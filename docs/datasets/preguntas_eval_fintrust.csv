@@ -1,0 +1,19 @@
+pregunta,respuesta_esperada,doc_id
+¿Cuántos días tengo para desconocer una compra con mi tarjeta?,120 días corridos desde la transacción.,FT-POL-01
+"Si desconozco una compra de 20 UF, ¿en cuánto tiempo me devuelven el dinero de forma provisoria?",Dentro de 5 días hábiles (montos hasta 35 UF).,FT-POL-01
+¿Tiene costo reponer una tarjeta robada?,"No, la reposición por robo, extravío o fraude no tiene costo.",FT-POL-02
+¿Cuánto cuesta reponer una tarjeta deteriorada?,"0,1 UF.",FT-POL-02
+¿FinTrust me puede pedir la clave dinámica por teléfono?,"No, nunca la solicita por teléfono, correo, SMS ni WhatsApp.",FT-POL-03
+¿Por qué quedó retenida mi transferencia de $800.000 a un destinatario nuevo?,Transferencias a destinatarios nuevos sobre $500.000 quedan retenidas 2 horas por seguridad.,FT-POL-03
+¿Cuándo no pago la mantención de la Cuenta Corriente Plus?,Si tiene abono de remuneraciones o saldo promedio mensual sobre $1.000.000.,FT-POL-04
+¿Cuál es la comisión de un avance en efectivo?,"2,5% del monto con mínimo de $2.500.",FT-POL-04
+¿Cuántas cuotas puedo postergar al año?,"Hasta 2 cuotas por año calendario, con pagos al día.",FT-POL-05
+¿Cuánto cobran por prepagar un crédito de consumo?,Un mes de intereses pactados sobre el capital prepagado (máximo dos meses para créditos bajo 5.000 UF).,FT-POL-05
+"Me equivoqué tres veces la clave y no puedo entrar, ¿qué pasa?",El acceso se bloquea por 24 horas; se puede desbloquear antes llamando al 600 600 1234.,FT-POL-06
+"La transferencia dio error pero me descontaron la plata, ¿qué hago?","Se revierte automáticamente en máximo 48 horas hábiles; si no, reclamar con el número de operación.",FT-POL-06
+¿En cuánto tiempo deben responder mi reclamo?,Máximo 10 días hábiles (5 días hábiles si es fraude).,FT-POL-07
+¿Puedo retractarme de un seguro que contraté hace dos semanas?,"Sí, dentro de 35 días con devolución total de la prima.",FT-POL-08
+¿Dónde descargo el certificado de intereses para la declaración de renta?,"En la web o app (Mi perfil > Certificados), disponible desde el 15 de febrero.",FT-POL-09
+¿Cada cuánto puedo cambiar la fecha de pago de la tarjeta?,"Una vez cada 6 meses; días 5, 10, 15, 20 o 25.",FT-POL-10
+¿Cuánto se demora la evaluación de un aumento de cupo?,48 horas hábiles.,FT-POL-10
+¿FinTrust ofrece créditos para comprar autos eléctricos con tasa cero?,No hay información en la base documental: el asistente debe decir que no lo sabe.,NINGUNO

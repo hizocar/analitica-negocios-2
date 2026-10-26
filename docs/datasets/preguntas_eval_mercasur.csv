@@ -1,0 +1,19 @@
+pregunta,respuesta_esperada,doc_id
+¿Cuánto se demora un despacho a regiones?,Entre 3 y 7 días hábiles.,MS-POL-01
+¿Desde qué monto el despacho es gratis en Santiago?,Compras sobre $39.990 en la Región Metropolitana.,MS-POL-01
+"El seguimiento dice entregado pero no me llegó nada, ¿qué hago?",Reportarlo dentro de 48 horas en Mis compras > Tengo un problema; responden en 5 días hábiles.,MS-POL-01
+¿Cuántos días tengo para retirar en tienda?,10 días corridos; luego la compra se anula y se reembolsa.,MS-POL-02
+¿Puede retirar mi pedido otra persona?,"Sí, con poder simple y copia de la cédula del comprador.",MS-POL-02
+¿Cuánto plazo tengo para devolver un producto?,"30 días corridos desde la recepción, sin uso y con etiquetas.",MS-POL-03
+¿Puedo devolver un perfume abierto?,"No, salvo falla; los productos de higiene personal abiertos no tienen cambio.",MS-POL-03
+¿Cuánto se demora el reembolso de una devolución?,5 a 10 días hábiles desde que el producto llega a bodega.,MS-POL-03
+¿Cuánto dura la garantía legal?,"6 meses: cambio, reparación o devolución del dinero.",MS-POL-04
+¿La garantía extendida cubre si se me cae el celular?,"No, cubre fallas de fabricación, no golpes ni líquidos.",MS-POL-04
+¿Desde qué monto puedo pagar en cuotas sin interés?,"Compras sobre $100.000, hasta 6 cuotas sin interés en bancos adheridos.",MS-POL-05
+"Me cobraron dos veces, ¿qué hago?",Enviar el comprobante a pagos@mercasur.cl; reembolsan el duplicado en 5 días hábiles.,MS-POL-05
+¿Puedo usar dos cupones en la misma compra?,"No, los cupones no son acumulables.",MS-POL-05
+"El producto bajó de precio después de comprarlo, ¿me devuelven la diferencia?","Sí, si es MercaSur Plus y ocurre dentro de 7 días, como saldo en MercaPay.",MS-POL-06
+¿Cómo hablo con una persona en el chat?,"Escribiendo ""ejecutivo""; el chat funciona de 8:00 a 22:00.",MS-POL-07
+¿Cuánto cuesta MercaSur Plus?,$2.990 mensuales.,MS-POL-08
+¿Cuándo vencen los puntos?,A los 12 meses.,MS-POL-08
+¿MercaSur vende pasajes de avión?,No hay información en la base documental: el asistente debe decir que no lo sabe.,NINGUNO

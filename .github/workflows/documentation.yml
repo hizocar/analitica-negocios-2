@@ -1,0 +1,23 @@
+name: GitHub Pages
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  Pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build the site
+        run: mkdocs build --site-dir public
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public

@@ -1,0 +1,186 @@
+/* ==========================================================================
+   ia.css — Componentes propios de Analítica para los Negocios II
+   (se suma a extra.css, que trae la paleta USM y los componentes base)
+   ========================================================================== */
+
+/* ---------- Ejercicio de Python (py-run.js) ---------- */
+.py-run {
+  margin: 1.4rem 0;
+  padding: 0.2rem 1.1rem 0.6rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-left: 5px solid #3776ab; /* azul de Python */
+  border-radius: 12px;
+}
+.md-typeset .py-run-t { margin: 0.8rem 0 0.4rem; font-weight: 700; font-size: 0.95rem; }
+.md-typeset .py-run .highlight { margin: 0.6rem 0 0; }
+.md-typeset .py-run code[contenteditable] { outline: none; }
+.md-typeset .py-run pre:focus-within { box-shadow: 0 0 0 2px var(--usm-gold); border-radius: 4px; }
+.md-typeset .py-run-reto {
+  margin: 0.7rem 0 0.2rem;
+  font-size: 0.8rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, #3776ab 10%, transparent);
+}
+.md-typeset .py-run-html { overflow-x: auto; margin-top: 0.4rem; }
+.md-typeset .py-run-html table {
+  font-size: 0.7rem;
+  border-collapse: collapse;
+  display: table;
+}
+.md-typeset .py-run-html th,
+.md-typeset .py-run-html td {
+  padding: 0.25rem 0.55rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  text-align: right;
+}
+.md-typeset .py-run-html thead th { border-bottom: 2px solid var(--usm-navy); }
+
+/* ---------- Botón "Abrir en Colab" y tarjeta de notebook ---------- */
+.ia-colab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1.2rem 0;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 1px dashed color-mix(in srgb, #f9ab00 70%, transparent);
+  background: color-mix(in srgb, #f9ab00 8%, transparent);
+}
+.md-typeset .ia-colab p { margin: 0; flex: 1 1 18rem; font-size: 0.8rem; }
+.md-typeset .ia-colab a.ia-colab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: #f9ab00;
+  color: #202124;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-decoration: none;
+  transition: transform 0.16s cubic-bezier(0.34, 1.36, 0.64, 1);
+}
+.md-typeset .ia-colab a.ia-colab-btn:hover { transform: translateY(-2px); }
+
+/* ---------- Pasos de un flujo (pipeline) ---------- */
+.ia-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0.4rem;
+  margin: 0.8rem 0;
+}
+.ia-flow-step {
+  flex: 1 1 7rem;
+  padding: 0.55rem 0.6rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--md-default-fg-color--lightest);
+  background: var(--md-default-bg-color);
+  font-size: 0.72rem;
+  line-height: 1.35;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.ia-flow-step strong { display: block; font-size: 0.78rem; margin-bottom: 0.15rem; }
+.ia-flow-step.is-on {
+  border-color: var(--usm-gold);
+  background: color-mix(in srgb, var(--usm-gold) 14%, transparent);
+}
+.ia-flow-step.is-done { border-color: color-mix(in srgb, #2e8b57 60%, transparent); }
+
+/* ---------- Fichas (tokens, palabras, documentos) ---------- */
+.ia-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.6rem 0; }
+.ia-chip {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-family: var(--md-code-font-family);
+  font-size: 0.72rem;
+  background: color-mix(in srgb, var(--usm-blue) 13%, transparent);
+  border: 1px solid color-mix(in srgb, var(--usm-blue) 35%, transparent);
+  white-space: pre;
+}
+.ia-chip:nth-child(5n + 2) { background: color-mix(in srgb, var(--usm-gold) 18%, transparent); border-color: color-mix(in srgb, var(--usm-gold) 45%, transparent); }
+.ia-chip:nth-child(5n + 3) { background: color-mix(in srgb, #2e8b57 15%, transparent); border-color: color-mix(in srgb, #2e8b57 40%, transparent); }
+.ia-chip:nth-child(5n + 4) { background: color-mix(in srgb, var(--usm-red) 12%, transparent); border-color: color-mix(in srgb, var(--usm-red) 35%, transparent); }
+.ia-chip:nth-child(5n + 5) { background: color-mix(in srgb, #7b4bb7 13%, transparent); border-color: color-mix(in srgb, #7b4bb7 35%, transparent); }
+.ia-chip.is-hot { outline: 2px solid var(--usm-gold); }
+
+/* ---------- Barras horizontales (probabilidades, similitudes) ---------- */
+.ia-bars { display: grid; gap: 0.3rem; margin: 0.6rem 0; }
+.ia-bar-row {
+  display: grid;
+  grid-template-columns: minmax(6rem, 11rem) 1fr 3.4rem;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+}
+.ia-bar-row > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ia-bar-track {
+  height: 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--md-default-fg-color) 8%, transparent);
+  overflow: hidden;
+}
+.ia-bar-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--usm-blue);
+}
+.ia-bar-row.is-top .ia-bar-fill { background: var(--usm-gold); }
+.ia-bar-row > span:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------- Mapa de calor (atención, matriz de confusión) ---------- */
+.ia-heat { display: grid; gap: 2px; margin: 0.6rem 0; font-size: 0.68rem; overflow-x: auto; }
+.ia-heat-cell {
+  min-width: 2.2rem;
+  padding: 0.3rem 0.2rem;
+  text-align: center;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.ia-heat-lbl { padding: 0.3rem 0.35rem; font-weight: 700; white-space: nowrap; }
+
+/* ---------- Lienzo SVG responsivo ---------- */
+.ia-svg { width: 100%; height: auto; display: block; margin: 0.5rem 0; overflow: visible; }
+.ia-svg text { fill: var(--md-default-fg-color); font-size: 11px; font-family: var(--md-text-font-family); }
+.ia-svg .ia-axis { stroke: var(--md-default-fg-color--lighter); stroke-width: 1; }
+.ia-svg .ia-grid { stroke: var(--md-default-fg-color--lightest); stroke-width: 1; }
+
+/* ---------- Tarjetas de sprint / entrega ---------- */
+.ia-sprint {
+  margin: 1rem 0;
+  padding: 0.9rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-top: 4px solid var(--usm-gold);
+}
+.md-typeset .ia-sprint h3 { margin-top: 0.2rem; }
+.ia-badge {
+  display: inline-block;
+  padding: 0.12rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: var(--usm-navy);
+  color: #fff;
+  margin-right: 0.3rem;
+}
+.ia-badge.is-gold { background: var(--usm-gold); color: var(--usm-navy-dark); }
+.ia-badge.is-red { background: var(--usm-red); }
+
+/* ---------- Bloque "paso" para explicaciones en etapas ---------- */
+.ia-step {
+  margin: 1rem 0;
+  padding: 0.6rem 1rem;
+  border-left: 4px solid var(--usm-blue);
+  border-radius: 0 10px 10px 0;
+  background: color-mix(in srgb, var(--usm-blue) 6%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset .ia-colab a.ia-colab-btn { transition: none; }
+  .ia-flow-step { transition: none; }
+}

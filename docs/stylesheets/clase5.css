@@ -1,0 +1,142 @@
+/* ==========================================================================
+   clase5.css — Estilos propios de la Clase 5 (Del prototipo a la decisión)
+   Prefijo .c5-  ·  colores con variables USM → modo claro y oscuro
+   ========================================================================== */
+
+/* ---------- c5-matriz: ranking de enfoques ---------- */
+.md-typeset ol.c5-rank {
+  list-style: none;
+  margin: 0.6rem 0 0.4rem;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+.md-typeset ol.c5-rank > li.c5-rank-row {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(7rem, 13rem) 1fr 2.8rem;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 10px;
+  background: var(--md-default-bg-color);
+  font-size: 0.74rem;
+  position: relative;
+}
+.md-typeset ol.c5-rank > li.c5-rank-row.is-top {
+  border-color: var(--usm-gold);
+  background: color-mix(in srgb, var(--usm-gold) 10%, var(--md-default-bg-color));
+}
+.c5-rank-pos {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--usm-navy);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.72rem;
+}
+.c5-rank-row.is-top .c5-rank-pos { background: var(--usm-gold); color: var(--usm-navy-dark); }
+.c5-rank-name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c5-rank-track {
+  height: 0.7rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--md-default-fg-color) 8%, transparent);
+  overflow: hidden;
+}
+.c5-rank-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--usm-blue);
+  transition: width 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+.c5-rank-row.is-top .c5-rank-fill { background: var(--usm-gold); }
+.c5-rank-val { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+
+/* ---------- c5-roi: cascada ---------- */
+.c5-roi-svg .c5-wf-bar.is-pos { fill: var(--usm-blue); }
+.c5-roi-svg .c5-wf-bar.is-neg { fill: var(--usm-red); opacity: 0.85; }
+.c5-roi-svg .c5-wf-bar.is-net { fill: var(--usm-gold); }
+.c5-roi-svg .c5-wf-conn { stroke: var(--md-default-fg-color--lighter); stroke-dasharray: 3 3; }
+.ia-svg text.c5-wf-lbl { font-size: 11px; font-weight: 600; }
+.ia-svg text.c5-wf-val { font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.econ-stat.is-red { border-left-color: var(--usm-red); }
+
+/* ---------- c5-bootstrap: histograma ---------- */
+.ia-svg .c5-bs-bar { fill: var(--usm-blue); opacity: 0.75; }
+.ia-svg .c5-bs-band { fill: var(--usm-gold); opacity: 0.22; }
+.ia-svg .c5-bs-zero { stroke: var(--usm-red); stroke-width: 2; stroke-dasharray: 4 3; }
+.ia-svg .c5-bs-obs { stroke: var(--usm-gold); stroke-width: 3; }
+.ia-svg text.c5-bs-zero-t { fill: var(--usm-red); font-size: 10px; font-weight: 700; }
+.ia-svg text.c5-muted { fill: var(--md-default-fg-color--light); font-size: 10px; }
+
+/* ---------- c5-piramide ---------- */
+.c5-pyr { display: grid; gap: 0.45rem; margin: 0.6rem 0; justify-items: center; }
+.c5-pyr-level {
+  width: 100%;
+  padding: 0.4rem 0.55rem 0.5rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--md-default-fg-color--lightest);
+  min-height: 3.2rem;
+}
+.c5-pyr-level.is-top { max-width: 58%; border-color: var(--usm-gold); background: color-mix(in srgb, var(--usm-gold) 12%, transparent); }
+.c5-pyr-level.is-arg { max-width: 80%; border-color: var(--usm-navy); background: color-mix(in srgb, var(--usm-navy) 6%, transparent); }
+.c5-pyr-level.is-ev { border-color: var(--usm-blue); background: color-mix(in srgb, var(--usm-blue) 6%, transparent); }
+.c5-pyr-level.is-annex { border-style: dashed; }
+.c5-pyr-level.is-pool { border-style: dotted; background: color-mix(in srgb, var(--md-default-fg-color) 3%, transparent); }
+.md-typeset .c5-pyr-lt {
+  margin: 0 0 0.3rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--md-default-fg-color--light);
+  text-align: center;
+}
+.c5-pyr-zone { display: flex; flex-wrap: wrap; gap: 0.35rem; justify-content: center; min-height: 1.6rem; }
+.c5-card {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1 1 13rem;
+  max-width: 22rem;
+  padding: 0.35rem 0.4rem 0.35rem 0.6rem;
+  border-radius: 9px;
+  border: 1.5px solid var(--md-default-fg-color--lighter);
+  background: var(--md-default-bg-color);
+  font-size: 0.7rem;
+  line-height: 1.35;
+  box-shadow: 0 1px 3px rgba(16, 25, 59, 0.08);
+}
+.c5-card-t { flex: 1; }
+.c5-card-ctl { display: flex; flex-direction: column; gap: 0.2rem; }
+.c5-card-btn {
+  font: inherit;
+  font-size: 0.62rem;
+  line-height: 1;
+  padding: 0.25rem 0.4rem;
+  border-radius: 6px;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  background: transparent;
+  color: var(--md-default-fg-color);
+  cursor: pointer;
+}
+.c5-card-btn:hover:not(:disabled) { border-color: var(--usm-gold); background: color-mix(in srgb, var(--usm-gold) 18%, transparent); }
+.c5-card-btn:focus-visible { outline: 2px solid var(--usm-gold); outline-offset: 1px; }
+.c5-card-btn:disabled { opacity: 0.3; cursor: default; }
+.c5-card.is-right { border-color: #2e8b57; background: color-mix(in srgb, #2e8b57 12%, var(--md-default-bg-color)); }
+.c5-card.is-wrong { border-color: var(--usm-red); background: color-mix(in srgb, var(--usm-red) 10%, var(--md-default-bg-color)); }
+
+@media (max-width: 700px) {
+  .c5-pyr-level.is-top, .c5-pyr-level.is-arg { max-width: 100%; }
+  .md-typeset ol.c5-rank > li.c5-rank-row { grid-template-columns: 1.5rem minmax(5.5rem, 8rem) 1fr 2.4rem; gap: 0.4rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c5-rank-fill { transition: none; }
+}

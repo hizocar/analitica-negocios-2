@@ -1,0 +1,119 @@
+# Project information
+site_name: Analítica para los Negocios II
+site_author: Sebastian Azocar
+site_description: Analítica para los Negocios II (USM) · Redes neuronales y LLMs aplicados a negocios · Intensivo modo tutoría, octubre a diciembre 2026
+site_url: https://hizocar.github.io/analitica-negocios-2/
+repo_url: https://github.com/hizocar/analitica-negocios-2
+repo_name: analitica-negocios-2
+edit_uri: ""
+
+# Markdown extensions
+markdown_extensions:
+  - attr_list
+  - admonition
+  - pymdownx.details
+  - md_in_html
+  - tables
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
+
+# Theme
+theme:
+  name: material
+  language: es
+  logo: images/usm_shield.png
+  favicon: images/usm_favicon.png
+  features:
+    - navigation.instant
+    - navigation.top
+    - navigation.tabs
+    - content.code.annotate
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+  palette:
+    # Light mode
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Cambiar a modo oscuro
+
+    # Dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/toggle-switch
+        name: Cambiar a modo claro
+
+# Extra CSS
+extra_css:
+  - stylesheets/extra.css
+  - stylesheets/ia.css
+  - stylesheets/clase1.css
+  - stylesheets/clase2.css
+  - stylesheets/clase3.css
+  - stylesheets/clase4.css
+  - stylesheets/clase5.css
+
+# Extra JavaScript: MathJax, Motion (animaciones), núcleo de simuladores,
+# simuladores de cada clase y Python en el navegador (Pyodide)
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js
+  - https://cdn.jsdelivr.net/npm/motion@12.23.12/dist/motion.js
+  - javascripts/ia-core.js
+  - javascripts/widgets-clase1.js
+  - javascripts/widgets-clase2.js
+  - javascripts/widgets-clase3.js
+  - javascripts/widgets-clase4.js
+  - javascripts/widgets-clase5.js
+  - javascripts/py-run.js
+
+# Customization
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/hizocar
+
+# Plugins
+plugins:
+  - search:
+      lang: es
+  - mkdocs-jupyter:
+      include: ["notebooks/*.ipynb"]
+      execute: false
+      include_source: true
+
+# TOC
+nav:
+  - Inicio: index.md
+  - Programa: programa.md
+  - Calendario: calendario.md
+  - Clases:
+      - clases/clases.md
+      - "Clase 1 · Redes neuronales en la práctica": clases/clase1.md
+      - "Clase 2 · Embeddings: el significado como vector": clases/clase2.md
+      - "Clase 3 · Transformers y LLMs": clases/clase3.md
+      - "Clase 4 · RAG: asistentes con tus documentos": clases/clase4.md
+      - "Clase 5 · Del prototipo a la decisión": clases/clase5.md
+  - Proyecto:
+      - "Enunciado y rúbrica": proyecto/enunciado.md
+      - "Sprints y buzón": proyecto/sprints.md
+  - Datasets: datasets/datasets.md
+  - Guías:
+      - "Google Colab": guias/colab.md
+      - "API de Gemini": guias/gemini.md

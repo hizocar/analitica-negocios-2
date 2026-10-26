@@ -1,0 +1,82 @@
+/* Estilos propios de la clase 1 · Redes neuronales en la práctica (prefijo .c1-) */
+
+/* ---------- textos dentro de los SVG ---------- */
+.ia-svg .c1-small { font-size: 10.5px; fill: var(--md-default-fg-color--light); }
+.ia-svg .c1-bold { font-weight: 700; fill: var(--md-default-fg-color); }
+.ia-svg .c1-faint { opacity: 0.55; }
+.ia-svg .c1-node-t { font-size: 12px; font-weight: 700; }
+.ia-svg .c1-wlbl { font-size: 11px; font-weight: 700; fill: var(--usm-navy); }
+[data-md-color-scheme="slate"] .ia-svg .c1-wlbl { fill: var(--usm-blue); }
+
+/* ---------- c1-neurona ---------- */
+.ia-svg .c1-node { fill: var(--md-default-bg-color); stroke: var(--usm-blue); stroke-width: 2; }
+.ia-svg .c1-neuron {
+  fill: color-mix(in srgb, var(--usm-blue) 12%, var(--md-default-bg-color));
+  stroke: var(--usm-navy);
+  stroke-width: 2.5;
+}
+[data-md-color-scheme="slate"] .ia-svg .c1-neuron { stroke: var(--usm-blue); }
+.ia-svg .c1-edge { stroke: var(--usm-gold); stroke-linecap: round; transition: stroke-width 0.16s ease-out; }
+.ia-svg .c1-edge.is-neg { stroke: var(--usm-blue); stroke-dasharray: 6 4; }
+.ia-svg .c1-edge-out { stroke: var(--md-default-fg-color--lighter); stroke-width: 2; }
+.ia-svg .c1-out { fill: var(--usm-gold); stroke: var(--usm-gold); stroke-width: 2; }
+.ia-svg .c1-curve { stroke: var(--usm-blue); stroke-width: 2.5; }
+.ia-svg .c1-guide { stroke: var(--md-default-fg-color--lighter); stroke-width: 1; stroke-dasharray: 3 3; }
+.ia-svg .c1-dot { fill: var(--usm-gold); stroke: var(--md-default-bg-color); stroke-width: 2; }
+.md-typeset .c1-formula {
+  margin: 0.4rem 0 0;
+  font-family: var(--md-code-font-family);
+  font-size: 0.72rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--usm-blue) 8%, transparent);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* ---------- c1-frontera ---------- */
+.c1-row { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; margin-bottom: 0.4rem; }
+.c1-row .econ-buttons { margin: 0; }
+.ia-svg .c1-cell { fill: var(--usm-blue); stroke: none; }
+.ia-svg .c1-cell.is-pos { fill: var(--usm-gold); }
+.ia-svg .c1-frame { fill: none; stroke: var(--md-default-fg-color--lighter); }
+.ia-svg .c1-pt { fill: var(--usm-blue); stroke: var(--md-default-bg-color); stroke-width: 1.2; }
+.ia-svg .c1-pt.is-pos { fill: var(--usm-gold); stroke: var(--usm-navy); stroke-width: 1; }
+.ia-svg .c1-loss { stroke: var(--usm-red); stroke-width: 2.2; stroke-linejoin: round; }
+
+/* ---------- c1-gradiente ---------- */
+.ia-svg .c1-ball { fill: var(--usm-gold); stroke: var(--usm-navy); stroke-width: 2; }
+.ia-svg .c1-ball.is-bad { fill: var(--usm-red); }
+.ia-svg .c1-tangent { stroke: var(--usm-red); stroke-width: 2.5; stroke-linecap: round; }
+.ia-svg .c1-trail { stroke: var(--usm-gold); stroke-width: 1.5; stroke-dasharray: 4 3; opacity: 0.8; }
+.ia-svg .c1-trail-dot { fill: var(--usm-gold); opacity: 0.6; }
+
+/* ---------- c1-curvas ---------- */
+.ia-svg .c1-tr { stroke: var(--usm-gold); stroke-width: 2.5; stroke-linejoin: round; }
+.ia-svg .c1-va { stroke: var(--usm-blue); stroke-width: 2.5; stroke-linejoin: round; }
+.ia-svg .c1-tr.is-ghost,
+.ia-svg .c1-va.is-ghost { stroke-width: 1.5; stroke-dasharray: 4 4; opacity: 0.45; }
+.ia-svg .c1-stopline { stroke: var(--usm-red); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.ia-svg .c1-stopdot { fill: var(--usm-red); stroke: var(--md-default-bg-color); stroke-width: 2; }
+
+/* ---------- c1-costos ---------- */
+.ia-svg .c1-pt.is-flag { stroke: var(--usm-red); stroke-width: 2; }
+.ia-svg .c1-thline { stroke: var(--usm-red); stroke-width: 2; }
+.ia-svg .c1-bestdot { fill: none; stroke: var(--usm-gold); stroke-width: 2.5; }
+.c1-cm { max-width: 32rem; }
+.c1-cm .ia-heat-cell { font-weight: 700; font-size: 0.8rem; transition: background-color 0.16s ease-out; }
+
+/* ---------- tabla de bolsa de palabras ---------- */
+.md-typeset .c1-bow table:not([class]) { font-size: 0.68rem; }
+.md-typeset .c1-bow td, .md-typeset .c1-bow th { text-align: center; padding: 0.3em 0.55em; }
+
+/* En celular el SVG se encoge a la mitad: agrandamos el texto para que siga legible */
+@media (max-width: 480px) {
+  .ia-svg .c1-small { font-size: 15px; }
+  .ia-svg .c1-node-t { font-size: 15px; }
+  .ia-svg .c1-wlbl { font-size: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ia-svg .c1-edge, .c1-cm .ia-heat-cell { transition: none; }
+}
