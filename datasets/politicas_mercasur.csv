@@ -1,0 +1,56 @@
+doc_id,titulo,texto
+MS-POL-01,Despacho a domicilio,"MercaSur despacha a todo Chile continental. En la Región Metropolitana el plazo es de 1 a 3 días hábiles; en regiones,
+de 3 a 7 días hábiles. Las compras sobre $39.990 tienen despacho gratis en la Región Metropolitana.
+
+El cliente recibe un código de seguimiento por correo. Si el seguimiento indica ""entregado"" pero el cliente no recibió
+el pedido, debe reportarlo dentro de 48 horas en la sección Mis compras > Tengo un problema. MercaSur investiga con el
+operador logístico y responde en 5 días hábiles, reenviando el producto o reembolsando el total.
+
+Si el producto llega con la caja dañada, el cliente puede rechazarlo al momento de la entrega o reportarlo dentro de
+48 horas con fotografías."
+MS-POL-02,Retiro en tienda,"El retiro en tienda es gratis. El pedido está disponible en 24 a 48 horas y se avisa por correo y SMS. El cliente
+tiene 10 días corridos para retirar; pasado ese plazo la compra se anula y se reembolsa automáticamente.
+
+Para retirar se debe presentar la cédula de identidad del comprador y el número de pedido. Un tercero puede retirar
+con un poder simple y una copia de la cédula del comprador."
+MS-POL-03,Cambios y devoluciones,"El cliente tiene 30 días corridos desde la recepción para cambiar o devolver un producto sin uso, con etiquetas y en
+su empaque original. Los productos de higiene personal (perfumes abiertos, cremas, afeitadoras usadas) no tienen
+cambio por razones sanitarias, salvo falla.
+
+La devolución puede iniciarse online (Mis compras > Devolver) con retiro a domicilio gratuito, o en cualquier tienda.
+El reembolso se realiza al mismo medio de pago en un plazo de 5 a 10 días hábiles desde que el producto llega a la
+bodega. Los cambios de talla en Moda son gratis y se pueden hacer hasta 2 veces por producto."
+MS-POL-04,Garantía legal y garantía extendida,"Todos los productos nuevos tienen garantía legal de 6 meses: si presentan una falla, el cliente puede elegir entre
+el cambio, la reparación gratuita o la devolución del dinero. Para hacer efectiva la garantía se necesita la boleta
+o el número de pedido.
+
+La garantía extendida MercaSur Protege se puede comprar al momento de la compra para Tecnología y Electrohogar.
+Extiende la cobertura a 12, 24 o 36 meses adicionales y cubre fallas de fabricación, no daños por golpes o líquidos.
+
+Los productos de Tecnología enviados a servicio técnico tienen un plazo de reparación máximo de 20 días hábiles;
+si se excede, el cliente puede pedir el cambio del producto."
+MS-POL-05,Medios de pago y cuotas,"MercaSur acepta tarjetas de crédito y débito, transferencia bancaria y la billetera MercaPay. Las compras sobre
+$100.000 con tarjeta de crédito pueden pagarse en hasta 6 cuotas sin interés en bancos adheridos.
+
+Si un pago fue rechazado pero se descontó el dinero, el banco emisor lo revierte en un plazo de 3 a 7 días hábiles.
+Si el cobro aparece duplicado, el cliente debe enviar el comprobante a pagos@mercasur.cl y MercaSur reembolsa el
+cobro duplicado en 5 días hábiles.
+
+Los cupones de descuento no son acumulables entre sí y deben ingresarse antes de confirmar el pago; no se aplican
+de forma retroactiva."
+MS-POL-06,Precios y ofertas,"El precio válido es el que aparece en el carro al confirmar el pago. Si un producto baja de precio dentro de los 7
+días siguientes a la compra, el cliente con cuenta MercaSur Plus puede solicitar la diferencia como saldo en
+MercaPay.
+
+En eventos como CyberDay y Black Friday, los precios de referencia corresponden al precio más bajo de los 30 días
+anteriores al evento. Las ofertas son válidas hasta agotar stock."
+MS-POL-07,Atención al cliente,"El chat de atención funciona todos los días de 8:00 a 22:00 y es atendido por ejecutivos después de un primer filtro
+automático; escribiendo ""ejecutivo"" se deriva a una persona. El tiempo de respuesta objetivo es de 3 minutos.
+
+Los correos a ayuda@mercasur.cl se responden en un máximo de 48 horas. Los reclamos formales tienen un número de caso
+y una respuesta de fondo en 7 días hábiles. Si el cliente no está conforme, puede escalar a SERNAC."
+MS-POL-08,Programa de puntos MercaSur Plus,"MercaSur Plus cuesta $2.990 mensuales e incluye despacho gratis en todo Chile sin monto mínimo, 2 puntos por cada
+$1.000 de compra y acceso anticipado a ofertas.
+
+Los puntos vencen a los 12 meses y se canjean en el carro de compra: 1 punto equivale a $1. La suscripción puede
+cancelarse en cualquier momento sin costo, con efecto desde el siguiente ciclo de facturación."

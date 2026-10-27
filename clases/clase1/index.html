@@ -1,0 +1,2557 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Analítica para los Negocios II (USM) · Redes neuronales y LLMs aplicados a negocios · Intensivo modo tutoría, octubre a diciembre 2026">
+      
+      
+        <meta name="author" content="Sebastian Azocar">
+      
+      
+        <link rel="canonical" href="https://hizocar.github.io/analitica-negocios-2/clases/clase1/">
+      
+      
+        <link rel="prev" href="../clases/">
+      
+      
+        <link rel="next" href="../clase2/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../images/usm_favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Clase 1 · Redes neuronales en la práctica - Analítica para los Negocios II</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/ia.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/clase1.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/clase2.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/clase3.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/clase4.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/clase5.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#clase-1-redes-neuronales-en-la-practica" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../.." title="Analítica para los Negocios II" class="md-header__button md-logo" aria-label="Analítica para los Negocios II" data-md-component="logo">
+      
+  <img src="../../images/usm_shield.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Analítica para los Negocios II
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Clase 1 · Redes neuronales en la práctica
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="amber"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hizocar/analitica-negocios-2" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    analitica-negocios-2
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../programa/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Programa
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../calendario/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Calendario
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../clases/" class="md-tabs__link">
+          
+  
+  
+  Clases
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../proyecto/enunciado/" class="md-tabs__link">
+          
+  
+  
+  Proyecto
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../datasets/datasets/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Datasets
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guias/colab/" class="md-tabs__link">
+          
+  
+  
+  Guías
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Analítica para los Negocios II" class="md-nav__button md-logo" aria-label="Analítica para los Negocios II" data-md-component="logo">
+      
+  <img src="../../images/usm_shield.png" alt="logo">
+
+    </a>
+    Analítica para los Negocios II
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hizocar/analitica-negocios-2" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    analitica-negocios-2
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../programa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../calendario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Calendario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Clases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../clases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🏫 Clases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clase 1 · Redes neuronales en la práctica
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clase 1 · Redes neuronales en la práctica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objetivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Objetivos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ruta-de-la-capsula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Ruta de la cápsula
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 1 · De la regresión logística a la neurona
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 2 · Redes multicapa: fronteras no lineales
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 3 · Cómo aprende una red
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 4 · Sobreajuste y cómo evitarlo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 5 · El texto también es un dato
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tema 5 · El texto también es un dato">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-antes-de-modelar-auditar-y-limpiar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Antes de modelar: auditar y limpiar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-bolsa-de-palabras-y-tf-idf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Bolsa de palabras y TF-IDF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-logistica-vs-red-neuronal-sobre-tf-idf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Logística vs. red neuronal sobre TF-IDF
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 6 · La matriz de confusión con ojos de negocio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notebook-de-colab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧑‍💻 Notebook de Colab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conexion-con-tu-proyecto-sprint-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔗 Conexión con tu proyecto (Sprint 1)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔗 Conexión con tu proyecto (Sprint 1)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sprint-1-datos-y-primeros-modelos-domingo-8-de-noviembre-2359-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📬 Sprint 1 · Datos y primeros modelos domingo 8 de noviembre, 23:59 10 %
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧠 Resumen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#para-profundizar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Para profundizar
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../clase2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clase 2 · Embeddings: el significado como vector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../clase3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clase 3 · Transformers y LLMs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../clase4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clase 4 · RAG: asistentes con tus documentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../clase5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clase 5 · Del prototipo a la decisión
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Proyecto
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Proyecto
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyecto/enunciado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enunciado y rúbrica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyecto/sprints/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sprints y buzón
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/datasets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guías
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guías
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guias/colab/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Google Colab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guias/gemini/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API de Gemini
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objetivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Objetivos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ruta-de-la-capsula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗺️ Ruta de la cápsula
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 1 · De la regresión logística a la neurona
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 2 · Redes multicapa: fronteras no lineales
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 3 · Cómo aprende una red
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 4 · Sobreajuste y cómo evitarlo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 5 · El texto también es un dato
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tema 5 · El texto también es un dato">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-antes-de-modelar-auditar-y-limpiar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Antes de modelar: auditar y limpiar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-bolsa-de-palabras-y-tf-idf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Bolsa de palabras y TF-IDF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-logistica-vs-red-neuronal-sobre-tf-idf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Logística vs. red neuronal sobre TF-IDF
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tema-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tema 6 · La matriz de confusión con ojos de negocio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notebook-de-colab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧑‍💻 Notebook de Colab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conexion-con-tu-proyecto-sprint-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔗 Conexión con tu proyecto (Sprint 1)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔗 Conexión con tu proyecto (Sprint 1)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sprint-1-datos-y-primeros-modelos-domingo-8-de-noviembre-2359-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📬 Sprint 1 · Datos y primeros modelos domingo 8 de noviembre, 23:59 10 %
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧠 Resumen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#para-profundizar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Para profundizar
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="clase-1-redes-neuronales-en-la-practica">Clase 1 · Redes neuronales en la práctica</h1>
+<div class="usm-session-meta">
+<span>📅 Jueves 29 de octubre de 2026 · Kickoff</span>
+<span>⏱️ Tutoría 18:30 – 19:30 · cápsula de ~2,5 h de autoestudio</span>
+<span class="usm-tag-gold">Se aplica en el Sprint 1 · domingo 8 de noviembre</span>
+</div>
+
+<div class="admonition example">
+<p class="admonition-title">Cómo estudiar esta cápsula</p>
+<p>Esta página <strong>enseña sola</strong>: no hay cátedra. Avanza tema por tema, en orden. Cada tema parte con una
+<strong>pregunta guía</strong>, explica la idea con un ejemplo de negocio y luego te deja <strong>jugar</strong>:</p>
+<ul>
+<li><strong>🧠 Simuladores:</strong> mueve los deslizadores y presiona los botones. No hay forma de romperlos; la idea es que
+  <em>predigas</em> qué va a pasar antes de tocar y luego compruebes.</li>
+<li><strong>🧪 Python en el navegador:</strong> cada bloque tiene un botón <strong>▶ Ejecutar en el navegador</strong>. La primera vez tarda
+  unos 15 segundos en cargar Python; después es inmediato. Puedes editar el código y cada bloque trae un <strong>🎯 Reto</strong>.</li>
+<li><strong>✍️ Practica:</strong> preguntas de selección múltiple. Si te equivocas, la alternativa te explica por qué no es.</li>
+<li><strong>🧑‍💻 Notebook de Colab:</strong> al final está el notebook que aplica todo a los datos completos de tu caso, con
+  una red neuronal en <strong>Keras</strong>. Es la base de tu <strong>Sprint 1</strong>.</li>
+</ul>
+<p><strong>Para la tutoría del jueves 29 (kickoff):</strong> llega con tu equipo armado (2–3 personas) o con la intención de
+armarlo ahí, y con una idea de qué caso prefieren: <strong>FinTrust</strong> (reclamos de un banco) o <strong>MercaSur</strong> (reseñas
+de un retail). Si alcanzas a leer el Tema 5 antes, mejor: es lo primero que harás con los datos.</p>
+</div>
+<h2 id="objetivos">🎯 Objetivos</h2>
+<p>Al terminar esta cápsula podrás:</p>
+<ul>
+<li>Explicar qué hace <strong>una neurona</strong> (suma ponderada + activación) y por qué la regresión logística del curso I
+  ya era una red neuronal de una sola neurona.</li>
+<li>Explicar por qué apilar <strong>capas ocultas</strong> permite fronteras de decisión no lineales.</li>
+<li>Describir cómo <strong>aprende</strong> una red: función de pérdida (entropía cruzada), descenso de gradiente, tasa de
+  aprendizaje, épocas y batches.</li>
+<li>Reconocer el <strong>sobreajuste</strong> en las curvas de entrenamiento y validación y controlarlo con <strong>early stopping</strong> y
+  <strong>dropout</strong>.</li>
+<li>Convertir <strong>texto en números</strong> con bolsa de palabras y <strong>TF-IDF</strong>, después de limpiar los datos.</li>
+<li>Comparar una regresión logística con una red neuronal usando <strong>F1 macro</strong> y leer la <strong>matriz de confusión con
+  ojos de negocio</strong>.</li>
+</ul>
+<h2 id="ruta-de-la-capsula">🗺️ Ruta de la cápsula</h2>
+<p>Haz clic en un tema para ir directo a él.</p>
+<ol class="econ-ruta">
+<li><span class="econ-ruta-h">20 min</span><a class="econ-ruta-a" href="#tema-1"><span class="econ-ruta-n">1</span><span class="econ-ruta-t">De la regresión logística a la neurona</span><span class="econ-ruta-l">🧠 simulador · 🧪 Python · ✍️ 2 preguntas</span></a></li>
+<li><span class="econ-ruta-h">25 min</span><a class="econ-ruta-a" href="#tema-2"><span class="econ-ruta-n">2</span><span class="econ-ruta-t">Redes multicapa: fronteras no lineales</span><span class="econ-ruta-l">🧠 simulador · 🧪 Python · ✍️ 2 preguntas</span></a></li>
+<li><span class="econ-ruta-h">25 min</span><a class="econ-ruta-a" href="#tema-3"><span class="econ-ruta-n">3</span><span class="econ-ruta-t">Cómo aprende una red</span><span class="econ-ruta-l">🧠 simulador · 🧪 Python · ✍️ 3 preguntas</span></a></li>
+<li><span class="econ-ruta-h">20 min</span><a class="econ-ruta-a" href="#tema-4"><span class="econ-ruta-n">4</span><span class="econ-ruta-t">Sobreajuste y cómo evitarlo</span><span class="econ-ruta-l">🧠 simulador · 🧪 Python · ✍️ 2 preguntas</span></a></li>
+<li class="is-break"><span class="econ-ruta-h">☕</span><span class="econ-ruta-t">Pausa: estírate antes de abrir los datos</span></li>
+<li><span class="econ-ruta-h">40 min</span><a class="econ-ruta-a" href="#tema-5"><span class="econ-ruta-n">5</span><span class="econ-ruta-t">El texto también es un dato</span><span class="econ-ruta-l">🧪 4 bloques de Python · ✍️ 3 preguntas</span></a></li>
+<li><span class="econ-ruta-h">15 min</span><a class="econ-ruta-a" href="#tema-6"><span class="econ-ruta-n">6</span><span class="econ-ruta-t">La matriz de confusión con ojos de negocio</span><span class="econ-ruta-l">🧠 simulador · 🧪 Python · ✍️ 2 preguntas</span></a></li>
+<li class="is-break"><span class="econ-ruta-h">✅</span><span class="econ-ruta-t">Notebook de Colab, conexión con el Sprint 1 y resumen</span></li>
+</ol>
+
+<hr />
+<h2 id="tema-1">Tema 1 · De la regresión logística a la neurona</h2>
+<blockquote>
+<p><strong>Pregunta guía:</strong> si ya sabes regresión logística, ¿cuánto te falta para entender una red neuronal?</p>
+</blockquote>
+<p><strong>Menos de lo que crees.</strong> Piensa en el equipo de servicio al cliente de <strong>FinTrust</strong>, que recibe cientos de
+reclamos al día. Una ejecutiva con experiencia decide en segundos si un reclamo es <strong>urgente</strong>: mira si trae
+palabras de alarma ("no reconozco", "fraude", "urgente") y cuánta plata está en juego. Sin darse cuenta, está
+<strong>ponderando</strong> señales: a algunas les da mucha importancia, a otras poca, y si la suma pasa cierto nivel, lo marca
+como urgente.</p>
+<p>Eso es exactamente una <strong>neurona artificial</strong>. Hace dos cosas:</p>
+<ol>
+<li><strong>Suma ponderada:</strong> multiplica cada entrada por un <strong>peso</strong> (cuánto importa) y suma un <strong>sesgo</strong> (qué tan exigente
+   es la neurona):
+   $$ z = w_1 x_1 + w_2 x_2 + b $$</li>
+<li><strong>Activación:</strong> pasa <span class="arithmatex">\( z \)</span> por una función <span class="arithmatex">\( f \)</span> que decide qué tan fuerte "se enciende":
+   $$ a = f(z) $$</li>
+</ol>
+<p>Si la activación es la <strong>sigmoide</strong> <span class="arithmatex">\( \sigma(z) = \frac{1}{1+e^{-z}} \)</span>, la salida queda entre 0 y 1 y se lee
+como probabilidad. ¿Te suena? <strong>Es la regresión logística del curso I</strong>, con otro nombre: los "coeficientes" ahora
+se llaman <em>pesos</em> y el "intercepto" se llama <em>sesgo</em>.</p>
+<table>
+<thead>
+<tr>
+<th>Activación</th>
+<th>Fórmula</th>
+<th>Rango</th>
+<th>Dónde se usa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sigmoide</td>
+<td><span class="arithmatex">\( \frac{1}{1+e^{-z}} \)</span></td>
+<td>0 a 1</td>
+<td>Salida de un clasificador binario (probabilidad)</td>
+</tr>
+<tr>
+<td>tanh</td>
+<td><span class="arithmatex">\( \tanh(z) \)</span></td>
+<td>−1 a 1</td>
+<td>Capas ocultas (centrada en cero)</td>
+</tr>
+<tr>
+<td>ReLU</td>
+<td><span class="arithmatex">\( \max(0, z) \)</span></td>
+<td>0 a ∞</td>
+<td>Capas ocultas: la más usada hoy, simple y rápida</td>
+</tr>
+<tr>
+<td>Softmax</td>
+<td><span class="arithmatex">\( \frac{e^{z_k}}{\sum_j e^{z_j}} \)</span></td>
+<td>0 a 1, suman 1</td>
+<td>Salida de un clasificador con <strong>varias</strong> clases (p. ej. 6 categorías de reclamo)</td>
+</tr>
+</tbody>
+</table>
+<div class="ia-widget" data-widget="c1-neurona"></div>
+
+<div class="admonition tip">
+<p class="admonition-title">💼 En el negocio</p>
+<p>Los pesos son <strong>interpretables</strong> en una sola neurona: un peso positivo y grande para "palabras de alarma"
+dice que esa señal empuja fuerte hacia "urgente". Esa transparencia se pierde cuando apilamos muchas neuronas,
+y por eso en banca (regulada) la regresión logística sigue viva: a veces <strong>explicar</strong> la decisión vale más que
+ganar dos puntos de F1.</p>
+</div>
+<div class="py-run">
+<p class="py-run-t">🧪 Practica en Python · Una neurona a mano</p>
+<p>Tres reclamos descritos con dos números. La neurona calcula <span class="arithmatex">\( z \)</span>, aplica la sigmoide y decide.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Cada reclamo se describe con dos números:</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1">#   x1 = cantidad de palabras de alarma ("urgente", "fraude", "no reconozco"...)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1">#   x2 = monto reclamado, en millones de pesos</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">reclamos</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="s2">"Me cobraron dos veces la cuota"</span><span class="p">:</span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">],</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="s2">"NO RECONOZCO compras, urgente, fraude"</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">],</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="s2">"¿Cómo cambio la clave de la app?"</span><span class="p">:</span>      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.00</span><span class="p">],</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>   <span class="c1"># pesos: cuánto importa cada entrada</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.0</span>                   <span class="c1"># sesgo: qué tan exigente es la neurona</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="k">def</span><span class="w"> </span><span class="nf">sigmoide</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">z</span><span class="p">))</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="k">for</span> <span class="n">texto</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">reclamos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>          <span class="c1"># 1) suma ponderada</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n">p</span> <span class="o">=</span> <span class="n">sigmoide</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>               <span class="c1"># 2) activación</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="n">etiqueta</span> <span class="o">=</span> <span class="s2">"URGENTE"</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="k">else</span> <span class="s2">"normal"</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">texto</span><span class="si">:</span><span class="s2">40s</span><span class="si">}</span><span class="s2"> z = </span><span class="si">{</span><span class="n">z</span><span class="si">:</span><span class="s2">5.2f</span><span class="si">}</span><span class="s2">  -&gt;  p = </span><span class="si">{</span><span class="n">p</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">etiqueta</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+</code></pre></div>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> cambia el sesgo a <code>b = -1.0</code>. ¿Qué reclamo cambia de etiqueta? ¿Te parece razonable para el negocio
+marcar un cobro duplicado como urgente?</p>
+</div>
+<div class="econ-practica">
+<p class="econ-practica-t"><span>✍️ Practica · Tema 1</span></p>
+<div class="econ-quiz">
+<p class="econ-quiz-q">Una neurona con activación sigmoide y una sola capa, entrenada para predecir si un reclamo es urgente, es equivalente a…</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="Un árbol parte el espacio con cortes del tipo “x₁ > 2”; la neurona hace una suma ponderada continua.">Un árbol de decisión de profundidad 1.</button>
+<button class="econ-quiz-opt" data-correct>Una regresión logística.</button>
+<button class="econ-quiz-opt" data-why="La regresión lineal no acota la salida entre 0 y 1; la sigmoide sí, y por eso la salida se lee como probabilidad.">Una regresión lineal.</button>
+</div>
+<p class="econ-quiz-fb">✅ Suma ponderada + sigmoide = regresión logística. Los pesos son los coeficientes y el sesgo es el intercepto. Las redes “de verdad” aparecen al apilar muchas de estas neuronas.</p>
+</div>
+<div class="econ-quiz">
+<p class="econ-quiz-q">Tienes que clasificar reclamos en 6 categorías (Fraude, Cobro indebido, …). ¿Qué activación usas en la capa de salida?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="ReLU no está acotada ni suma 1: no entrega probabilidades. Se usa en capas ocultas.">ReLU</button>
+<button class="econ-quiz-opt" data-why="Una sigmoide por clase daría 6 probabilidades que no suman 1; sirve si un reclamo pudiera tener varias categorías a la vez (multietiqueta), no es nuestro caso.">Sigmoide</button>
+<button class="econ-quiz-opt" data-correct>Softmax</button>
+</div>
+<p class="econ-quiz-fb">✅ Softmax convierte 6 puntajes en 6 probabilidades que suman 1, y la red elige la categoría con mayor probabilidad. Es lo que usarás en Keras en el notebook.</p>
+</div>
+</div>
+<hr />
+<h2 id="tema-2">Tema 2 · Redes multicapa: fronteras no lineales</h2>
+<blockquote>
+<p><strong>Pregunta guía:</strong> si una neurona ya es una regresión logística, ¿para qué queremos muchas?</p>
+</blockquote>
+<p>Una neurona sola traza una <strong>frontera recta</strong>: a un lado "sí", al otro "no". El problema es que muchos patrones
+de negocio <strong>no se separan con una recta</strong>:</p>
+<ul>
+<li>Clientes que se van de MercaSur: los que compran <strong>muy poco</strong> (no enganchan) <em>y</em> los que compran <strong>muchísimo</strong>
+  (revendedores que encontraron un mejor precio). Los del medio se quedan. Eso es un <strong>anillo</strong>, no una recta.</li>
+<li>Reclamos urgentes en FinTrust: "monto alto <strong>y</strong> cliente nuevo" o "monto bajo <strong>y</strong> muchas palabras de alarma".
+  Es un "o exclusivo" (<strong>XOR</strong>): ninguna recta lo separa.</li>
+</ul>
+<p>La solución es poner <strong>capas ocultas</strong> entre la entrada y la salida. Cada neurona oculta traza <strong>su propia recta</strong>;
+la neurona de salida <strong>combina</strong> esas rectas y puede formar curvas, bandas o regiones cerradas. Eso es una
+<strong>red multicapa</strong> o <strong>MLP</strong> (<em>multilayer perceptron</em>).</p>
+<div class="arithmatex">\[ \text{entrada } x \;\longrightarrow\; \underbrace{h = f(W_1 x + b_1)}_{\text{capa oculta}} \;\longrightarrow\; \underbrace{\hat{y} = \sigma(W_2 h + b_2)}_{\text{capa de salida}} \]</div>
+<div class="ia-widget" data-widget="c1-frontera"></div>
+
+<div class="admonition info">
+<p class="admonition-title">La activación es lo que hace la magia</p>
+<p>Si las capas ocultas <strong>no</strong> tuvieran activación (o fuera lineal), apilar capas no serviría de nada: una
+combinación lineal de combinaciones lineales sigue siendo lineal, y la red entera volvería a ser una recta.
+La no linealidad (ReLU, tanh) es lo que permite "doblar" la frontera.</p>
+</div>
+<div class="py-run">
+<p class="py-run-t">🧪 Practica en Python · Logística vs. red con capa oculta</p>
+<p>Clientes "promedio" en el centro y clientes "extremos" en un anillo. Entrenamos los dos modelos y dibujamos sus fronteras.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_circles</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegression</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neural_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLPClassifier</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># 400 clientes: centro = se quedan (0), anillo = se van (1)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_circles</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="n">modelos</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="s2">"Regresión logística (1 neurona)"</span><span class="p">:</span> <span class="n">LogisticRegression</span><span class="p">(),</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="s2">"Red con 8 neuronas ocultas"</span><span class="p">:</span> <span class="n">MLPClassifier</span><span class="p">(</span><span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,),</span> <span class="n">activation</span><span class="o">=</span><span class="s2">"tanh"</span><span class="p">,</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>                                                <span class="n">solver</span><span class="o">=</span><span class="s2">"lbfgs"</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">}</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="c1"># Grilla para pintar la frontera de decisión</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mi">150</span><span class="p">))</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="n">grilla</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">xx</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="p">(</span><span class="n">nombre</span><span class="p">,</span> <span class="n">modelo</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">modelos</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>    <span class="n">modelo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>    <span class="n">exactitud</span> <span class="o">=</span> <span class="n">modelo</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>    <span class="n">prob</span> <span class="o">=</span> <span class="n">modelo</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">grilla</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>    <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"coolwarm"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"coolwarm"</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nombre</span><span class="si">}</span><span class="se">\n</span><span class="s2">exactitud = </span><span class="si">{</span><span class="n">exactitud</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([]);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nombre</span><span class="si">:</span><span class="s2">35s</span><span class="si">}</span><span class="s2"> exactitud = </span><span class="si">{</span><span class="n">exactitud</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> cambia <code>hidden_layer_sizes=(8,)</code> por <code>(1,)</code> y luego por <code>(2,)</code>. ¿Con cuántas neuronas ocultas la red
+logra "encerrar" el centro? ¿Por qué con una sola neurona oculta se parece tanto a la logística?</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">⚠️ Error común</p>
+<p>Pensar que "más capas siempre es mejor". Una red más grande <strong>puede</strong> dibujar fronteras más complejas, pero también
+puede dibujar fronteras <strong>absurdas</strong> que se acomodan al ruido de los datos (lo verás en el Tema 4). Con texto
+representado como TF-IDF, a menudo una regresión logística ya funciona muy bien: <strong>la red tiene que ganarse su
+lugar</strong> en la comparación del Sprint 1.</p>
+</div>
+<div class="econ-practica">
+<p class="econ-practica-t"><span>✍️ Practica · Tema 2</span></p>
+<div class="econ-quiz">
+<p class="econ-quiz-q">En el simulador, con <strong>0 neuronas ocultas</strong> y los datos en anillo, la exactitud se queda cerca del 50–60 % aunque entrenes muchas épocas. ¿Por qué?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="Más épocas no cambian la forma de la frontera: con 0 neuronas ocultas siempre es una recta.">Porque le faltan épocas de entrenamiento.</button>
+<button class="econ-quiz-opt" data-why="La tasa de aprendizaje afecta la velocidad, no el tipo de frontera que el modelo puede dibujar.">Porque la tasa de aprendizaje es muy baja.</button>
+<button class="econ-quiz-opt" data-correct>Porque sin capa oculta el modelo solo puede trazar una frontera recta, y un anillo no se separa con una recta.</button>
+</div>
+<p class="econ-quiz-fb">✅ Es un problema de <strong>capacidad</strong> del modelo, no de entrenamiento. Con capa oculta, cada neurona aporta una recta y la salida las combina en una región cerrada.</p>
+</div>
+<div class="econ-quiz">
+<p class="econ-quiz-q">¿Qué pasaría si quitaras la función de activación de las capas ocultas (dejándolas lineales)?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-correct>La red completa sería equivalente a un modelo lineal, sin importar cuántas capas tenga.</button>
+<button class="econ-quiz-opt" data-why="Al contrario: sin activación, las capas se “funden” en una sola transformación lineal y la red pierde capacidad.">La red sería más flexible porque no “aplasta” los valores.</button>
+<button class="econ-quiz-opt" data-why="Entrenaría igual de rápido o más, pero el problema es lo que puede representar: solo fronteras rectas.">La red no podría entrenarse con descenso de gradiente.</button>
+</div>
+<p class="econ-quiz-fb">✅ Lineal de lineal es lineal: \( W_2(W_1x) = (W_2W_1)x \). La no linealidad es la que permite doblar la frontera.</p>
+</div>
+</div>
+<hr />
+<h2 id="tema-3">Tema 3 · Cómo aprende una red</h2>
+<blockquote>
+<p><strong>Pregunta guía:</strong> nadie le dice a la red cuáles son los pesos correctos. ¿Cómo los encuentra?</p>
+</blockquote>
+<p>Una red parte con pesos <strong>al azar</strong> y los va corrigiendo, como quien aprende a lanzar al aro: lanza, mira qué tan
+lejos quedó, y ajusta. Para eso necesita tres piezas:</p>
+<p><strong>1. Una función de pérdida: ¿qué tan mal lo hice?</strong> En clasificación se usa la <strong>entropía cruzada</strong>. La intuición es
+simple: <em>mira la probabilidad que la red le dio a la respuesta correcta y castígala si es baja</em>.</p>
+<div class="arithmatex">\[ \text{pérdida} = -\log(p_{\text{clase correcta}}) \]</div>
+<table>
+<thead>
+<tr>
+<th>La red dijo que era "Fraude" con probabilidad…</th>
+<th>…y era Fraude. Pérdida</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0,90 (segura y acertó)</td>
+<td><span class="arithmatex">\( -\log 0{,}90 = 0{,}11 \)</span> 🙂</td>
+</tr>
+<tr>
+<td>0,50 (dudosa)</td>
+<td><span class="arithmatex">\( -\log 0{,}50 = 0{,}69 \)</span> 😐</td>
+</tr>
+<tr>
+<td>0,05 (segura y <strong>se equivocó</strong>)</td>
+<td><span class="arithmatex">\( -\log 0{,}05 = 3{,}00 \)</span> 😱</td>
+</tr>
+</tbody>
+</table>
+<p>Equivocarse <strong>con seguridad</strong> cuesta muchísimo más que dudar. Eso empuja a la red a ser honesta con sus probabilidades.</p>
+<p><strong>2. El descenso de gradiente: ¿hacia dónde corrijo?</strong> Imagina que estás en un cerro con niebla y quieres llegar al
+valle. No ves el valle, pero sí sientes la <strong>pendiente</strong> bajo tus pies. Das un paso cuesta abajo, vuelves a sentir la
+pendiente, otro paso… El <strong>gradiente</strong> es esa pendiente: dice cómo cambia la pérdida si mueves cada peso un poquito.</p>
+<div class="arithmatex">\[ w \;\leftarrow\; w - \eta \cdot \frac{\partial\, \text{pérdida}}{\partial w} \]</div>
+<p><strong>3. La tasa de aprendizaje <span class="arithmatex">\( \eta \)</span>: ¿qué tan largo es el paso?</strong> Es el hiperparámetro más importante del
+entrenamiento. Pruébalo:</p>
+<div class="ia-widget" data-widget="c1-gradiente"></div>
+
+<p><strong>Épocas y batches.</strong> Calcular el gradiente con <em>todos</em> los reclamos a la vez es caro. En la práctica la red mira los
+datos de a <strong>batches</strong> (lotes, p. ej. 32 reclamos), da un paso con cada lote, y cuando ya vio todos los datos una vez,
+completó una <strong>época</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Concepto</th>
+<th>Qué es</th>
+<th>Ejemplo con 6.000 reclamos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Batch</td>
+<td>Grupo de ejemplos con que se calcula <strong>un</strong> paso</td>
+<td>32 reclamos</td>
+</tr>
+<tr>
+<td>Iteración</td>
+<td>Un paso de descenso de gradiente</td>
+<td>6.000 / 32 ≈ 188 pasos por época</td>
+</tr>
+<tr>
+<td>Época</td>
+<td>Una pasada completa por los datos de entrenamiento</td>
+<td>20 épocas = 3.760 pasos</td>
+</tr>
+</tbody>
+</table>
+<p>El algoritmo que calcula el gradiente de todos los pesos de una red, capa por capa desde la salida hacia atrás, es
+la <strong>retropropagación</strong> (<em>backpropagation</em>), que viste en el curso I. Hoy no lo programas a mano: Keras y
+scikit-learn lo hacen por ti. Lo que <strong>sí</strong> decides tú es la tasa, el tamaño del batch y cuántas épocas entrenar.</p>
+<div class="py-run">
+<p class="py-run-t">🧪 Practica en Python · Descenso de gradiente a mano</p>
+<p>Entrenamos una neurona (regresión logística) con tres tasas de aprendizaje y comparamos cómo baja la pérdida.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Intuición de la entropía cruzada: castiga equivocarse con seguridad</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">]:</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Prob. asignada a la clase correcta = </span><span class="si">{</span><span class="n">p</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  -&gt;  pérdida = </span><span class="si">{</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># 200 reclamos simulados: x = palabras de alarma (estandarizado), y = 1 si es urgente</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">x</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">))))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="k">def</span><span class="w"> </span><span class="nf">entrenar</span><span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="n">epocas</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="n">w</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>                    <span class="c1"># pesos iniciales</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    <span class="n">historia</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epocas</span><span class="p">):</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>        <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">b</span><span class="p">)))</span>                                  <span class="c1"># predicción</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>        <span class="n">perdida</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">))</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>        <span class="n">historia</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">perdida</span><span class="p">)</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>        <span class="n">grad_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">p</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>  <span class="c1"># pendiente de la pérdida respecto de w</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="n">grad_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span>        <span class="c1"># pendiente respecto de b</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="n">w</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">grad_w</span>               <span class="c1"># paso cuesta abajo</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>        <span class="n">b</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">grad_b</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>    <span class="k">return</span> <span class="n">historia</span>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="k">for</span> <span class="n">lr</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">30</span><span class="p">]:</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>    <span class="n">h</span> <span class="o">=</span> <span class="n">entrenar</span><span class="p">(</span><span class="n">lr</span><span class="p">)</span>
+<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"tasa = </span><span class="si">{</span><span class="n">lr</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"tasa </span><span class="si">{</span><span class="n">lr</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">: pérdida inicial </span><span class="si">{</span><span class="n">h</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> -&gt; final </span><span class="si">{</span><span class="n">h</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"época"</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"entropía cruzada"</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"¿Qué tasa de aprendizaje elegirías?"</span><span class="p">)</span>
+<a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> prueba con <code>lr = 0.5</code> y <code>lr = 8</code>. Busca la tasa más grande que todavía baja de forma suave. ¿Qué pasa
+con la curva de <code>30</code>, y por qué se parece a la bola del simulador cuando la tasa es mayor que 2?</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">⚠️ Error común</p>
+<p>Entrenar con una tasa demasiado alta y concluir que "la red no funciona". Si la pérdida <strong>sube o salta</strong> de una
+época a otra, el primer sospechoso es la tasa de aprendizaje. Si baja <strong>lentísimo</strong>, también. En Keras el
+optimizador <strong>Adam</strong> (el que usaremos) ajusta el tamaño del paso de cada peso de forma automática, y su valor por
+defecto (0,001) suele ser un buen punto de partida.</p>
+</div>
+<div class="econ-practica">
+<p class="econ-practica-t"><span>✍️ Practica · Tema 3</span></p>
+<div class="econ-quiz">
+<p class="econ-quiz-q">Un reclamo era “Cobro indebido”. El modelo A le asignó 0,40 a esa clase; el modelo B, 0,02. ¿Cuál tiene mayor entropía cruzada en ese reclamo?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="−log(0,40) ≈ 0,92, mientras que −log(0,02) ≈ 3,9: A se equivoca menos.">El modelo A, porque 0,40 está más lejos de 1 que de 0.</button>
+<button class="econ-quiz-opt" data-correct>El modelo B: casi descartó la respuesta correcta, y eso se castiga fuerte.</button>
+<button class="econ-quiz-opt" data-why="La entropía cruzada solo mira la probabilidad de la clase correcta, y ahí los modelos son muy distintos.">Igual, porque ninguno de los dos acertó (ambos &lt; 0,5).</button>
+</div>
+<p class="econ-quiz-fb">✅ −log(0,02) ≈ 3,9 frente a −log(0,40) ≈ 0,92. La pérdida castiga mucho más la seguridad equivocada que la duda, aunque en exactitud los dos “fallan” igual.</p>
+</div>
+<div class="econ-quiz">
+<p class="econ-quiz-q">Durante el entrenamiento, la pérdida salta así: 0,69 → 0,52 → 2,10 → 0,61 → 3,40… ¿Qué cambias primero?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="Más épocas solo prolongan los saltos; el problema es el tamaño de cada paso.">Aumento el número de épocas.</button>
+<button class="econ-quiz-opt" data-why="Más neuronas no arreglan un paso demasiado largo; incluso pueden empeorar la inestabilidad.">Agrego más neuronas ocultas.</button>
+<button class="econ-quiz-opt" data-correct>Bajo la tasa de aprendizaje.</button>
+</div>
+<p class="econ-quiz-fb">✅ Pérdida que rebota o crece = pasos demasiado largos que sobrepasan el mínimo, como la bola del simulador con tasa &gt; 2.</p>
+</div>
+<div class="econ-quiz">
+<p class="econ-quiz-q">Tienes 4.800 reclamos de entrenamiento y usas <code>batch_size=64</code>. ¿Cuántos pasos de descenso de gradiente da la red en una época?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="Ese sería el caso de batch_size = 4.800 (todos los datos en un solo lote).">1</button>
+<button class="econ-quiz-opt" data-correct>75</button>
+<button class="econ-quiz-opt" data-why="Eso sería un paso por reclamo (batch_size = 1).">4.800</button>
+</div>
+<p class="econ-quiz-fb">✅ 4.800 / 64 = 75 pasos (iteraciones) por época. En Keras verás “75/75” en la barra de progreso de cada época.</p>
+</div>
+</div>
+<hr />
+<h2 id="tema-4">Tema 4 · Sobreajuste y cómo evitarlo</h2>
+<blockquote>
+<p><strong>Pregunta guía:</strong> si la pérdida de entrenamiento sigue bajando, ¿por qué no entrenar para siempre?</p>
+</blockquote>
+<p>Porque la red puede <strong>memorizar</strong> en vez de <strong>aprender</strong>. Es como el alumno que se aprende de memoria las respuestas
+de la prueba del año pasado: le va perfecto en <em>esa</em> prueba, pero mal en la de este año. Una red con muchos pesos
+puede aprenderse de memoria hasta el ruido de los reclamos de entrenamiento (incluidas las etiquetas mal puestas,
+que en FinTrust y MercaSur existen a propósito).</p>
+<p>Para detectarlo separamos un grupo de <strong>validación</strong>: datos que la red <strong>no usa para aprender</strong>, solo para
+controlar cómo le va. Luego comparamos las dos curvas:</p>
+<ul>
+<li>Las dos bajan juntas → la red está aprendiendo patrones generales. 👍</li>
+<li>Entrenamiento sigue bajando, validación <strong>sube</strong> → <strong>sobreajuste</strong> (<em>overfitting</em>). 🚩</li>
+</ul>
+<p>Las dos herramientas que usarás en Keras:</p>
+<ul>
+<li><strong>Early stopping:</strong> vigila la pérdida de validación; si no mejora en <em>N</em> épocas seguidas (la <strong>paciencia</strong>), detiene
+  el entrenamiento y <strong>recupera los pesos de la mejor época</strong>.</li>
+<li><strong>Dropout:</strong> en cada paso de entrenamiento <strong>apaga al azar</strong> un porcentaje de neuronas (p. ej. 30 %). La red no
+  puede depender de una sola neurona "estrella" y se ve obligada a repartir lo aprendido. Es como entrenar a un
+  equipo rotando a los jugadores: nadie se vuelve imprescindible.</li>
+</ul>
+<div class="ia-widget" data-widget="c1-curvas"></div>
+
+<div class="py-run">
+<p class="py-run-t">🧪 Practica en Python · Ver el sobreajuste en vivo</p>
+<p>Una red demasiado grande para pocos datos ruidosos. Registramos la pérdida en entrenamiento y validación época a época.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_moons</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neural_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLPClassifier</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_loss</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># Pocos datos y bastante ruido: terreno fértil para memorizar</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_moons</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">X_tr</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="c1"># Red grande (2 capas de 64 neuronas) y sin regularización (alpha = 0)</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="n">red</span> <span class="o">=</span> <span class="n">MLPClassifier</span><span class="p">(</span><span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">learning_rate_init</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="n">perdida_tr</span><span class="p">,</span> <span class="n">perdida_val</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="k">for</span> <span class="n">epoca</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">250</span><span class="p">):</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>    <span class="n">red</span><span class="o">.</span><span class="n">partial_fit</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>          <span class="c1"># una época de entrenamiento</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>    <span class="n">perdida_tr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">log_loss</span><span class="p">(</span><span class="n">y_tr</span><span class="p">,</span> <span class="n">red</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_tr</span><span class="p">)))</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>    <span class="n">perdida_val</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">log_loss</span><span class="p">(</span><span class="n">y_val</span><span class="p">,</span> <span class="n">red</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_val</span><span class="p">)))</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="n">mejor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">perdida_val</span><span class="p">))</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mejor época según validación: </span><span class="si">{</span><span class="n">mejor</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">  (pérdida val = </span><span class="si">{</span><span class="n">perdida_val</span><span class="p">[</span><span class="n">mejor</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Época 250: pérdida train = </span><span class="si">{</span><span class="n">perdida_tr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, pérdida val = </span><span class="si">{</span><span class="n">perdida_val</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a>
+<a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
+<a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">perdida_tr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"entrenamiento"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#e5b300"</span><span class="p">)</span>
+<a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">perdida_val</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"validación"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#005f96"</span><span class="p">)</span>
+<a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">mejor</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#b30828"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"aquí convenía parar"</span><span class="p">)</span>
+<a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"época"</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"entropía cruzada"</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<a id="__codelineno-3-32" name="__codelineno-3-32" href="#__codelineno-3-32"></a><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> scikit-learn no trae dropout, pero sí otra forma de frenar la memorización: la penalización <code>alpha</code>
+(como el Ridge del curso I). Prueba <code>alpha=0.05</code> y luego <code>hidden_layer_sizes=(8,)</code>. ¿Qué pasa con la brecha entre
+las curvas y con la mejor época?</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">⚠️ Error común</p>
+<p>Elegir el modelo (o la época, o la cantidad de neuronas) mirando el <strong>test</strong>. El test es la "prueba final":
+se mira <strong>una sola vez</strong>, al final, para reportar. Para decidir hiperparámetros se usa <strong>validación</strong>
+(en Keras, <code>validation_split=0.15</code>). Si ajustas mirando el test, tu F1 reportado será optimista y en producción
+te llevarás una sorpresa.</p>
+</div>
+<div class="econ-practica">
+<p class="econ-practica-t"><span>✍️ Practica · Tema 4</span></p>
+<div class="econ-quiz">
+<p class="econ-quiz-q">En la época 30, la pérdida de entrenamiento es 0,05 y la de validación es 0,95 (y viene subiendo desde la época 8). ¿Qué diagnosticas?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="Subajuste sería que ambas pérdidas se quedan altas: el modelo no logra aprender ni siquiera los datos de entrenamiento.">Subajuste: la red necesita más capacidad.</button>
+<button class="econ-quiz-opt" data-correct>Sobreajuste: la red memorizó el entrenamiento; convenía parar cerca de la época 8.</button>
+<button class="econ-quiz-opt" data-why="Una tasa alta haría saltar la pérdida de entrenamiento; aquí la de entrenamiento baja suavemente hasta casi cero.">La tasa de aprendizaje es demasiado alta.</button>
+</div>
+<p class="econ-quiz-fb">✅ Brecha grande y validación subiendo = sobreajuste. Early stopping con <code>restore_best_weights=True</code> se habría quedado con los pesos de la época 8.</p>
+</div>
+<div class="econ-quiz">
+<p class="econ-quiz-q">¿Cuál de estas afirmaciones sobre el <strong>dropout</strong> es correcta?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="Dropout no borra datos: apaga neuronas (temporalmente) durante el entrenamiento.">Elimina al azar el 30 % de los reclamos de entrenamiento en cada época.</button>
+<button class="econ-quiz-opt" data-why="Al predecir (validación, test, producción) todas las neuronas están encendidas; Keras lo maneja solo.">También apaga neuronas al momento de predecir, para que las predicciones sean más prudentes.</button>
+<button class="econ-quiz-opt" data-correct>Apaga neuronas al azar solo durante el entrenamiento, para que la red no dependa de unas pocas.</button>
+</div>
+<p class="econ-quiz-fb">✅ Por eso con dropout la pérdida de entrenamiento suele quedar <em>más alta</em> que sin él, pero la de validación mejora: la red aprende patrones más robustos.</p>
+</div>
+</div>
+<hr />
+<h2 id="tema-5">Tema 5 · El texto también es un dato</h2>
+<blockquote>
+<p><strong>Pregunta guía:</strong> una red neuronal solo entiende números. ¿Cómo le pasamos un reclamo escrito por un cliente?</p>
+</blockquote>
+<h3 id="51-antes-de-modelar-auditar-y-limpiar">5.1 Antes de modelar: auditar y limpiar</h3>
+<p>Antes de cualquier modelo, <strong>mira los datos</strong>. Los casos FinTrust y MercaSur vienen sucios a propósito, como los
+datos reales: reclamos duplicados, textos vacíos o basura ("reclamo", "ok"), categorías escritas de cinco formas
+distintas ("Fraude", "FRAUDE", "fraude ", …), montos negativos o días de resolución imposibles. Si entrenas con
+"Fraude" y "FRAUDE" como clases distintas, el modelo aprende 12 categorías en vez de 6 y tus métricas no significan nada.</p>
+<div class="py-run">
+<p class="py-run-t">🧪 Practica en Python · Auditoría de calidad de FinTrust</p>
+<p>Cuántos problemas hay, y de qué tipo. La herramienta estrella es <code>value_counts()</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA</span> <span class="o">+</span> <span class="s2">"reclamos_fintrust_muestra.csv"</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Filas:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Duplicados exactos:"</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">texto</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"texto"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Textos vacíos o de menos de 3 palabras:"</span><span class="p">,</span> <span class="p">(</span><span class="n">texto</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Montos negativos:"</span><span class="p">,</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"monto_reclamado"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Días de resolución imposibles (&lt; 0 o &gt; 365):"</span><span class="p">,</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>      <span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s2">"dias_resolucion"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"dias_resolucion"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">365</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Urgencia nula:"</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s2">"urgencia"</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Formas distintas de escribir la categoría:"</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">(),</span> <span class="s2">"(deberían ser 6)</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="c1"># ¿Cómo está escrita la categoría? Debería haber 6 valores...</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="n">df</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</code></pre></div>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> haz lo mismo con la columna <code>canal</code> (<code>df["canal"].value_counts()</code>). ¿Cuántos canales distintos hay
+<em>de verdad</em>? Si eliges MercaSur, cambia el archivo por <code>resenas_mercasur_muestra.csv</code> y audita <code>aspecto</code> y <code>rating</code>.</p>
+</div>
+<p>La limpieza mínima para el Sprint 1 cabe en una función reutilizable: quitar duplicados, sacar textos basura y
+<strong>normalizar las categorías</strong> (minúsculas, sin tildes, sin espacios extra, y un diccionario para los sinónimos).</p>
+<div class="py-run">
+<p class="py-run-t">🧪 Practica en Python · Una función de limpieza</p>
+<p>Normalizamos la categoría para que "FRAUDE", "fraude " y "Fraude" sean la misma clase.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">unicodedata</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">sin_tildes</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s2">"NFD"</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">if</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">category</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"Mn"</span><span class="p">)</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">clave</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="sd">"""'  Crédito y  TASAS ' -&gt; 'credito y tasas'"""</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="k">return</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sin_tildes</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="n">CATEGORIAS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Fraude"</span><span class="p">,</span> <span class="s2">"Cobro indebido"</span><span class="p">,</span> <span class="s2">"App y canales digitales"</span><span class="p">,</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>              <span class="s2">"Crédito y tasas"</span><span class="p">,</span> <span class="s2">"Atención al cliente"</span><span class="p">,</span> <span class="s2">"Información y trámites"</span><span class="p">]</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="n">MAPA</span> <span class="o">=</span> <span class="p">{</span><span class="n">clave</span><span class="p">(</span><span class="n">c</span><span class="p">):</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">CATEGORIAS</span><span class="p">}</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="n">MAPA</span><span class="p">[</span><span class="s2">"cobros indebidos"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Cobro indebido"</span>          <span class="c1"># sinónimos detectados en la auditoría</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="k">def</span><span class="w"> </span><span class="nf">limpiar</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col_texto</span><span class="o">=</span><span class="s2">"texto"</span><span class="p">,</span> <span class="n">col_clase</span><span class="o">=</span><span class="s2">"categoria"</span><span class="p">):</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>    <span class="n">n0</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>    <span class="n">df</span><span class="p">[</span><span class="n">col_texto</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col_texto</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col_texto</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">]</span>               <span class="c1"># fuera textos basura</span>
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>    <span class="n">df</span><span class="p">[</span><span class="n">col_clase</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col_clase</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">MAPA</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">clave</span><span class="p">(</span><span class="n">s</span><span class="p">)))</span>  <span class="c1"># normaliza categorías</span>
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">col_clase</span><span class="p">])</span>
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Filas: </span><span class="si">{</span><span class="n">n0</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s2">  (eliminadas: </span><span class="si">{</span><span class="n">n0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>    <span class="k">return</span> <span class="n">df</span>
+<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>
+<a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="n">df</span> <span class="o">=</span> <span class="n">limpiar</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA</span> <span class="o">+</span> <span class="s2">"reclamos_fintrust_muestra.csv"</span><span class="p">))</span>
+<a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="n">df</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</code></pre></div>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> agrega una línea a <code>limpiar</code> que elimine los montos negativos (convirtiéndolos en <code>NaN</code> con
+<code>df.loc[df["monto_reclamado"] &lt; 0, "monto_reclamado"] = None</code>). ¿Por qué es mejor convertirlos en nulos que borrar la fila completa?</p>
+</div>
+<h3 id="52-bolsa-de-palabras-y-tf-idf">5.2 Bolsa de palabras y TF-IDF</h3>
+<p>La idea más simple para convertir texto en números es la <strong>bolsa de palabras</strong>: hacemos una columna por cada palabra
+del vocabulario y contamos cuántas veces aparece en cada reclamo. Se pierde el orden ("me cobraron y no pagué" y "no
+me cobraron y pagué" quedan casi iguales), pero funciona sorprendentemente bien para clasificar temas.</p>
+<div class="c1-bow">
+<p><em>Algunas columnas del vocabulario (en la práctica hay miles):</em></p>
+<table>
+<thead>
+<tr>
+<th>Reclamo</th>
+<th>cobraron</th>
+<th>dos</th>
+<th>veces</th>
+<th>comisión</th>
+<th>reconozco</th>
+<th>compra</th>
+<th>fraude</th>
+<th>app</th>
+<th>cae</th>
+<th>la</th>
+<th>no</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1 · "me cobraron dos veces la comisión"</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>R2 · "no reconozco una compra, creo que es fraude"</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>R3 · "la app no me deja entrar, la app se cae"</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Problema: palabras como "la", "no" o "me" aparecen en casi todos los reclamos y no ayudan a distinguir la categoría.
+<strong>TF-IDF</strong> corrige esto multiplicando dos cosas:</p>
+<ul>
+<li><strong>TF</strong> (<em>term frequency</em>): cuántas veces aparece la palabra <strong>en este reclamo</strong> → "app" pesa más en R3 porque aparece dos veces.</li>
+<li><strong>IDF</strong> (<em>inverse document frequency</em>): qué tan <strong>rara</strong> es la palabra <strong>en todos los reclamos</strong> → "fraude" aparece
+  en pocos reclamos y pesa mucho; "la" aparece en casi todos y pesa poco.</li>
+</ul>
+<div class="arithmatex">\[ \text{tf-idf}(\text{palabra}, \text{reclamo}) = \text{tf} \times \log\frac{N}{\text{n.º de reclamos con esa palabra}} \]</div>
+<p>El resultado: cada reclamo se convierte en un vector (una fila) con miles de columnas, casi todas en cero, donde
+las palabras <strong>frecuentes en ese reclamo pero raras en general</strong> tienen los valores más altos. Esa matriz es la
+entrada de la regresión logística y de la red neuronal.</p>
+<div class="py-run">
+<p class="py-run-t">🧪 Practica en Python · TF-IDF con tres reclamos</p>
+<p>Compara los conteos con los pesos TF-IDF: mira qué pasa con "la" y con "fraude".</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.feature_extraction.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">CountVectorizer</span><span class="p">,</span> <span class="n">TfidfVectorizer</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">reclamos</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"me cobraron dos veces la comisión"</span><span class="p">,</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>            <span class="s2">"no reconozco una compra, creo que es fraude"</span><span class="p">,</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>            <span class="s2">"la app no me deja entrar, la app se cae"</span><span class="p">]</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">bolsa</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">()</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">conteos</span> <span class="o">=</span> <span class="n">bolsa</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">reclamos</span><span class="p">)</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Vocabulario:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">bolsa</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()),</span> <span class="s2">"palabras</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">()</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="n">pesos</span> <span class="o">=</span> <span class="n">tfidf</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">reclamos</span><span class="p">)</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="c1"># Palabras en filas, reclamos en columnas (más fácil de leer)</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="n">tabla</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pesos</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">tfidf</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">(),</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>                     <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"R1"</span><span class="p">,</span> <span class="s2">"R2"</span><span class="p">,</span> <span class="s2">"R3"</span><span class="p">])</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="n">tabla</span><span class="p">[</span><span class="s2">"conteo total"</span><span class="p">]</span> <span class="o">=</span> <span class="n">conteos</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="n">tabla</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"R3"</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> agrega un cuarto reclamo: <code>"la app me cobró una comisión que no reconozco"</code>. ¿Qué le pasa al peso de
+"app" en R3 ahora que la palabra aparece en dos reclamos?</p>
+</div>
+<h3 id="53-logistica-vs-red-neuronal-sobre-tf-idf">5.3 Logística vs. red neuronal sobre TF-IDF</h3>
+<p>Ahora sí, el flujo completo del Sprint 1 en miniatura: limpiar → separar entrenamiento y test → TF-IDF →
+dos modelos → comparar con <strong>F1 macro</strong>.</p>
+<div class="ia-flow">
+<div class="ia-flow-step is-done"><strong>1 · Limpiar</strong>duplicados, textos basura, categorías</div>
+<div class="ia-flow-step is-done"><strong>2 · Separar</strong>80 % entrena · 20 % test (estratificado)</div>
+<div class="ia-flow-step is-done"><strong>3 · TF-IDF</strong>se ajusta <em>solo</em> con entrenamiento</div>
+<div class="ia-flow-step is-on"><strong>4 · Modelos</strong>logística vs. red (MLP)</div>
+<div class="ia-flow-step"><strong>5 · Evaluar</strong>F1 macro + matriz de confusión</div>
+</div>
+
+<p>¿Por qué <strong>F1 macro</strong> y no exactitud? Porque las categorías no tienen el mismo tamaño. F1 macro calcula el F1 de
+<strong>cada</strong> categoría y los promedia <strong>sin ponderar</strong>: una categoría chica pero crítica (como Fraude) pesa lo mismo que
+la más grande. Un modelo que ignora Fraude no puede esconderse detrás de un buen promedio.</p>
+<div class="py-run">
+<p class="py-run-t">🧪 Practica en Python · Primer duelo: logística vs. MLP</p>
+<p>Con la muestra de 1.500 reclamos. Tarda unos segundos: la red se entrena en tu navegador.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">unicodedata</span><span class="o">,</span><span class="w"> </span><span class="nn">warnings</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.feature_extraction.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegression</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neural_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLPClassifier</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">f1_score</span><span class="p">,</span> <span class="n">ConfusionMatrixDisplay</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelEncoder</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="c1"># --- 1. Limpiar (misma función de antes, compacta)</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="k">def</span><span class="w"> </span><span class="nf">clave</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>    <span class="n">s</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s2">"NFD"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="k">if</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">category</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"Mn"</span><span class="p">)</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>    <span class="k">return</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="n">CATS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Fraude"</span><span class="p">,</span> <span class="s2">"Cobro indebido"</span><span class="p">,</span> <span class="s2">"App y canales digitales"</span><span class="p">,</span> <span class="s2">"Crédito y tasas"</span><span class="p">,</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>        <span class="s2">"Atención al cliente"</span><span class="p">,</span> <span class="s2">"Información y trámites"</span><span class="p">]</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="n">MAPA</span> <span class="o">=</span> <span class="p">{</span><span class="n">clave</span><span class="p">(</span><span class="n">c</span><span class="p">):</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">CATS</span><span class="p">}</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"cobros indebidos"</span><span class="p">:</span> <span class="s2">"Cobro indebido"</span><span class="p">}</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA</span> <span class="o">+</span> <span class="s2">"reclamos_fintrust_muestra.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="n">df</span><span class="p">[</span><span class="s2">"texto"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"texto"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"texto"</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">]</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="n">df</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">MAPA</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">clave</span><span class="p">(</span><span class="n">s</span><span class="p">)))</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">])</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="c1"># Las redes trabajan con números: cada categoría pasa a ser 0, 1, ..., 5</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="n">codif</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="n">y</span> <span class="o">=</span> <span class="n">codif</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">])</span>
+<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>
+<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a><span class="c1"># --- 2. Separar (estratificado: misma proporción de categorías en train y test)</span>
+<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a><span class="n">X_tr</span><span class="p">,</span> <span class="n">X_te</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">y_te</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"texto"</span><span class="p">],</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>                                          <span class="n">stratify</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a>
+<a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a><span class="c1"># --- 3. TF-IDF: se ajusta SOLO con entrenamiento</span>
+<a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a><span class="n">vec</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">max_features</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">min_df</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sublinear_tf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a><span class="n">Xtr</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_tr</span><span class="p">)</span>
+<a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a><span class="n">Xte</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_te</span><span class="p">)</span>
+<a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Matriz TF-IDF de entrenamiento:"</span><span class="p">,</span> <span class="n">Xtr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a>
+<a id="__codelineno-7-40" name="__codelineno-7-40" href="#__codelineno-7-40"></a><span class="c1"># --- 4. Dos modelos</span>
+<a id="__codelineno-7-41" name="__codelineno-7-41" href="#__codelineno-7-41"></a><span class="n">modelos</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-7-42" name="__codelineno-7-42" href="#__codelineno-7-42"></a>    <span class="s2">"Regresión logística"</span><span class="p">:</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+<a id="__codelineno-7-43" name="__codelineno-7-43" href="#__codelineno-7-43"></a>    <span class="s2">"Red neuronal (MLP 64)"</span><span class="p">:</span> <span class="n">MLPClassifier</span><span class="p">(</span><span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,),</span> <span class="n">early_stopping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-7-44" name="__codelineno-7-44" href="#__codelineno-7-44"></a>                                           <span class="n">max_iter</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span>
+<a id="__codelineno-7-45" name="__codelineno-7-45" href="#__codelineno-7-45"></a><span class="p">}</span>
+<a id="__codelineno-7-46" name="__codelineno-7-46" href="#__codelineno-7-46"></a><span class="k">for</span> <span class="n">nombre</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">modelos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-7-47" name="__codelineno-7-47" href="#__codelineno-7-47"></a>    <span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Xtr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
+<a id="__codelineno-7-48" name="__codelineno-7-48" href="#__codelineno-7-48"></a>    <span class="n">pred</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Xte</span><span class="p">)</span>
+<a id="__codelineno-7-49" name="__codelineno-7-49" href="#__codelineno-7-49"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nombre</span><span class="si">:</span><span class="s2">25s</span><span class="si">}</span><span class="s2"> F1 macro en test = </span><span class="si">{</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_te</span><span class="p">,</span><span class="w"> </span><span class="n">pred</span><span class="p">,</span><span class="w"> </span><span class="n">average</span><span class="o">=</span><span class="s1">'macro'</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-7-50" name="__codelineno-7-50" href="#__codelineno-7-50"></a>
+<a id="__codelineno-7-51" name="__codelineno-7-51" href="#__codelineno-7-51"></a><span class="c1"># --- 5. Matriz de confusión del modelo logístico</span>
+<a id="__codelineno-7-52" name="__codelineno-7-52" href="#__codelineno-7-52"></a><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<a id="__codelineno-7-53" name="__codelineno-7-53" href="#__codelineno-7-53"></a><span class="n">ConfusionMatrixDisplay</span><span class="o">.</span><span class="n">from_predictions</span><span class="p">(</span><span class="n">y_te</span><span class="p">,</span> <span class="n">modelos</span><span class="p">[</span><span class="s2">"Regresión logística"</span><span class="p">]</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Xte</span><span class="p">),</span>
+<a id="__codelineno-7-54" name="__codelineno-7-54" href="#__codelineno-7-54"></a>                                        <span class="n">labels</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">codif</span><span class="o">.</span><span class="n">classes_</span><span class="p">)),</span>
+<a id="__codelineno-7-55" name="__codelineno-7-55" href="#__codelineno-7-55"></a>                                        <span class="n">display_labels</span><span class="o">=</span><span class="n">codif</span><span class="o">.</span><span class="n">classes_</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+<a id="__codelineno-7-56" name="__codelineno-7-56" href="#__codelineno-7-56"></a>                                        <span class="n">xticks_rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"Blues"</span><span class="p">,</span> <span class="n">colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-7-57" name="__codelineno-7-57" href="#__codelineno-7-57"></a><span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Regresión logística · matriz de confusión (test)"</span><span class="p">)</span>
+<a id="__codelineno-7-58" name="__codelineno-7-58" href="#__codelineno-7-58"></a><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Categoría predicha"</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Categoría real"</span><span class="p">)</span>
+<a id="__codelineno-7-59" name="__codelineno-7-59" href="#__codelineno-7-59"></a><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> comenta la línea que normaliza <code>categoria</code> (ponle <code>#</code> adelante) y vuelve a ejecutar. ¿Cuántas
+"categorías" ve ahora el modelo y qué le pasa al F1 macro? Esa es la razón de auditar primero.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">💼 En el negocio</p>
+<p>Que la red neuronal <strong>no</strong> le gane a la logística sobre TF-IDF no es un fracaso: es un <strong>hallazgo</strong>. Con
+vocabularios claros ("no reconozco", "cobraron dos veces", "la app se cae"), un modelo lineal ya separa bien, es
+más rápido, más barato y más fácil de explicar a un gerente. En las próximas clases verás cuándo sí ganan los
+modelos más sofisticados (embeddings y LLM): con <strong>pocos datos etiquetados</strong>, sinónimos y tareas de extracción.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">⚠️ Error común</p>
+<p>Ajustar el <code>TfidfVectorizer</code> con <strong>todos</strong> los datos (<code>fit</code> antes de separar). El IDF "espía" las palabras del test
+y el resultado sale optimista. La regla: <code>fit_transform</code> en entrenamiento, <code>transform</code> en test. Lo mismo vale para
+cualquier limpieza que "aprenda" de los datos.</p>
+</div>
+<div class="econ-practica">
+<p class="econ-practica-t"><span>✍️ Practica · Tema 5</span></p>
+<div class="econ-quiz">
+<p class="econ-quiz-q">En la auditoría, <code>value_counts()</code> de la categoría muestra 20 valores distintos en vez de 6. ¿Qué haces?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="Borrarías ~7 % de los datos que tienen una etiqueta válida, solo mal escrita. Es información recuperable.">Eliminas las filas cuya categoría no esté escrita exactamente igual a las 6 oficiales.</button>
+<button class="econ-quiz-opt" data-correct>Normalizas (minúsculas, sin tildes, sin espacios extra) y mapeas sinónimos a las 6 categorías oficiales.</button>
+<button class="econ-quiz-opt" data-why="El modelo trataría “Fraude” y “FRAUDE” como clases distintas y repartiría los ejemplos entre ellas: aprende peor y las métricas pierden sentido.">Nada: la red neuronal es capaz de aprender que son la misma categoría.</button>
+</div>
+<p class="econ-quiz-fb">✅ Normalizar recupera esas filas y deja exactamente 6 clases. Reporta en tu Sprint 1 cuántas filas corregiste: es parte de la auditoría.</p>
+</div>
+<div class="econ-quiz">
+<p class="econ-quiz-q">En TF-IDF, ¿qué palabra tendrá <strong>mayor</strong> peso en el reclamo “no reconozco un cargo, creo que es fraude, no fui yo”?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="“no” aparece dos veces (TF alto), pero también aparece en una enorme cantidad de reclamos: su IDF es bajo.">“no”, porque aparece dos veces.</button>
+<button class="econ-quiz-opt" data-why="“que” aparece en casi todos los textos en español: IDF muy bajo.">“que”, porque es la más común en español.</button>
+<button class="econ-quiz-opt" data-correct>“reconozco” o “fraude”, porque aparecen en este reclamo y son raras en el resto.</button>
+</div>
+<p class="econ-quiz-fb">✅ TF-IDF premia lo frecuente <em>aquí</em> y raro <em>en general</em>: justo las palabras que distinguen la categoría.</p>
+</div>
+<div class="econ-quiz">
+<p class="econ-quiz-q">Un modelo tiene 85 % de exactitud, pero su F1 macro es 0,60. ¿Qué es lo más probable?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-correct>Le va bien en las categorías grandes y mal en una o más categorías chicas.</button>
+<button class="econ-quiz-opt" data-why="La exactitud y el F1 macro miden cosas distintas; la discrepancia es información, no un error de cálculo.">Hay un error de cálculo: ambas métricas deberían coincidir.</button>
+<button class="econ-quiz-opt" data-why="El F1 macro no castiga el tamaño del modelo; promedia el F1 de cada categoría con igual peso.">La red es demasiado grande y el F1 macro castiga la complejidad.</button>
+</div>
+<p class="econ-quiz-fb">✅ La exactitud la dominan las clases grandes; el F1 macro da el mismo peso a todas. Revisa el F1 por clase en el <code>classification_report</code> para encontrar la categoría débil.</p>
+</div>
+</div>
+<hr />
+<h2 id="tema-6">Tema 6 · La matriz de confusión con ojos de negocio</h2>
+<blockquote>
+<p><strong>Pregunta guía:</strong> si el modelo se equivoca en 20 reclamos, ¿da lo mismo <strong>cuáles</strong> 20?</p>
+</blockquote>
+<p><strong>No da lo mismo.</strong> En FinTrust no cuesta lo mismo:</p>
+<ul>
+<li>Un <strong>fraude</strong> clasificado como "Información y trámites": el reclamo va a la cola lenta, el cliente sigue perdiendo
+  plata, el banco puede tener que devolver el dinero con intereses, aparece en redes sociales y quizás en la CMF.</li>
+<li>Una <strong>consulta de información</strong> clasificada como "Fraude": el equipo antifraude pierde 10 minutos revisándola y la
+  reenvía. Molesta, pero barato.</li>
+</ul>
+<p>La matriz de confusión te dice <strong>cuántos</strong> errores de cada tipo hay; el negocio te dice <strong>cuánto cuesta</strong> cada uno.
+Multiplicando ambas cosas obtienes el <strong>costo esperado</strong> del modelo, que es lo que le importa al gerente. Y hay una
+palanca que no requiere reentrenar: el <strong>umbral</strong> de decisión. Si un fraude no detectado es muy caro, conviene marcar
+como fraude todo reclamo con probabilidad sobre 0,3 (no 0,5), aceptando más falsas alarmas.</p>
+<div class="ia-widget" data-widget="c1-costos"></div>
+
+<div class="py-run">
+<p class="py-run-t">🧪 Practica en Python · ¿Cuánto cuestan los errores del modelo?</p>
+<p>Usamos la probabilidad de "Fraude" de la regresión logística y buscamos el umbral que minimiza el costo.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">unicodedata</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.feature_extraction.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegression</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="k">def</span><span class="w"> </span><span class="nf">clave</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    <span class="n">s</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s2">"NFD"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="k">if</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">category</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"Mn"</span><span class="p">)</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="k">return</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="n">CATS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Fraude"</span><span class="p">,</span> <span class="s2">"Cobro indebido"</span><span class="p">,</span> <span class="s2">"App y canales digitales"</span><span class="p">,</span> <span class="s2">"Crédito y tasas"</span><span class="p">,</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>        <span class="s2">"Atención al cliente"</span><span class="p">,</span> <span class="s2">"Información y trámites"</span><span class="p">]</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="n">MAPA</span> <span class="o">=</span> <span class="p">{</span><span class="n">clave</span><span class="p">(</span><span class="n">c</span><span class="p">):</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">CATS</span><span class="p">}</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"cobros indebidos"</span><span class="p">:</span> <span class="s2">"Cobro indebido"</span><span class="p">}</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA</span> <span class="o">+</span> <span class="s2">"reclamos_fintrust_muestra.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="n">df</span><span class="p">[</span><span class="s2">"texto"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"texto"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"texto"</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">]</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="n">df</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">MAPA</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">clave</span><span class="p">(</span><span class="n">s</span><span class="p">)))</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">])</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="n">X_tr</span><span class="p">,</span> <span class="n">X_te</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">y_te</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"texto"</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">],</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>                                          <span class="n">stratify</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">],</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a><span class="n">vec</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">max_features</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">min_df</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sublinear_tf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="n">modelo</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">vec</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_tr</span><span class="p">),</span> <span class="n">y_tr</span><span class="p">)</span>
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="n">p_fraude</span> <span class="o">=</span> <span class="n">modelo</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">vec</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_te</span><span class="p">))[:,</span> <span class="nb">list</span><span class="p">(</span><span class="n">modelo</span><span class="o">.</span><span class="n">classes_</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"Fraude"</span><span class="p">)]</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="n">es_fraude</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_te</span> <span class="o">==</span> <span class="s2">"Fraude"</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>
+<a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a><span class="n">COSTO_FN</span> <span class="o">=</span> <span class="mi">400_000</span>   <span class="c1"># fraude que se nos escapa (devolución, multa, reputación)</span>
+<a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a><span class="n">COSTO_FP</span> <span class="o">=</span> <span class="mi">20_000</span>    <span class="c1"># falsa alarma: revisión manual del equipo antifraude</span>
+<a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a>
+<a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a><span class="n">filas</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a><span class="k">for</span> <span class="n">umbral</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]:</span>
+<a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a>    <span class="n">marcado</span> <span class="o">=</span> <span class="n">p_fraude</span> <span class="o">&gt;=</span> <span class="n">umbral</span>
+<a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a>    <span class="n">fn</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">es_fraude</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">marcado</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<a id="__codelineno-8-34" name="__codelineno-8-34" href="#__codelineno-8-34"></a>    <span class="n">fp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="o">~</span><span class="n">es_fraude</span> <span class="o">&amp;</span> <span class="n">marcado</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<a id="__codelineno-8-35" name="__codelineno-8-35" href="#__codelineno-8-35"></a>    <span class="n">filas</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"umbral"</span><span class="p">:</span> <span class="n">umbral</span><span class="p">,</span> <span class="s2">"fraudes no detectados"</span><span class="p">:</span> <span class="n">fn</span><span class="p">,</span> <span class="s2">"falsas alarmas"</span><span class="p">:</span> <span class="n">fp</span><span class="p">,</span>
+<a id="__codelineno-8-36" name="__codelineno-8-36" href="#__codelineno-8-36"></a>                  <span class="s2">"costo total ($)"</span><span class="p">:</span> <span class="n">fn</span> <span class="o">*</span> <span class="n">COSTO_FN</span> <span class="o">+</span> <span class="n">fp</span> <span class="o">*</span> <span class="n">COSTO_FP</span><span class="p">})</span>
+<a id="__codelineno-8-37" name="__codelineno-8-37" href="#__codelineno-8-37"></a><span class="n">tabla</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">filas</span><span class="p">)</span>
+<a id="__codelineno-8-38" name="__codelineno-8-38" href="#__codelineno-8-38"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Umbral de menor costo:"</span><span class="p">,</span> <span class="n">tabla</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">tabla</span><span class="p">[</span><span class="s2">"costo total ($)"</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">(),</span> <span class="s2">"umbral"</span><span class="p">])</span>
+<a id="__codelineno-8-39" name="__codelineno-8-39" href="#__codelineno-8-39"></a>
+<a id="__codelineno-8-40" name="__codelineno-8-40" href="#__codelineno-8-40"></a><span class="c1"># Los "fraudes" que el modelo no ve ni con umbral 0,1: ¿son fraude de verdad?</span>
+<a id="__codelineno-8-41" name="__codelineno-8-41" href="#__codelineno-8-41"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Reclamos etiquetados como Fraude con probabilidad &lt; 0,1:"</span><span class="p">)</span>
+<a id="__codelineno-8-42" name="__codelineno-8-42" href="#__codelineno-8-42"></a><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">X_te</span><span class="p">[</span><span class="n">es_fraude</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">p_fraude</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">)]:</span>
+<a id="__codelineno-8-43" name="__codelineno-8-43" href="#__codelineno-8-43"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"  ·"</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<a id="__codelineno-8-44" name="__codelineno-8-44" href="#__codelineno-8-44"></a><span class="n">tabla</span>
+</code></pre></div>
+<p>Mira los "fraudes" que el modelo no detecta ni con umbral 0,1: ¿de verdad son fraudes? Son <strong>ruido de etiqueta</strong>
+(reclamos mal etiquetados por una persona). Ningún umbral ni ninguna red los arregla: el techo de tu F1 lo pone
+la calidad de las etiquetas.</p>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> ¿qué pasa con el umbral óptimo si la falsa alarma cuesta $150.000 (por ejemplo, porque bloquea la
+tarjeta del cliente)? Cambia <code>COSTO_FP</code> y explícalo en una frase como se lo dirías a la gerenta de riesgo.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">💼 En el negocio</p>
+<p>Presenta los errores en <strong>pesos y en clientes</strong>, no solo en F1. "El modelo deja pasar 3 de cada 100 fraudes, lo
+que estimamos en $X al mes; bajando el umbral a 0,3 dejamos pasar 1 de cada 100 a cambio de 40 revisiones manuales
+más por semana" es una frase que un comité puede <strong>decidir</strong>. Esa traducción es lo que se evalúa en la presentación final.</p>
+</div>
+<div class="econ-practica">
+<p class="econ-practica-t"><span>✍️ Practica · Tema 6</span></p>
+<div class="econ-quiz">
+<p class="econ-quiz-q">Si un fraude no detectado cuesta 20 veces más que una falsa alarma, ¿hacia dónde mueves el umbral para marcar “Fraude”?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="Subir el umbral marca menos reclamos como fraude: menos falsas alarmas, pero se escapan más fraudes, que son los caros.">Lo subo (p. ej. a 0,8), para estar muy seguro antes de marcar.</button>
+<button class="econ-quiz-opt" data-correct>Lo bajo (p. ej. a 0,3), aceptando más falsas alarmas a cambio de detectar más fraudes.</button>
+<button class="econ-quiz-opt" data-why="0,5 solo es óptimo si ambos errores cuestan lo mismo, lo que aquí no se cumple.">Lo dejo en 0,5, que es el umbral estándar.</button>
+</div>
+<p class="econ-quiz-fb">✅ Cuando el falso negativo es mucho más caro, conviene sacrificar precisión para ganar <strong>recall</strong> en Fraude. Compruébalo en el simulador con el botón 🎯.</p>
+</div>
+<div class="econ-quiz">
+<p class="econ-quiz-q">En la matriz de confusión de tu modelo, 6 reclamos de “Fraude” quedaron como “Información y trámites” y 6 de “Información y trámites” quedaron como “Fraude”. ¿Qué le dices al gerente?</p>
+<div class="econ-quiz-opts">
+<button class="econ-quiz-opt" data-why="Son la misma cantidad, pero no el mismo costo: el fraude mal clasificado es el que duele.">Que los errores se compensan: 6 hacia un lado y 6 hacia el otro.</button>
+<button class="econ-quiz-opt" data-why="El F1 macro resume, pero no distingue el costo de cada tipo de error; el gerente necesita saber cuáles errores importan.">Que el F1 macro ya resume eso, no hace falta mirar la matriz.</button>
+<button class="econ-quiz-opt" data-correct>Que los 6 fraudes mal derivados son el error crítico y propones cómo reducirlos (umbral o revisión humana).</button>
+</div>
+<p class="econ-quiz-fb">✅ Misma cantidad, costo muy distinto. Leer la matriz con ojos de negocio es separar el error molesto del error caro y proponer una acción.</p>
+</div>
+</div>
+<hr />
+<h2 id="notebook-de-colab">🧑‍💻 Notebook de Colab</h2>
+<div class="ia-colab">
+<p>🧑‍💻 <strong>Notebook de la clase:</strong> carga el caso completo (FinTrust o MercaSur, ~6.000 textos), audita y limpia
+los datos, hace el EDA de texto, entrena el baseline TF-IDF + regresión logística y una red neuronal en
+<strong>Keras</strong> con dropout y early stopping, y compara ambos en test con F1 macro y matriz de confusión.
+Toma ~45 minutos leyéndolo con calma (el entrenamiento corre en menos de 2 minutos). Es el esqueleto de tu Sprint 1.</p>
+<p><a class="ia-colab-btn" href="https://colab.research.google.com/github/hizocar/analitica-negocios-2/blob/main/docs/notebooks/clase1_redes_neuronales.ipynb" target="_blank" rel="noopener">▶ Abrir en Colab</a></p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Antes de abrirlo</p>
+<p>En Colab, usa <strong>Archivo → Guardar una copia en Drive</strong> para no perder tus cambios. En la primera celda de código
+elige tu caso: <code>CASO = "fintrust"</code> o <code>CASO = "mercasur"</code>. No necesitas GPU ni clave de API para esta clase.</p>
+</div>
+<h2 id="conexion-con-tu-proyecto-sprint-1">🔗 Conexión con tu proyecto (Sprint 1)</h2>
+<div class="ia-sprint">
+<h3 id="sprint-1-datos-y-primeros-modelos-domingo-8-de-noviembre-2359-10">📬 Sprint 1 · Datos y primeros modelos <span class="ia-badge is-gold">domingo 8 de noviembre, 23:59</span> <span class="ia-badge">10 %</span></h3>
+<p>Antes, el <strong>domingo 1 de noviembre</strong> se inscribe el equipo y el caso por buzón (sin nota). Para el Sprint 1, tu
+notebook debe incluir:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Pregunta de negocio</strong> en una o dos frases: qué decisión apoya el clasificador y quién lo usaría
+      (p. ej. "derivar automáticamente cada reclamo al equipo correcto en menos de un minuto").</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Auditoría de calidad</strong> con números: duplicados, nulos, textos vacíos o basura, categorías mal escritas y
+      valores imposibles (montos negativos, días o ratings fuera de rango). Una tabla "problema → cuántos → qué hicimos".</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Función de limpieza</strong> reutilizable y el <code>value_counts()</code> de las clases <strong>antes y después</strong>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>EDA de texto:</strong> distribución de clases, largo de los textos y palabras más frecuentes por clase, con una
+      conclusión breve de cada gráfico.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Baseline:</strong> TF-IDF + regresión logística, con el vectorizador ajustado solo en entrenamiento.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Red neuronal MLP en Keras</strong> sobre TF-IDF, con dropout, early stopping y sus <strong>curvas de entrenamiento</strong>
+      (pérdida en entrenamiento y validación).</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Comparación en test:</strong> F1 macro de ambos modelos, <code>classification_report</code> y matriz de confusión del mejor.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Lectura de negocio</strong> (3–5 líneas): qué error es el más caro en tu caso y qué modelo recomiendas por ahora.</li>
+</ul>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Para la tutoría del jueves 5 de noviembre</p>
+<p>Lleva el notebook con la auditoría y el baseline funcionando, y <strong>una pregunta concreta</strong> (p. ej. "¿cómo
+tratamos las reseñas con sarcasmo?" o "¿nuestra red sobreajusta?"). Recibirás un semáforo 🟢🟡🔴 de avance.</p>
+</div>
+<h2 id="resumen">🧠 Resumen</h2>
+<table>
+<thead>
+<tr>
+<th>Concepto</th>
+<th>La idea en una línea</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Neurona</td>
+<td>Suma ponderada de las entradas + sesgo, pasada por una activación. Con sigmoide = regresión logística.</td>
+</tr>
+<tr>
+<td>Activación</td>
+<td>La no linealidad (ReLU, tanh) que permite fronteras curvas; softmax en la salida multiclase.</td>
+</tr>
+<tr>
+<td>Red multicapa (MLP)</td>
+<td>Capas ocultas que combinan muchas "rectas" en fronteras de cualquier forma.</td>
+</tr>
+<tr>
+<td>Entropía cruzada</td>
+<td>−log(probabilidad de la clase correcta): castiga mucho equivocarse con seguridad.</td>
+</tr>
+<tr>
+<td>Descenso de gradiente</td>
+<td>Corregir los pesos dando pasos cuesta abajo en la pérdida.</td>
+</tr>
+<tr>
+<td>Tasa de aprendizaje</td>
+<td>El largo del paso: muy chica = lento; muy grande = rebota o diverge.</td>
+</tr>
+<tr>
+<td>Época / batch</td>
+<td>Una pasada completa por los datos / el grupo de ejemplos con que se da cada paso.</td>
+</tr>
+<tr>
+<td>Sobreajuste</td>
+<td>Validación empeora mientras entrenamiento mejora: la red memoriza.</td>
+</tr>
+<tr>
+<td>Early stopping / dropout</td>
+<td>Parar en la mejor época / apagar neuronas al azar al entrenar.</td>
+</tr>
+<tr>
+<td>Auditoría y limpieza</td>
+<td>Duplicados, textos basura y categorías mal escritas se corrigen <strong>antes</strong> de modelar.</td>
+</tr>
+<tr>
+<td>TF-IDF</td>
+<td>Peso alto a palabras frecuentes en el texto y raras en el resto.</td>
+</tr>
+<tr>
+<td>F1 macro</td>
+<td>Promedio simple del F1 de cada clase: las clases chicas importan igual.</td>
+</tr>
+<tr>
+<td>Matriz de confusión con ojos de negocio</td>
+<td>No todos los errores cuestan lo mismo; el umbral es una palanca de negocio.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="para-profundizar">📚 Para profundizar</h2>
+<ul>
+<li><strong>3Blue1Brown · ¿Qué es una red neuronal?</strong> (video, con subtítulos en español): la mejor intuición visual de
+  neuronas, capas y pesos. <a href="https://www.youtube.com/watch?v=aircAruvnKk">youtube.com/watch?v=aircAruvnKk</a></li>
+<li><strong>TensorFlow Playground:</strong> el simulador del Tema 2 en versión extendida; prueba capas, activaciones, tasa de
+  aprendizaje y regularización. <a href="https://playground.tensorflow.org/">playground.tensorflow.org</a></li>
+<li><strong>Google · Machine Learning Crash Course</strong> (módulos de redes neuronales y clasificación):
+  <a href="https://developers.google.com/machine-learning/crash-course">developers.google.com/machine-learning/crash-course</a></li>
+<li><strong>scikit-learn · Extracción de características de texto</strong> (bolsa de palabras y TF-IDF, con ejemplos):
+  <a href="https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction">scikit-learn.org/stable/modules/feature_extraction.html</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/hizocar" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.top", "navigation.tabs", "content.code.annotate", "content.code.copy", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/motion@12.23.12/dist/motion.js"></script>
+      
+        <script src="../../javascripts/ia-core.js"></script>
+      
+        <script src="../../javascripts/widgets-clase1.js"></script>
+      
+        <script src="../../javascripts/widgets-clase2.js"></script>
+      
+        <script src="../../javascripts/widgets-clase3.js"></script>
+      
+        <script src="../../javascripts/widgets-clase4.js"></script>
+      
+        <script src="../../javascripts/widgets-clase5.js"></script>
+      
+        <script src="../../javascripts/py-run.js"></script>
+      
+    
+  </body>
+</html>

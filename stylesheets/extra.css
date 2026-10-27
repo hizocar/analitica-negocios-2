@@ -1,0 +1,2095 @@
+/* Tipografía de las anotaciones "a plumón" de los casos (casos.js) */
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap");
+
+/* ==========================================================================
+   Paleta institucional UTFSM
+   Colores extraídos del escudo y timbre oficiales de la Universidad Técnica
+   Federico Santa María (Dirección General de Docencia).
+   ========================================================================== */
+:root,
+[data-md-color-scheme="default"] {
+  --usm-navy: #1b2a5e;
+  --usm-navy-dark: #10193b;
+  --usm-blue: #005f96;
+  --usm-gold: #e5b300;
+  --usm-red: #b30828;
+
+  --md-primary-fg-color: var(--usm-navy);
+  --md-primary-fg-color--light: var(--usm-blue);
+  --md-primary-fg-color--dark: var(--usm-navy-dark);
+  --md-accent-fg-color: var(--usm-gold);
+  --md-accent-fg-color--transparent: #e5b30022;
+  --md-typeset-a-color: var(--usm-blue);
+}
+
+[data-md-color-scheme="slate"] {
+  --usm-navy: #24356e;
+  --usm-navy-dark: #0c1330;
+  --usm-blue: #3d9bd6;
+  --usm-gold: #f2c334;
+  --usm-red: #e15268;
+
+  --md-primary-fg-color: var(--usm-navy-dark);
+  --md-primary-fg-color--light: var(--usm-navy);
+  --md-primary-fg-color--dark: #080d1f;
+  --md-accent-fg-color: var(--usm-gold);
+  --md-typeset-a-color: var(--usm-blue);
+  --md-default-bg-color: #10142a;
+}
+
+/* Header / topbar -------------------------------------------------------- */
+.md-header {
+  background: linear-gradient(90deg, var(--usm-navy-dark) 0%, var(--usm-navy) 55%, var(--usm-blue) 100%);
+  box-shadow: 0 1px 0 var(--usm-gold);
+}
+
+.md-tabs {
+  background-color: var(--usm-navy-dark);
+}
+
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 1.6rem;
+  width: 1.6rem;
+}
+
+/* Gold accent underline on active tabs/links */
+.md-tabs__link--active,
+.md-nav__link--active {
+  color: var(--usm-gold) !important;
+}
+
+.md-typeset a:hover {
+  color: var(--usm-gold);
+}
+
+/* Footer ------------------------------------------------------------------ */
+.md-footer {
+  background-color: var(--usm-navy-dark);
+}
+
+.md-footer-meta {
+  background-color: var(--usm-navy-dark);
+}
+
+/* Headings ----------------------------------------------------------------*/
+.md-typeset h1 {
+  color: var(--usm-navy);
+  border-bottom: 3px solid var(--usm-gold);
+  padding-bottom: 0.3rem;
+}
+
+[data-md-color-scheme="slate"] .md-typeset h1 {
+  color: #eef1fb;
+}
+
+.md-typeset h2 {
+  border-left: 4px solid var(--usm-blue);
+  padding-left: 0.6rem;
+}
+
+/* Tables -------------------------------------------------------------------*/
+.md-typeset table:not([class]) th {
+  background-color: var(--usm-navy);
+  color: #ffffff;
+}
+
+.md-typeset table:not([class]) tr:nth-child(even) {
+  background-color: var(--md-accent-fg-color--transparent);
+}
+
+/* Admonitions tuned to the palette ------------------------------------------*/
+.md-typeset .admonition.note,
+.md-typeset .note > .admonition-title {
+  border-color: var(--usm-blue);
+}
+.md-typeset .note > .admonition-title::before {
+  background-color: var(--usm-blue);
+}
+
+.md-typeset .admonition.warning,
+.md-typeset .warning > .admonition-title {
+  border-color: var(--usm-gold);
+}
+.md-typeset .warning > .admonition-title::before {
+  background-color: var(--usm-gold);
+}
+
+/* ==========================================================================
+   Hero banner (home page)
+   ========================================================================== */
+.usm-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  background: linear-gradient(120deg, var(--usm-navy-dark) 0%, var(--usm-navy) 60%, var(--usm-blue) 100%);
+  color: #f3f5fb;
+  border-radius: 12px;
+  padding: 2.2rem 2.4rem;
+  margin: 0.5rem 0 2rem 0;
+  border-bottom: 4px solid var(--usm-gold);
+}
+
+.usm-hero h1 {
+  color: #ffffff !important;
+  border-bottom: none !important;
+  margin: 0 0 0.4rem 0;
+  font-size: 1.9rem;
+}
+
+.usm-hero p {
+  margin: 0;
+  opacity: 0.92;
+  max-width: 46ch;
+}
+
+.usm-hero .usm-hero-tag {
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  padding: 0.15rem 0.7rem;
+  border-radius: 999px;
+  background: var(--usm-gold);
+  color: var(--usm-navy-dark);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.usm-hero img {
+  height: 110px;
+  width: auto;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+}
+
+/* Info strip / key facts ---------------------------------------------------*/
+.usm-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem 0;
+}
+
+.usm-fact {
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-accent-fg-color--transparent);
+  border-top: 3px solid var(--usm-blue);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  text-align: center;
+}
+
+.usm-fact .usm-fact-label {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  margin-bottom: 0.25rem;
+}
+
+.usm-fact .usm-fact-value {
+  display: block;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--usm-navy);
+}
+
+[data-md-color-scheme="slate"] .usm-fact .usm-fact-value {
+  color: #eef1fb;
+}
+
+/* Card grid (docente, unidades, etc.) ---------------------------------------*/
+.usm-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+  margin: 1.5rem 0;
+}
+
+.usm-card {
+  border: 1px solid var(--md-accent-fg-color--transparent);
+  border-radius: 10px;
+  padding: 1.2rem 1.3rem;
+  background: var(--md-default-bg-color);
+  border-top: 4px solid var(--usm-gold);
+}
+
+.usm-card h3 {
+  margin-top: 0;
+  color: var(--usm-navy);
+}
+
+[data-md-color-scheme="slate"] .usm-card h3 {
+  color: #eef1fb;
+}
+
+/* Class session header badge -------------------------------------------------*/
+.usm-session-meta {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin: 0.6rem 0 1.4rem 0;
+}
+
+.usm-session-meta span {
+  background: var(--usm-navy);
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.usm-session-meta span.usm-tag-gold {
+  background: var(--usm-gold);
+  color: var(--usm-navy-dark);
+}
+
+.usm-session-meta span.usm-tag-red {
+  background: var(--usm-red);
+}
+
+/* Interactive chart containers ----------------------------------------------*/
+.usm-chart {
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-accent-fg-color--transparent);
+  border-radius: 10px;
+  padding: 1.2rem 1.4rem 0.6rem 1.4rem;
+  margin: 1.4rem 0;
+}
+
+.usm-chart-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 300px;
+}
+
+.usm-chart-canvas-wrap canvas {
+  /* Chart.js sizes the canvas to this wrapper (responsive + maintainAspectRatio:false in
+     charts.js) — without a fixed-height wrapper, Chart.js and the CSS max-height fight over the
+     canvas size and it collapses over successive re-renders. */
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.usm-chart-caption {
+  display: block;
+  text-align: center;
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin: 0.4rem 0 0.9rem 0;
+  font-style: italic;
+}
+
+.usm-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.2rem;
+}
+
+/* Deliverable / activity callouts --------------------------------------------*/
+.usm-activity {
+  border: 1px solid var(--md-accent-fg-color--transparent);
+  border-left: 5px solid var(--usm-blue);
+  border-radius: 6px;
+  padding: 1rem 1.2rem;
+  margin: 1.2rem 0;
+  background: var(--md-default-bg-color);
+}
+
+.usm-activity h3 {
+  margin-top: 0;
+}
+
+.usm-deliverable {
+  border: 1px solid var(--md-accent-fg-color--transparent);
+  border-left: 5px solid var(--usm-red);
+  border-radius: 6px;
+  padding: 1rem 1.2rem;
+  margin: 1.2rem 0;
+  background: var(--md-default-bg-color);
+}
+
+.usm-deliverable h3 {
+  margin-top: 0;
+  color: var(--usm-red);
+}
+
+.usm-deliverable-badge {
+  display: inline-block;
+  background: var(--usm-red);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  margin-bottom: 0.6rem;
+}
+
+/* ==========================================================================
+   Perfil docente (Home)
+   ========================================================================== */
+.usm-profile {
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  border-top: 4px solid var(--usm-gold);
+  border: 1px solid var(--md-accent-fg-color--transparent);
+  border-radius: 12px;
+  padding: 1.6rem 1.8rem;
+  margin: 1.2rem 0 1.6rem 0;
+  background: var(--md-default-bg-color);
+}
+
+.usm-profile img {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--usm-gold);
+  flex-shrink: 0;
+}
+
+.usm-profile-body {
+  flex: 1;
+  min-width: 240px;
+}
+
+.usm-profile-body h3 {
+  margin: 0 0 0.15rem 0;
+  font-size: 1.35rem;
+  color: var(--usm-navy);
+}
+
+[data-md-color-scheme="slate"] .usm-profile-body h3 {
+  color: #eef1fb;
+}
+
+.usm-profile-role {
+  display: block;
+  font-weight: 600;
+  color: var(--usm-blue);
+  margin-bottom: 0.6rem;
+}
+
+.usm-profile-body p {
+  margin: 0 0 0.8rem 0;
+}
+
+.usm-profile-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--usm-navy);
+  color: #fff !important;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none !important;
+}
+
+.usm-profile-links a:hover {
+  background: var(--usm-blue);
+}
+
+/* Timeline (experiencia / docencia) ------------------------------------------*/
+.usm-timeline {
+  list-style: none;
+  margin: 0.6rem 0 0 0;
+  padding: 0;
+  position: relative;
+}
+
+.usm-timeline li {
+  position: relative;
+  padding: 0 0 1.1rem 1.4rem;
+  border-left: 2px solid var(--md-accent-fg-color--transparent);
+}
+
+.usm-timeline li:last-child {
+  padding-bottom: 0;
+  border-left-color: transparent;
+}
+
+.usm-timeline li::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--usm-blue);
+  border: 2px solid var(--md-default-bg-color);
+}
+
+.usm-timeline li.usm-current::before {
+  background: var(--usm-gold);
+}
+
+.usm-timeline .usm-timeline-title {
+  display: block;
+  font-weight: 700;
+  color: var(--usm-navy);
+}
+
+[data-md-color-scheme="slate"] .usm-timeline .usm-timeline-title {
+  color: #eef1fb;
+}
+
+.usm-timeline .usm-timeline-meta {
+  display: block;
+  font-size: 0.82rem;
+  opacity: 0.75;
+}
+
+.usm-timeline .usm-timeline-badge {
+  display: inline-block;
+  margin-left: 0.4rem;
+  background: var(--usm-gold);
+  color: var(--usm-navy-dark);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+}
+
+/* Call-to-action box (ej. registro de grupos) --------------------------------*/
+.usm-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  border: 1px solid var(--md-accent-fg-color--transparent);
+  border-left: 5px solid var(--usm-gold);
+  border-radius: 8px;
+  padding: 1rem 1.3rem;
+  margin: 1.2rem 0;
+  background: var(--md-default-bg-color);
+}
+
+.usm-cta-text > strong {
+  display: block;
+  color: var(--usm-navy);
+  font-size: 1rem;
+  margin-bottom: 0.15rem;
+}
+
+[data-md-color-scheme="slate"] .usm-cta-text > strong {
+  color: #eef1fb;
+}
+
+.usm-cta-text span {
+  display: block;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Negritas dentro del texto secundario: inline, sin romper el párrafo */
+.usm-cta-text span strong {
+  display: inline;
+  font-size: inherit;
+  color: inherit;
+  margin: 0;
+}
+
+.usm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--usm-gold);
+  color: var(--usm-navy-dark) !important;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.usm-btn:hover {
+  background: #f2c334;
+  transform: translateY(-1px);
+}
+
+
+/* ==========================================================================
+   Simuladores interactivos de econometría (econ.js)
+   Cada <div class="econ-widget" data-widget="..."> es montado por econ.js.
+   Los colores del SVG usan las variables de la paleta, así funcionan en
+   modo claro y oscuro sin lógica adicional en JS.
+   ========================================================================== */
+.econ-widget {
+  --econ-ink: var(--md-default-fg-color);
+  --econ-muted: var(--md-default-fg-color--light);
+  --econ-grid: var(--md-default-fg-color--lightest);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-top: 4px solid var(--usm-blue);
+  border-radius: 10px;
+  padding: 1rem 1.2rem 1.1rem 1.2rem;
+  margin: 1.5rem 0;
+  background: var(--md-default-bg-color);
+}
+
+.econ-widget-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--usm-navy);
+  margin-bottom: 0.2rem;
+}
+
+[data-md-color-scheme="slate"] .econ-widget-title {
+  color: #eef1fb;
+}
+
+.econ-widget-title .econ-chip {
+  background: var(--usm-gold);
+  color: var(--usm-navy-dark);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+}
+
+.econ-widget-sub {
+  font-size: 0.78rem;
+  opacity: 0.8;
+  margin: 0 0 0.8rem 0;
+}
+
+.econ-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.6rem 1.2rem;
+  margin-bottom: 0.8rem;
+}
+
+.econ-control label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.econ-control label output {
+  font-variant-numeric: tabular-nums;
+  color: var(--usm-blue);
+}
+
+.econ-control input[type="range"] {
+  width: 100%;
+  accent-color: var(--usm-blue);
+}
+
+.econ-control select,
+.econ-control input[type="number"] {
+  width: 100%;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 6px;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+}
+
+.econ-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.2rem 0 0.8rem 0;
+}
+
+.econ-btn {
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.4rem 0.95rem;
+  cursor: pointer;
+  background: var(--usm-navy);
+  color: #fff;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.econ-btn:hover {
+  background: var(--usm-blue);
+}
+
+.econ-btn:active {
+  transform: scale(0.97);
+}
+
+.econ-btn.econ-btn-gold {
+  background: var(--usm-gold);
+  color: var(--usm-navy-dark);
+}
+
+.econ-btn.econ-btn-ghost {
+  background: transparent;
+  color: var(--md-default-fg-color);
+  border: 1px solid var(--md-default-fg-color--lighter);
+}
+
+.econ-btn[aria-pressed="true"] {
+  background: var(--usm-gold);
+  color: var(--usm-navy-dark);
+}
+
+.econ-plot {
+  width: 100%;
+  height: auto;
+  display: block;
+  touch-action: none;
+  user-select: none;
+}
+
+.econ-plot-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.econ-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.econ-stat {
+  flex: 1 1 120px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-left: 3px solid var(--usm-blue);
+  border-radius: 6px;
+  padding: 0.35rem 0.6rem;
+}
+
+.econ-stat.is-gold { border-left-color: var(--usm-gold); }
+.econ-stat.is-red { border-left-color: var(--usm-red); }
+
+/* Sin text-transform: las mayúsculas convertirían μ en M y σ en Σ. */
+.econ-stat span {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.econ-stat strong {
+  display: block;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.econ-note {
+  font-size: 0.78rem;
+  margin-top: 0.7rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+  background: var(--md-accent-fg-color--transparent);
+}
+
+/* SVG primitives ----------------------------------------------------------*/
+.econ-plot .ax { stroke: var(--econ-muted); stroke-width: 1; }
+.econ-plot .grid { stroke: var(--econ-grid); stroke-width: 1; }
+.econ-plot text { fill: var(--econ-ink); font-size: 11px; font-family: inherit; }
+.econ-plot text.muted { fill: var(--econ-muted); }
+.econ-plot .pt { fill: var(--usm-blue); fill-opacity: 0.75; }
+.econ-plot .pt-alt { fill: var(--usm-gold); fill-opacity: 0.9; }
+.econ-plot .pt-red { fill: var(--usm-red); fill-opacity: 0.8; }
+.econ-plot .bar { fill: var(--usm-blue); fill-opacity: 0.7; }
+.econ-plot .bar-gold { fill: var(--usm-gold); }
+.econ-plot .bar-red { fill: var(--usm-red); fill-opacity: 0.8; }
+.econ-plot .bar-navy { fill: var(--usm-navy); }
+.econ-plot .line { stroke: var(--usm-red); stroke-width: 2.5; fill: none; }
+.econ-plot .line-gold { stroke: var(--usm-gold); stroke-width: 2.5; fill: none; }
+.econ-plot .line-navy { stroke: var(--usm-navy); stroke-width: 2.5; fill: none; }
+.econ-plot .line-dash { stroke-dasharray: 6 4; }
+.econ-plot .resid { stroke: var(--usm-red); stroke-width: 1.2; stroke-opacity: 0.55; }
+.econ-plot .sq { fill: var(--usm-red); fill-opacity: 0.08; stroke: var(--usm-red); stroke-opacity: 0.25; }
+.econ-plot .ci-hit { stroke: var(--usm-blue); stroke-width: 2; }
+.econ-plot .ci-miss { stroke: var(--usm-red); stroke-width: 2.5; }
+.econ-plot .mu { stroke: var(--usm-gold); stroke-width: 2; }
+.econ-plot .drag { cursor: grab; }
+
+[data-md-color-scheme="slate"] .econ-plot .bar-navy { fill: #8fa3e8; }
+[data-md-color-scheme="slate"] .econ-plot .line-navy { stroke: #8fa3e8; }
+
+/* Tabla de outcomes potenciales -------------------------------------------*/
+.econ-po-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin: 0.4rem 0;
+}
+
+.econ-po-table th,
+.econ-po-table td {
+  padding: 0.35rem 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.econ-po-table th {
+  background: var(--usm-navy);
+  color: #fff;
+  font-weight: 600;
+}
+
+.econ-po-table td.hidden-po {
+  color: var(--econ-muted);
+  font-style: italic;
+}
+
+.econ-po-table td.revealed-po {
+  color: var(--usm-red);
+  font-weight: 700;
+}
+
+/* Quizzes -----------------------------------------------------------------*/
+.econ-quiz {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-left: 5px solid var(--usm-gold);
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem;
+  margin: 1.2rem 0;
+}
+
+.md-typeset .econ-quiz-q {
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.econ-quiz-opts {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.econ-quiz-opt {
+  text-align: left;
+  font: inherit;
+  font-size: 0.82rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.econ-quiz-opt:hover { border-color: var(--usm-blue); }
+.econ-quiz-opt.is-right { border-color: #2e8b57; background: #2e8b5722; }
+.econ-quiz-opt.is-wrong { border-color: var(--usm-red); background: color-mix(in srgb, var(--usm-red) 12%, transparent); }
+
+.econ-quiz-fb {
+  font-size: 0.8rem;
+  margin-top: 0.6rem;
+  display: none;
+}
+
+.econ-quiz-fb.is-visible { display: block; }
+
+/* Bloque de agenda de la clase -------------------------------------------*/
+.econ-agenda-break td {
+  font-style: italic;
+  opacity: 0.75;
+}
+
+/* Tarjetas de semana en el calendario ---------------------------------------*/
+.econ-week {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-left: 5px solid var(--usm-blue);
+  border-radius: 8px;
+  padding: 0.8rem 1.1rem;
+  margin: 0.9rem 0;
+}
+
+.econ-week.is-eval { border-left-color: var(--usm-red); }
+.econ-week.is-now { border-left-color: var(--usm-gold); background: var(--md-accent-fg-color--transparent); }
+
+.econ-week h3 {
+  margin: 0 0 0.3rem 0 !important;
+  font-size: 0.95rem;
+}
+
+.econ-week ul {
+  margin: 0.2rem 0 0 0 !important;
+}
+
+.econ-pill {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.08rem 0.5rem;
+  border-radius: 999px;
+  margin-left: 0.3rem;
+  vertical-align: middle;
+  background: var(--usm-red);
+  color: #fff;
+}
+
+.econ-pill.is-gold { background: var(--usm-gold); color: var(--usm-navy-dark); }
+.econ-pill.is-grey { background: var(--md-default-fg-color--lighter); color: var(--md-default-bg-color); }
+.econ-pill.is-blue { background: var(--usm-blue); }
+
+@media (max-width: 600px) {
+  .econ-widget { padding: 0.8rem 0.8rem 0.9rem 0.8rem; }
+  .econ-controls { grid-template-columns: 1fr 1fr; }
+}
+
+/* Proporciones de columnas solo en pantallas anchas; en celular se apilan. */
+@media (min-width: 760px) {
+  .econ-plot-row.is-2-1 { grid-template-columns: 2fr 1fr; }
+  .econ-plot-row.is-3-2 { grid-template-columns: 3fr 2fr; }
+}
+
+/* ==========================================================================
+   Láminas oficiales convertidas desde los .tex (tools/clases.py)
+   ========================================================================== */
+.econ-source {
+  font-size: 0.74rem;
+  opacity: 0.75;
+  margin-top: -0.4rem;
+}
+
+/* Figuras de las diapositivas: fondo blanco para que se lean también en modo oscuro */
+.md-typeset img.econ-slide-img {
+  display: block;
+  max-width: min(560px, 100%);
+  margin: 0.8rem auto;
+  background: #fff;
+  border-radius: 6px;
+  padding: 4px;
+}
+
+/* Figuras TikZ re-dibujadas */
+/* Prefijo .md-typeset: Material fija ".md-typeset svg { max-width: 100% }" */
+.md-typeset .econ-tikz-svg {
+  display: inline-block;
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  vertical-align: middle;
+  margin: 0.4rem 0;
+  font-size: 13px;
+}
+
+.md-typeset .econ-tikz-svg.econ-dag { max-width: 190px; }
+
+.econ-tikz-tree {
+  max-width: 560px;
+  margin: 1rem auto;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.econ-tikz-tree .t-root { font-weight: 700; }
+
+.econ-tikz-tree .t-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 0.2rem 0;
+}
+
+.econ-tikz-tree .t-row > span { font-size: 1.4rem; line-height: 1; }
+
+.econ-tikz-tree .t-cf { color: var(--usm-red); }
+
+
+/* ==========================================================================
+   Casos ilustrados (casos.js)
+   Paleta de datos validada con el skill de dataviz (CVD y contraste):
+   claro  #005f96 · #c28000 · #b30828   |   oscuro #3d9bd6 · #bf8a1a · #e15268
+   ========================================================================== */
+:root,
+[data-md-color-scheme="default"] {
+  --econ-c1: #005f96;
+  --econ-c2: #c28000;
+  --econ-c3: #b30828;
+  --econ-seq-lo: #f3dca6;
+  --econ-seq-hi: #8a5a00;
+  --econ-ink-soft: #8a94ad;
+  --econ-caso-bg: #f5f8fc;
+}
+
+[data-md-color-scheme="slate"] {
+  --econ-c1: #3d9bd6;
+  --econ-c2: #bf8a1a;
+  --econ-c3: #e15268;
+  --econ-seq-lo: #5b4a26;
+  --econ-seq-hi: #f2c334;
+  --econ-ink-soft: #6c7798;
+  --econ-caso-bg: #161c38;
+}
+
+.econ-widget.econ-caso {
+  border-top: 0;
+  border-left: 5px solid var(--usm-gold);
+  background: var(--econ-caso-bg);
+  padding: 1.1rem 1.3rem 1.2rem;
+}
+
+.econ-caso-eyebrow {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--econ-c2);
+}
+
+.econ-caso-title {
+  font-size: 1.12rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0.15rem 0 0.35rem;
+  color: var(--usm-navy);
+}
+
+[data-md-color-scheme="slate"] .econ-caso-title { color: #eef1fb; }
+
+.md-typeset .econ-caso-lead {
+  font-size: 0.82rem;
+  margin: 0 0 0.9rem;
+  max-width: 62ch;
+}
+
+/* Escenas ilustradas: fondo propio (se ven igual en claro y oscuro) */
+.econ-scene {
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0.4rem 0 0.8rem;
+  border-radius: 14px;
+  user-select: none;
+}
+
+.econ-scene text { fill: #1b2a5e; font-size: 12px; font-family: var(--md-text-font-family, Roboto), sans-serif; }
+.econ-scene .muted { fill: #5a6785; }
+.econ-scene-bg { fill: #eef3fa; }
+
+/* Anotaciones a plumón */
+.econ-hand {
+  font-family: "Caveat", "Comic Sans MS", cursive !important;
+  font-size: 23px !important;
+  font-weight: 700;
+  fill: var(--usm-red) !important;
+}
+
+/* En gráficos: halo del color de fondo para que la anotación se lea sobre los puntos */
+.econ-chart .econ-hand,
+.econ-plot .econ-hand {
+  fill: var(--econ-c3) !important;
+  paint-order: stroke;
+  stroke: var(--md-default-bg-color);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.econ-hand-stroke {
+  fill: none;
+  stroke: var(--usm-red);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+/* Capa ambiental: sol que gira, mar que respira, vapor de la sopa */
+.econ-sun { transform-box: view-box; transform-origin: 520px 44px; }
+.is-live .econ-sun { animation: econ-spin 40s linear infinite; }
+.is-live .econ-wave { animation: econ-breathe 5s ease-in-out infinite alternate; }
+@keyframes econ-spin { to { transform: rotate(360deg); } }
+@keyframes econ-breathe { from { transform: translateX(0); } to { transform: translateX(-10px); } }
+
+.econ-steam {
+  fill: none;
+  stroke: #9aa6c2;
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0;
+}
+.is-live .econ-steam { animation: econ-steam 2.6s ease-in-out infinite; }
+@keyframes econ-steam {
+  0% { opacity: 0; transform: translateY(6px); }
+  40% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-14px); }
+}
+
+/* Control segmentado (pasos de un caso) */
+.econ-seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--md-default-fg-color--lightest);
+  margin: 0.2rem 0 0.6rem;
+}
+
+.econ-seg-btn {
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  background: transparent;
+  color: var(--md-default-fg-color);
+  cursor: pointer;
+  transition: background 0.18s cubic-bezier(0.2, 0, 0, 1), color 0.18s;
+}
+
+.econ-seg-btn[aria-selected="true"] {
+  background: var(--usm-navy);
+  color: #fff;
+}
+
+.econ-seg-btn:focus-visible,
+.econ-btn:focus-visible,
+.econ-quiz-opt:focus-visible {
+  outline: 2px solid var(--usm-gold);
+  outline-offset: 2px;
+}
+
+/* Puntos y diagramas de datos */
+.econ-dot { stroke: var(--md-default-bg-color); stroke-width: 2; }
+.econ-node { fill: var(--md-default-bg-color); stroke: var(--econ-c1); stroke-width: 2; }
+.econ-node-hot { fill: var(--econ-seq-lo); stroke: var(--econ-c2); stroke-width: 2; }
+.econ-arrow { fill: none; stroke: var(--econ-c2); stroke-width: 2.5; }
+.econ-arrowhead { fill: var(--econ-c2); }
+.econ-arrow-q { stroke: var(--econ-ink-soft); stroke-width: 2; stroke-dasharray: 3 3; }
+.econ-dag-side g,
+.econ-dag-side path {
+  transition: opacity 0.35s cubic-bezier(0.2, 0, 0, 1), transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.econ-dag-side .is-hidden { opacity: 0; transform: translateY(-8px) scale(0.9); }
+
+/* Insignias de factores ocultos */
+.econ-badge-bg { fill: #ffffff; stroke: var(--usm-gold); stroke-width: 2; }
+.econ-scene .econ-badge-txt { fill: #1b2a5e; font-size: 12px; }
+
+/* Grilla de tipos de datos */
+.econ-cell {
+  fill: var(--md-default-fg-color--lightest);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill 0.25s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.econ-cell.is-on { fill: var(--econ-c1); transform: scale(1.06); }
+
+/* Barras del caso Literary Digest */
+.econ-bar-c1 { fill: var(--econ-c1); }
+.econ-bar-c3 { fill: var(--econ-c3); }
+.econ-plot .econ-bar-lbl { fill: var(--md-default-fg-color); font-size: 12px; }
+
+/* Cifras de casos reales */
+.econ-reales {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.9rem;
+}
+
+.econ-real {
+  background: var(--md-default-bg-color);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.econ-real-icon { font-size: 1.6rem; line-height: 1; }
+
+.econ-real-num {
+  display: block;
+  font-size: 2.3rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--econ-c1);
+}
+
+.econ-real-lbl { display: block; font-size: 0.78rem; font-weight: 700; }
+.md-typeset .econ-real p { font-size: 0.78rem; margin: 0.5rem 0; }
+
+/* Tiles media / mediana */
+.econ-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+  margin: 0.6rem 0;
+}
+
+.econ-tile {
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  background: var(--md-default-bg-color);
+  border-left: 5px solid var(--econ-c1);
+}
+
+.econ-tile.is-c2 { border-left-color: var(--econ-c2); }
+.econ-tile span { display: block; font-size: 0.7rem; font-weight: 700; opacity: 0.75; }
+.econ-tile strong { display: block; font-size: 1.8rem; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.econ-tile em { font-size: 0.68rem; opacity: 0.7; }
+
+/* Máquina de Galton y aros */
+.econ-galton { display: block; width: 100%; height: auto; max-width: 600px; margin: 0.3rem auto 0.6rem; }
+.econ-ring { fill: none; stroke: #005f96; stroke-width: 3; }
+.econ-ring.is-miss { stroke: #b30828; }
+
+/* Llamados "¿Sabías que?" y letra chica */
+.econ-sabias {
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px dashed var(--econ-c2);
+}
+
+.econ-fine { font-size: 0.7rem; opacity: 0.65; }
+
+@media (prefers-reduced-motion: reduce) {
+  .is-live .econ-sun,
+  .is-live .econ-wave,
+  .is-live .econ-steam { animation: none; }
+  .econ-cell,
+  .econ-dag-side g,
+  .econ-dag-side path,
+  .econ-seg-btn { transition: none; }
+}
+
+/* Fórmulas anchas de las láminas: scroll horizontal propio en pantallas chicas */
+.md-typeset div.arithmatex {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Control de pasos: en celular se reparte en líneas sin deformarse */
+@media (max-width: 600px) {
+  .econ-seg {
+    display: flex;
+    border-radius: 14px;
+  }
+
+  .econ-seg-btn {
+    flex: 1 1 100%;
+    border-radius: 10px;
+    text-align: left;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Fórmulas en línea muy largas (p. ej. la de diferencia de medias) */
+  .md-typeset span.arithmatex {
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    vertical-align: middle;
+  }
+}
+
+/* \color{blue} / \color{red} de las láminas: en modo oscuro el azul puro es ilegible */
+[data-md-color-scheme="slate"] mjx-container [style*="color: blue"] { color: #8fb8ff !important; }
+[data-md-color-scheme="slate"] mjx-container [style*="color: red"] { color: #ff8f9c !important; }
+
+/* ---------- Historia por pasos (casos reales) ---------- */
+.econ-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0.6rem;
+}
+
+.econ-step-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem 0.25rem 0.3rem;
+  cursor: pointer;
+  transition: background 0.18s cubic-bezier(0.2, 0, 0, 1), border-color 0.18s;
+}
+
+.econ-step-pill span {
+  display: inline-grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  background: var(--md-default-fg-color--lightest);
+  font-size: 0.7rem;
+}
+
+.econ-step-pill.is-done span { background: var(--econ-c2); color: #fff; }
+.econ-step-pill[aria-selected="true"] { background: var(--usm-navy); border-color: var(--usm-navy); color: #fff; }
+.econ-step-pill[aria-selected="true"] span { background: var(--usm-gold); color: var(--usm-navy-dark); }
+
+.econ-step-body {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  background: var(--md-default-bg-color);
+  border-left: 4px solid var(--econ-c2);
+  min-height: 5.5rem;
+}
+
+.econ-step-body.is-in { animation: econ-rise 0.32s cubic-bezier(0.2, 0, 0, 1); }
+@keyframes econ-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.econ-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* Íconos de escuelas y fábricas */
+.econ-roof { fill: #1b2a5e; transition: fill 0.3s; }
+.econ-wall { fill: #3f6aa8; transition: fill 0.3s; }
+.econ-roof.is-off, .econ-wall.is-off { fill: #c7cfdf; }
+.econ-wall.is-t { fill: #c28000; }
+.econ-wall.is-c { fill: #8fa3c8; }
+
+/* ---------- Casos de métodos de muestreo ---------- */
+.econ-pop { fill: #c7cfdf; transition: fill 0.25s; }
+.econ-pop.is-on { fill: #c28000; stroke: #1b2a5e; stroke-width: 1.5; }
+
+.econ-belt { transform-box: view-box; }
+.is-live .econ-belt { animation: econ-belt 9s linear infinite; }
+@keyframes econ-belt { from { transform: translateX(0); } to { transform: translateX(400px); } }
+
+.econ-cluster {
+  fill: #ffffff;
+  stroke: #c7cfdf;
+  stroke-width: 2;
+  transition: opacity 0.4s, stroke 0.25s;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.econ-cluster.is-on { stroke: #c28000; stroke-width: 4; }
+.econ-cluster.is-dim { opacity: 0.45; }
+
+.econ-metodo {
+  font-size: 0.82rem;
+  background: var(--md-default-bg-color);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+}
+
+.econ-metodo-caso { font-size: 0.86rem; margin-bottom: 0.3rem; }
+.md-typeset .econ-metodo ol { margin: 0.3rem 0 0.6rem 1.2rem; }
+.md-typeset .econ-metodo li { margin-bottom: 0.15rem; }
+
+.econ-metodo-pc {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.econ-metodo-pc > div {
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  background: var(--econ-caso-bg);
+}
+
+@media (max-width: 600px) {
+  .econ-metodo-pc { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-live .econ-belt { animation: none; }
+  .econ-step-body.is-in { animation: none; }
+}
+
+/* ==========================================================================
+   Estructura de las clases: franja por parte + tarjeta por tema (tools/clases.py)
+   ========================================================================== */
+.md-typeset h2.econ-parte {
+  margin: 2.8rem 0 0.4rem;
+  padding: 1.1rem 1.4rem 1.2rem;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(120deg, var(--usm-navy-dark) 0%, var(--usm-navy) 60%, #24438a 100%);
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.25;
+  scroll-margin-top: 4.5rem;
+}
+
+.md-typeset h2.econ-parte::before {
+  content: attr(data-eyebrow);
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--usm-gold);
+}
+
+.md-typeset h2.econ-parte.is-ayudantia {
+  background: linear-gradient(120deg, #00456e 0%, var(--usm-blue) 70%, #2b86bd 100%);
+}
+
+.md-typeset h2.econ-parte.is-ayudantia::before { color: #ffffff; opacity: 0.85; }
+
+.md-typeset h2.econ-parte + .econ-source { margin: 0.2rem 0 1rem 0.2rem; }
+
+/* Tarjeta de un tema (una o varias láminas con el mismo título) */
+.md-typeset .econ-lamina {
+  margin: 1.2rem 0;
+  padding: 0 1.3rem 0.5rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-left: 5px solid var(--usm-navy);
+  border-radius: 12px;
+  background: var(--md-default-bg-color);
+  box-shadow: 0 1px 3px rgba(16, 25, 59, 0.06);
+}
+
+.md-typeset .econ-lamina.is-ayudantia { border-left-color: var(--usm-blue); }
+
+/* Bloque normal (no flex): con flex, cada fórmula del título era un ítem aparte y el
+   título no podía partirse en líneas, desbordando la pantalla en celular. */
+.md-typeset .econ-lamina > h3 {
+  position: relative;
+  margin: 0 -1.3rem 0.9rem;
+  padding: 0.7rem 8rem 0.7rem 1.3rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0 12px 0 0;
+  background: color-mix(in srgb, var(--usm-navy) 7%, transparent);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--usm-navy);
+  scroll-margin-top: 4.5rem;
+}
+
+.md-typeset .econ-lamina.is-ayudantia > h3 { background: color-mix(in srgb, var(--usm-blue) 9%, transparent); }
+
+.md-typeset .econ-lamina > h3::after {
+  content: attr(data-lamina);
+  position: absolute;
+  top: 0.95rem;
+  right: 1.3rem;
+  white-space: nowrap;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--md-default-fg-color--light);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .econ-lamina { border-left-color: #8fa3e8; box-shadow: none; }
+[data-md-color-scheme="slate"] .md-typeset .econ-lamina.is-ayudantia { border-left-color: var(--usm-blue); }
+[data-md-color-scheme="slate"] .md-typeset .econ-lamina > h3 { color: #eef1fb; background: rgba(255, 255, 255, 0.04); }
+
+.md-typeset .econ-lamina-cont {
+  margin: 0.7rem 0 0.6rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--md-default-fg-color--light);
+}
+
+/* Las imágenes de lámina dentro de la tarjeta no necesitan margen extra */
+.md-typeset .econ-lamina > p:last-child { margin-bottom: 0.6rem; }
+
+@media (max-width: 600px) {
+  .md-typeset .econ-lamina > h3 { padding-right: 1.3rem; }
+  .md-typeset .econ-lamina > h3::after {
+    position: static;
+    display: block;
+    margin-top: 0.2rem;
+  }
+}
+
+/* ---------- Clase 2 · casos ---------- */
+.econ-cards6 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.6rem;
+  margin: 0.4rem 0 0.6rem;
+}
+
+.econ-card6 {
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+  font-size: 0.78rem;
+}
+
+.econ-card6-e { font-size: 1.6rem; line-height: 1.1; }
+.econ-card6 > strong { display: block; margin: 0.2rem 0 0.4rem; }
+.econ-card6-opts { display: grid; gap: 0.3rem; }
+.econ-card6-opts .econ-quiz-opt { padding: 0.3rem 0.5rem; font-size: 0.74rem; }
+.md-typeset .econ-card6-fb { font-size: 0.74rem; margin: 0.4rem 0 0; }
+
+.econ-r2-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0.8rem;
+}
+
+.econ-r2-card {
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.econ-r2-opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem;
+  margin: 0.2rem 0 0.4rem;
+}
+
+.econ-r2-opts .econ-quiz-opt { padding: 0.3rem 0.4rem; font-size: 0.72rem; text-align: center; }
+.econ-r2-val { font-weight: 800; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+
+.econ-r2-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--md-default-fg-color--lightest);
+  overflow: hidden;
+  margin: 0.25rem 0 0.2rem;
+}
+
+.econ-r2-bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--econ-c2);
+}
+
+.econ-plot .econ-band { fill: var(--econ-c1); fill-opacity: 0.1; stroke: var(--econ-c1); stroke-opacity: 0.35; stroke-dasharray: 4 4; }
+
+.econ-swing { transform-box: fill-box; transform-origin: center; }
+.is-live .econ-swing { animation: econ-swing 1.6s ease-in-out infinite alternate; }
+@keyframes econ-swing { from { transform: rotate(-35deg); } to { transform: rotate(35deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .is-live .econ-swing { animation: none; }
+}
+
+/* ---------- Clase 3 · casos ---------- */
+.is-live .econ-star { animation: econ-twinkle 2.8s ease-in-out infinite alternate; }
+.is-live .econ-star:nth-child(3n) { animation-delay: 0.9s; }
+.is-live .econ-star:nth-child(3n + 1) { animation-delay: 1.7s; }
+@keyframes econ-twinkle { from { opacity: 0.2; } to { opacity: 0.9; } }
+
+.econ-metodo.is-in { animation: econ-rise 0.32s cubic-bezier(0.2, 0, 0, 1); }
+
+.econ-decomp {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.6rem 0;
+}
+
+.econ-decomp > div {
+  flex: 1 1 140px;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  background: var(--econ-caso-bg);
+  border-left: 4px solid var(--econ-ink-soft);
+}
+
+.econ-decomp > div.is-att { border-left-color: var(--econ-c1); }
+.econ-decomp > div.is-bias { border-left-color: var(--econ-c3); }
+.econ-decomp span { display: block; font-size: 0.7rem; opacity: 0.8; }
+.econ-decomp strong { font-size: 0.95rem; }
+.econ-decomp > em { font-style: normal; font-weight: 800; font-size: 1.2rem; }
+
+.econ-signos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0.7rem;
+}
+
+.econ-signo-card {
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 10px;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+.md-typeset .econ-signo-card p { margin: 0.3rem 0 0.5rem; }
+.econ-signo-card.is-pop { animation: econ-pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes econ-pop { 0% { transform: scale(0.97); } 60% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+.econ-signo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.25rem 0;
+}
+
+.econ-signo-row > span { flex: 1; font-weight: 600; font-size: 0.74rem; }
+
+.econ-signo-btn {
+  font: inherit;
+  font-weight: 800;
+  width: 2.1rem;
+  height: 1.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.econ-signo-btn[aria-pressed="true"] { background: var(--usm-navy); color: #fff; border-color: var(--usm-navy); }
+.econ-signo-card .econ-btn { margin-top: 0.4rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .is-live .econ-star, .econ-signo-card.is-pop, .econ-metodo.is-in { animation: none; }
+}
+
+/* ---------- Clase 4 · casos ---------- */
+.econ-plot .econ-floor { fill: var(--md-default-fg-color--lightest); stroke: var(--econ-ink-soft); stroke-width: 1; }
+.econ-plot .econ-planeq { fill: var(--econ-c1); fill-opacity: 0.18; stroke: var(--econ-c1); stroke-width: 2; }
+.econ-plot .econ-gridline { stroke: var(--econ-c1); stroke-opacity: 0.3; stroke-width: 1; }
+.econ-plot .econ-drop { stroke: var(--econ-c2); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.econ-plot .econ-trail { stroke: var(--econ-c3); stroke-width: 4; fill: none; stroke-linecap: round; }
+.econ-plot .econ-brk { fill: none; stroke: var(--md-default-fg-color); stroke-width: 2; }
+
+/* Tabla editable de la calculadora */
+.econ-datagrid { border-collapse: collapse; font-size: 0.78rem; margin: 0.3rem 0 0.6rem; }
+.econ-datagrid th { background: var(--usm-navy); color: #fff; padding: 0.35rem 0.5rem; font-weight: 600; }
+.econ-datagrid td { padding: 0.25rem 0.4rem; border-bottom: 1px solid var(--md-default-fg-color--lightest); text-align: center; font-variant-numeric: tabular-nums; }
+.econ-datagrid input {
+  width: 5rem;
+  font: inherit;
+  padding: 0.2rem 0.3rem;
+  border-radius: 6px;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  text-align: right;
+}
+.econ-datagrid input:focus-visible { outline: 2px solid var(--usm-gold); outline-offset: 1px; }
+
+/* Matrices con corchetes */
+.econ-matflow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.4rem 0;
+}
+
+.econ-matstep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  animation: econ-rise 0.35s cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+.econ-matstep > span { font-size: 0.72rem; font-weight: 700; }
+.econ-matarrow { font-size: 1.1rem; opacity: 0.6; }
+
+.econ-mat {
+  display: inline-block;
+  padding: 0.15rem 0.35rem;
+  border-left: 2px solid var(--md-default-fg-color);
+  border-right: 2px solid var(--md-default-fg-color);
+  border-radius: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.econ-mat table { border-collapse: collapse; font-size: 0.74rem; }
+.econ-mat td { padding: 0.08rem 0.4rem; text-align: right; }
+.econ-mat.is-result { border-color: var(--econ-c2); background: color-mix(in srgb, var(--econ-c2) 12%, transparent); font-weight: 700; }
+
+/* Variables basura */
+.econ-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.2rem 0 0.5rem; }
+.econ-chip-junk {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--econ-c3) 14%, transparent);
+  border: 1px solid var(--econ-c3);
+}
+.econ-chip-junk.is-real { background: color-mix(in srgb, var(--econ-c1) 14%, transparent); border-color: var(--econ-c1); }
+
+/* Salida de R cliqueable */
+.econ-r-out {
+  margin: 0.4rem 0;
+  padding: 0.8rem 0.9rem;
+  border-radius: 8px;
+  background: #fbfbf8;
+  color: #1a1a1a;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  white-space: pre;
+  border: 1px solid var(--md-default-fg-color--lightest);
+}
+
+[data-md-color-scheme="slate"] .econ-r-out { background: #0d1020; color: #e6e9f5; }
+
+.econ-r-tok {
+  font: inherit;
+  white-space: pre;
+  color: inherit;
+  background: color-mix(in srgb, var(--usm-gold) 22%, transparent);
+  border: 0;
+  border-radius: 4px;
+  padding: 0 0.1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.econ-r-tok:hover { background: color-mix(in srgb, var(--usm-gold) 45%, transparent); }
+.econ-r-tok.is-on { background: var(--usm-gold); color: var(--usm-navy-dark); }
+.econ-r-tok:focus-visible { outline: 2px solid var(--usm-navy); }
+
+/* Cofactores */
+.econ-cof { display: flex; flex-wrap: wrap; gap: 1.2rem; align-items: flex-start; margin: 0.3rem 0 0.6rem; }
+.econ-cof-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(4.2rem, auto));
+  gap: 0.25rem;
+  padding: 0.3rem 0.5rem;
+  border-left: 2px solid var(--md-default-fg-color);
+  border-right: 2px solid var(--md-default-fg-color);
+  border-radius: 6px;
+}
+.econ-cof-cell {
+  padding: 0.35rem 0.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  border-radius: 6px;
+  transition: opacity 0.25s, background 0.25s;
+}
+.econ-cof-cell.is-out { opacity: 0.25; text-decoration: line-through; }
+.econ-cof-cell.is-keep { background: color-mix(in srgb, var(--econ-c2) 18%, transparent); font-weight: 700; }
+.econ-cof-cell.is-pulse { animation: econ-pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.econ-cof-pick { display: grid; grid-template-columns: repeat(3, auto); gap: 0.3rem; }
+.econ-cof-btn { width: auto; padding: 0 0.6rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .econ-matstep, .econ-cof-cell.is-pulse { animation: none; }
+}
+
+/* ==========================================================================
+   Clases por temas (tools/clases.py, clave "temas"): ruta, encabezado de tema,
+   práctica de selección múltiple y ejercicios de R ejecutables (r-run.js)
+   ========================================================================== */
+
+/* Con temas, el título de cada lámina es h4: misma tarjeta que con h3 */
+.md-typeset .econ-lamina > h4 {
+  position: relative;
+  margin: 0 -1.3rem 0.9rem;
+  padding: 0.7rem 8rem 0.7rem 1.3rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0 12px 0 0;
+  background: color-mix(in srgb, var(--usm-navy) 7%, transparent);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: normal;
+  color: var(--usm-navy);
+  scroll-margin-top: 4.5rem;
+}
+.md-typeset .econ-lamina > h4::after {
+  content: attr(data-lamina);
+  position: absolute;
+  top: 0.95rem;
+  right: 1.3rem;
+  white-space: nowrap;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--md-default-fg-color--light);
+}
+[data-md-color-scheme="slate"] .md-typeset .econ-lamina > h4 { color: #eef1fb; background: rgba(255, 255, 255, 0.04); }
+@media (max-width: 600px) {
+  .md-typeset .econ-lamina > h4 { padding-right: 1.3rem; }
+  .md-typeset .econ-lamina > h4::after { position: static; display: block; margin-top: 0.2rem; }
+}
+
+/* Ruta de la clase (agenda por temas) */
+.md-typeset ol.econ-ruta {
+  list-style: none;
+  margin: 0.8rem 0 1.4rem;
+  padding: 0;
+  position: relative;
+}
+.md-typeset ol.econ-ruta::before {
+  content: "";
+  position: absolute;
+  left: 3.55rem;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  width: 2px;
+  background: linear-gradient(var(--usm-gold), var(--usm-navy));
+  opacity: 0.5;
+}
+.md-typeset ol.econ-ruta > li {
+  display: grid;
+  grid-template-columns: 2.9rem 1fr;
+  gap: 0.9rem;
+  align-items: center;
+  margin: 0 0 0.45rem;
+  padding: 0;
+}
+.econ-ruta-h {
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--md-default-fg-color--light);
+  text-align: right;
+}
+.md-typeset a.econ-ruta-a {
+  display: grid;
+  grid-template-columns: 1.9rem 1fr;
+  column-gap: 0.7rem;
+  align-items: center;
+  padding: 0.5rem 0.8rem 0.5rem 0.55rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 10px;
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.md-typeset a.econ-ruta-a:hover,
+.md-typeset a.econ-ruta-a:focus-visible {
+  border-color: var(--usm-gold);
+  transform: translateX(3px);
+  box-shadow: 0 2px 8px rgba(16, 25, 59, 0.08);
+}
+.econ-ruta-n {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: var(--usm-navy);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.econ-ruta-t { font-weight: 700; font-size: 0.82rem; line-height: 1.3; }
+.econ-ruta-l { font-size: 0.68rem; color: var(--md-default-fg-color--light); }
+.md-typeset ol.econ-ruta > li.is-break .econ-ruta-t {
+  font-weight: 600;
+  font-size: 0.74rem;
+  color: var(--md-default-fg-color--light);
+  padding-left: 0.6rem;
+}
+[data-md-color-scheme="slate"] .econ-ruta-n { background: var(--usm-blue); color: #0c1330; }
+
+/* Encabezado de tema */
+.md-typeset h3.econ-tema {
+  position: relative;
+  margin: 2.4rem 0 0.2rem;
+  padding: 0.2rem 0 0 3.4rem;
+  min-height: 2.6rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--usm-navy);
+  scroll-margin-top: 4.5rem;
+}
+.md-typeset h3.econ-tema::before {
+  content: attr(data-num);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 12px;
+  background: var(--usm-gold);
+  color: var(--usm-navy-dark);
+  font-size: 1.25rem;
+}
+.md-typeset h3.econ-tema::after {
+  content: "Tema " attr(data-num) " · " attr(data-laminas);
+  display: block;
+  order: -1;
+  margin-top: 0.15rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--md-default-fg-color--light);
+}
+.md-typeset p.econ-tema-q {
+  margin: 0.5rem 0 1rem 3.4rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--usm-gold) 14%, transparent);
+  font-size: 0.86rem;
+}
+.md-typeset p.econ-tema-q::before { content: "❓ Pregunta guía · "; font-weight: 700; }
+[data-md-color-scheme="slate"] .md-typeset h3.econ-tema { color: #eef1fb; }
+@media (max-width: 600px) {
+  .md-typeset p.econ-tema-q { margin-left: 0; }
+}
+
+/* Práctica al cierre de cada tema */
+.econ-practica {
+  margin: 1.4rem 0;
+  padding: 0.3rem 1.1rem 0.4rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-top: 4px solid var(--usm-gold);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--usm-gold) 5%, var(--md-default-bg-color));
+}
+.md-typeset .econ-practica-t {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.8rem;
+  margin: 0.7rem 0 0.2rem;
+  font-weight: 700;
+}
+.econ-practica-t > span:first-child { font-size: 0.95rem; margin-right: auto; }
+.econ-practica-score {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--md-default-fg-color--light);
+}
+.econ-practica-score.is-complete { color: var(--econ-c1); font-weight: 700; }
+.econ-btn.econ-btn-sm { font-size: 0.68rem; padding: 0.25rem 0.7rem; }
+.econ-practica .econ-quiz { margin: 0.8rem 0; background: var(--md-default-bg-color); }
+.econ-quiz-opt:disabled { cursor: default; }
+.econ-quiz-opt.is-wrong:disabled { opacity: 0.85; }
+.md-typeset .econ-quiz-why {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  color: var(--usm-red);
+}
+.md-typeset .econ-quiz-why:empty { display: none; }
+
+/* Ejercicio de R */
+.econ-r {
+  margin: 1.4rem 0;
+  padding: 0.2rem 1.1rem 0.6rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-left: 5px solid #276dc3; /* azul de R */
+  border-radius: 12px;
+}
+.md-typeset .econ-r-t { margin: 0.8rem 0 0.4rem; font-weight: 700; font-size: 0.95rem; }
+.md-typeset .econ-r .highlight { margin: 0.6rem 0 0; }
+.md-typeset .econ-r code[contenteditable] { outline: none; }
+.md-typeset .econ-r pre:focus-within { box-shadow: 0 0 0 2px var(--usm-gold); border-radius: 4px; }
+.econ-r-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.55rem 0 0.2rem;
+}
+.econ-r-hint { font-size: 0.68rem; color: var(--md-default-fg-color--light); margin-left: 0.3rem; }
+.econ-r-out {
+  margin: 0.5rem 0 0.2rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--md-default-fg-color) 5%, transparent);
+}
+.md-typeset .econ-r-text {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  white-space: pre;
+  overflow-x: auto;
+  background: none;
+}
+.md-typeset .econ-r-text.is-error { color: var(--usm-red); white-space: pre-wrap; }
+.md-typeset .econ-r-status { margin: 0.2rem 0; font-size: 0.78rem; }
+.econ-r-plot { display: block; max-width: 100%; height: auto; margin-top: 0.5rem; border-radius: 6px; background: #fff; }
+.md-typeset .econ-r-reto {
+  margin: 0.7rem 0 0.2rem;
+  font-size: 0.8rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, #276dc3 9%, transparent);
+}
+
+/* Outcomes potenciales (WIDGETS.po): recorrido en cuatro pasos */
+.econ-po-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.35rem;
+  margin: 0.8rem 0;
+}
+.econ-po-step {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-radius: 10px;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color--light);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.econ-po-step > span {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  background: var(--md-default-fg-color--lightest);
+  color: var(--md-default-fg-color);
+}
+.econ-po-step:hover { border-color: var(--usm-blue); }
+.econ-po-step.is-done { color: var(--md-default-fg-color); }
+.econ-po-step.is-done > span { background: var(--econ-c1); color: #fff; }
+.econ-po-step.is-active { border-color: var(--usm-gold); background: color-mix(in srgb, var(--usm-gold) 16%, var(--md-default-bg-color)); color: var(--md-default-fg-color); }
+.econ-po-step.is-active > span { background: var(--usm-gold); color: var(--usm-navy-dark); }
+
+.econ-po-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.econ-po-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.55rem;
+  border-radius: 10px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  background: var(--md-default-bg-color);
+}
+.econ-po-card.is-treated { border-color: color-mix(in srgb, var(--econ-c1) 45%, transparent); }
+.econ-po-who { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; }
+.econ-po-av {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--usm-navy);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.econ-po-badge {
+  align-self: flex-start;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+}
+.econ-po-badge.is-t { background: var(--econ-c1); color: #fff; }
+.econ-po-badge.is-nt { background: var(--md-default-fg-color--lightest); color: var(--md-default-fg-color); }
+.econ-po-badge.is-pop { animation: econ-po-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.econ-po-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.7rem;
+  color: var(--md-default-fg-color--light);
+}
+.econ-po-legend .is-cf { color: var(--econ-c3); }
+.econ-po-box {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.3rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 7px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.econ-po-box > span { font-size: 0.68rem; color: var(--md-default-fg-color--light); white-space: nowrap; }
+.econ-po-box > strong { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.econ-po-box.is-obs { background: color-mix(in srgb, var(--econ-c1) 10%, transparent); }
+.econ-po-box.is-cf { border-style: dashed; color: var(--md-default-fg-color--light); }
+.econ-po-box.is-cf-shown { border-style: dashed; border-color: var(--econ-c3); }
+.econ-po-box.is-cf-shown > strong { color: var(--econ-c3); }
+.econ-po-box.is-focus { box-shadow: 0 0 0 2px var(--usm-gold); background: color-mix(in srgb, var(--usm-gold) 14%, transparent); }
+.econ-po-box.is-flip { animation: econ-po-flip 0.45s ease-out both; }
+.econ-po-fx { font-size: 0.66rem; font-weight: 700; color: var(--econ-c2); min-height: 0.9rem; opacity: 0; transition: opacity 0.3s ease 0.2s; }
+.econ-po-fx.is-on { opacity: 1; }
+.econ-po-panel {
+  margin: 0.8rem 0 0.4rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  font-size: 0.8rem;
+}
+.md-typeset .econ-po-panel p { margin: 0.4rem 0; }
+.md-typeset .econ-po-eq {
+  font-variant-numeric: tabular-nums;
+  padding: 0.3rem 0.6rem;
+  border-left: 3px solid var(--econ-c2);
+  background: color-mix(in srgb, var(--econ-c2) 8%, transparent);
+  border-radius: 0 6px 6px 0;
+}
+.md-typeset .econ-po-eq.is-big { font-size: 0.95rem; }
+.econ-po-extra { margin-top: 0.4rem; }
+.econ-po-nav { justify-content: space-between; margin-top: 0.7rem; }
+.econ-btn:disabled { opacity: 0.45; cursor: default; transform: none; }
+
+@keyframes econ-po-flip {
+  from { transform: rotateX(90deg); opacity: 0; }
+  to { transform: rotateX(0); opacity: 1; }
+}
+@keyframes econ-po-pop {
+  0% { transform: scale(0.6); }
+  100% { transform: scale(1); }
+}
+@media (max-width: 700px) {
+  .econ-po-steps { grid-template-columns: repeat(2, 1fr); }
+  .econ-po-grid { grid-template-columns: repeat(auto-fill, minmax(7.2rem, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .econ-po-box.is-flip, .econ-po-badge.is-pop { animation: none; }
+  .md-typeset a.econ-ruta-a:hover { transform: none; }
+}
+
+/* Ruta y temas de ayudantía (se ven otro día: sin horario, en azul) */
+.md-typeset p.econ-ruta-sub { margin: 1.2rem 0 0.4rem; font-size: 0.78rem; color: var(--md-default-fg-color--light); }
+.md-typeset ol.econ-ruta.is-ayudantia::before { background: var(--usm-blue); }
+.md-typeset ol.econ-ruta.is-ayudantia .econ-ruta-n { background: var(--usm-blue); }
+.md-typeset h3.econ-tema.is-ayudantia::before { background: var(--usm-blue); color: #fff; }
+.md-typeset h3.econ-tema.is-ayudantia + p.econ-tema-q { background: color-mix(in srgb, var(--usm-blue) 10%, transparent); }

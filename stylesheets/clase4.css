@@ -1,0 +1,144 @@
+/* ==========================================================================
+   clase4.css — Estilos de los simuladores de la Clase 4 (RAG). Prefijo .c4-
+   ========================================================================== */
+
+/* ---------- Colores de los chunks (5 tonos que se repiten) ---------- */
+.c4-k0 { --c4-c: var(--usm-blue); }
+.c4-k1 { --c4-c: var(--usm-gold); }
+.c4-k2 { --c4-c: #2e8b57; }
+.c4-k3 { --c4-c: var(--usm-red); }
+.c4-k4 { --c4-c: #7b4bb7; }
+
+/* ---------- c4-pipeline ---------- */
+.c4-flow .ia-flow-step { flex: 1 1 6.5rem; }
+.c4-stage {
+  min-height: 11rem;
+  margin: 0.6rem 0;
+  padding: 0.8rem 0.9rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--usm-blue) 5%, transparent);
+  border: 1px dashed var(--md-default-fg-color--lightest);
+}
+.md-typeset .c4-stage p { margin: 0.2rem 0 0.5rem; }
+.md-typeset .c4-stage-t { font-size: 0.76rem; font-weight: 700; }
+.md-typeset .c4-stage-sub { font-size: 0.7rem; color: var(--md-default-fg-color--light); }
+.md-typeset .c4-alerta { color: var(--usm-red); font-weight: 600; }
+.c4-bubble {
+  display: inline-block;
+  max-width: 100%;
+  margin: 0.2rem 0 0.5rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 16px 16px 16px 4px;
+  background: color-mix(in srgb, var(--usm-navy) 12%, transparent);
+  font-size: 0.86rem;
+}
+.c4-bubble.is-small { font-size: 0.72rem; padding: 0.3rem 0.7rem; }
+.c4-vec { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; margin: 0.3rem 0; }
+.c4-vcell {
+  width: 1.3rem;
+  height: 1.6rem;
+  border-radius: 4px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+}
+.c4-vmore { font-size: 0.7rem; margin-left: 0.3rem; color: var(--md-default-fg-color--light); }
+.c4-grid {
+  display: grid;
+  grid-template-columns: 4.6rem repeat(4, minmax(0, 1fr));
+  gap: 3px;
+  font-size: 0.66rem;
+}
+.c4-grid-lbl { font-weight: 700; align-self: center; white-space: nowrap; }
+.c4-cell {
+  padding: 0.2rem 0.1rem;
+  border-radius: 4px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.c4-cell.is-top { outline: 2px solid var(--usm-gold); font-weight: 700; }
+.c4-cell.is-empty { visibility: hidden; }
+.c4-mini {
+  margin: 0.35rem 0;
+  padding: 0.35rem 0.6rem;
+  border-left: 4px solid var(--c4-c);
+  border-radius: 0 8px 8px 0;
+  background: color-mix(in srgb, var(--c4-c) 8%, transparent);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+.c4-mini strong { display: block; font-size: 0.68rem; }
+.c4-prompt {
+  max-height: 19rem;
+  overflow: auto;
+  padding: 0.7rem 0.8rem;
+  border-radius: 8px;
+  background: var(--md-code-bg-color);
+  font-family: var(--md-code-font-family);
+  font-size: 0.66rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.c4-prompt > span { display: block; }
+.c4-p-reglas { color: var(--md-default-fg-color--light); }
+.c4-p-ctx { margin: 0.5rem 0; padding-left: 0.55rem; border-left: 3px solid var(--usm-blue); }
+.c4-p-q { padding-left: 0.55rem; border-left: 3px solid var(--usm-gold); font-weight: 700; }
+.c4-answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 0.6rem; }
+.c4-ans {
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  background: var(--md-default-bg-color);
+  font-size: 0.8rem;
+}
+.c4-ans.is-rag { border-top: 4px solid #2e8b57; }
+.c4-ans.is-sin { border-top: 4px solid var(--usm-red); }
+.c4-ans-t { display: block; margin-bottom: 0.2rem; font-size: 0.7rem; font-weight: 700; }
+
+/* ---------- c4-chunks ---------- */
+.md-typeset .c4-doc-t { margin: 0.4rem 0 0; font-size: 0.74rem; font-weight: 700; }
+.c4-strip .c4-docbar { fill: color-mix(in srgb, var(--md-default-fg-color) 12%, transparent); }
+.c4-strip .c4-tick { stroke: var(--md-default-fg-color--light); stroke-width: 1.5; }
+.c4-strip .c4-keyline { stroke: var(--usm-gold); stroke-width: 4; stroke-linecap: round; }
+.c4-strip .c4-keyline.is-rota { stroke: var(--usm-red); stroke-dasharray: 6 4; }
+.c4-strip text.c4-svg-lbl { font-size: 9px; fill: var(--md-default-fg-color--light); }
+.c4-strip g rect { fill: var(--c4-c); fill-opacity: 0.75; stroke: var(--md-default-bg-color); stroke-width: 1; }
+.c4-strip text.c4-svg-num { font-size: 10px; font-weight: 700; fill: #fff; }
+.c4-chunk-list { max-height: 21rem; overflow-y: auto; padding-right: 0.2rem; }
+.c4-chunk {
+  margin: 0.35rem 0;
+  padding: 0.35rem 0.65rem;
+  border-left: 4px solid var(--c4-c);
+  border-radius: 0 8px 8px 0;
+  background: color-mix(in srgb, var(--c4-c) 8%, transparent);
+}
+.c4-chunk-h { display: block; font-size: 0.64rem; font-weight: 700; opacity: 0.75; }
+.md-typeset .c4-chunk p { margin: 0.1rem 0 0; font-size: 0.74rem; line-height: 1.5; }
+.md-typeset mark.c4-solape {
+  padding: 0 0.1rem;
+  border-radius: 3px;
+  color: inherit;
+  background: color-mix(in srgb, var(--md-default-fg-color) 16%, transparent);
+  box-shadow: none;
+}
+.md-typeset .c4-clave { text-decoration: underline 2px var(--usm-gold); text-underline-offset: 3px; }
+.md-typeset .c4-clave-rota { text-decoration: underline 2px dashed var(--usm-red); text-underline-offset: 3px; }
+
+/* ---------- c4-recuperador ---------- */
+.c4-sel { grid-column: 1 / -1; }
+.md-typeset .c4-esperada { margin: 0.2rem 0 0.4rem; font-size: 0.74rem; }
+.c4-rank .ia-bar-row { grid-template-columns: minmax(6.5rem, 8.5rem) 1fr 2.8rem; }
+.c4-rank .ia-bar-row.c4-fuera { opacity: 0.4; }
+.c4-corte {
+  margin: 0.15rem 0;
+  font-size: 0.62rem;
+  text-align: center;
+  color: var(--usm-red);
+  border-top: 1px dashed var(--usm-red);
+  padding-top: 0.1rem;
+}
+.md-typeset blockquote.c4-chunk-text { margin: 0.5rem 0 0; font-size: 0.72rem; }
+
+@media (max-width: 600px) {
+  .c4-grid { grid-template-columns: 3.8rem repeat(4, minmax(0, 1fr)); font-size: 0.6rem; }
+  .c4-vcell { width: 1rem; height: 1.3rem; }
+}
