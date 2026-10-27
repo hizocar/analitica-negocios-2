@@ -17,7 +17,7 @@
     - **🧑‍💻 Notebook de Colab**: ahí usas modelos de verdad (Hugging Face y Gemini) sobre tu caso. Es la base
       del **Sprint 3**.
 
-    **Para la tutoría del jueves 12**, trae: (1) tu prompt de clasificación escrito (rol, categorías, formato, ejemplos),
+    **Para la tutoría del jueves 19 (clínica de LLM)**, trae: (1) tu prompt de clasificación escrito (rol, categorías, formato, ejemplos),
     (2) 3 respuestas del LLM que te hayan sorprendido y (3) tus dudas sobre la API de Gemini.
 
 ## 🎯 Objetivos
@@ -66,7 +66,7 @@ rápido las palabras frecuentes, y lo raro lo construyes con piezas chicas.
 - **Letras sueltas:** las secuencias serían larguísimas y el modelo tendría que aprender a deletrear todo.
 - **Palabras completas:** el vocabulario sería gigante y no sabría qué hacer con una palabra nueva o mal escrita
   («tarjtea», «FinTruts»).
-- **Subpalabras** (lo que se usa en la práctica): un vocabulario fijo de entre 30.000 y 250.000 piezas, aprendido de
+- **Subpalabras** (lo que se usa en la práctica): un vocabulario fijo de unas 30.000 a más de 250.000 piezas, aprendido de
   los textos de entrenamiento, con el que se puede escribir *cualquier* texto.
 
 Esto tiene tres consecuencias directas para el negocio:
@@ -74,12 +74,12 @@ Esto tiene tres consecuencias directas para el negocio:
 1. **Se cobra por token.** Los proveedores cobran por millón de tokens de **entrada** (tu prompt + el reclamo) y,
    más caro, por millón de tokens de **salida** (lo que el modelo escribe).
 2. **El idioma importa.** El vocabulario se aprende sobre todo con texto en inglés, así que el español suele
-   necesitar más piezas para decir lo mismo. En tokenizadores antiguos centrados en inglés la diferencia puede ser de
-   un 20 a 50 %; en los modernos y multilingües se achica bastante, pero rara vez desaparece. En el notebook lo mides
-   con tokenizadores reales.
+   necesitar más piezas para decir lo mismo. En tokenizadores antiguos centrados en inglés (como el de GPT-2) la
+   diferencia suele ser de 30 a 60 % o más; en los modernos y multilingües, para el español casi desaparece (sigue
+   siendo grande en idiomas con poco texto en internet). En el notebook lo mides con tokenizadores reales.
 3. **Hay un límite: la ventana de contexto.** Es el máximo de tokens que el modelo puede «tener a la vista» en una
    llamada (instrucciones + datos + respuesta). Hoy va desde unos miles hasta más de un millón de tokens según el
-   modelo. Todo lo que no cabe, el modelo simplemente no lo ve.
+   modelo. Si te pasas, la API rechaza la llamada o hay que recortar el texto: lo que no cabe, el modelo no lo ve.
 
 <div class="ia-widget" data-widget="c3-tokens"></div>
 
@@ -90,8 +90,8 @@ $$
 $$
 
 donde \(p\) es el precio en US$ por millón de tokens. Una regla gruesa para estimar sin tokenizador: en inglés hay
-~4 caracteres por token y en español ~3 a 3,5. Si quieres jugar con un tokenizador real, prueba el
-[tokenizador de OpenAI](https://platform.openai.com/tokenizer) con un reclamo en español y su traducción.
+~4 caracteres por token y en español entre 3 y 4, según el tokenizador (abajo usamos 3,5, un supuesto
+conservador). Si quieres jugar con un tokenizador real, prueba el [tokenizador de OpenAI](https://platform.openai.com/tokenizer) con un reclamo en español y su traducción.
 
 <div class="py-run" markdown>
 
@@ -142,9 +142,9 @@ a 1200: ¿cuánto sube el costo mensual? ¿Y si además el modelo responde con u
 </div>
 
 !!! tip "💼 En el negocio"
-    Para clasificar reclamos, el costo en tokens suele ser **bajo** (decenas de dólares al mes para 100.000 casos con un
-    modelo rápido) y lo que más pesa es **lo que repites en cada llamada**: instrucciones largas, muchos ejemplos o
-    pedirle al modelo que «explique su razonamiento». Antes de presentar un piloto, haz esta cuenta con los precios
+    Para clasificar reclamos, el costo en tokens suele ser **bajo** (del orden de 10 a 50 dólares al mes para 100.000
+    casos con un modelo rápido) y lo que más pesa es **lo que repites en cada llamada**: instrucciones largas, muchos
+    ejemplos o pedirle al modelo que «explique su razonamiento». Antes de presentar un piloto, haz esta cuenta con los precios
     vigentes y con tu prompt real. El costo que no aparece en la factura del proveedor (personas revisando errores,
     integración, gobierno de datos) suele ser mayor.
 
@@ -157,7 +157,7 @@ a 1200: ¿cuánto sube el costo mensual? ¿Y si además el modelo responde con u
 <button class="econ-quiz-opt" data-correct>Porque el vocabulario de tokens se aprendió con mucho más texto en inglés, así que las palabras en español se parten en más piezas.</button>
 <button class="econ-quiz-opt" data-why="No se cobra por letra sino por token. El largo influye, pero la causa principal es qué tan bien cubre el vocabulario al idioma.">Porque los proveedores cobran por letra y el español usa más letras.</button>
 </div>
-<p class="econ-quiz-fb">✅ El tokenizador se entrena con textos donde domina el inglés: sus palabras frecuentes quedan como una sola pieza y las del español se arman con varias. Los tokenizadores multilingües modernos reducen, pero no eliminan, esa brecha.</p>
+<p class="econ-quiz-fb">✅ El tokenizador se entrena con textos donde domina el inglés: sus palabras frecuentes quedan como una sola pieza y las del español se arman con varias. Los tokenizadores multilingües modernos achican mucho esa brecha: en el notebook verás que con el de GPT-4o casi desaparece, mientras que con el de GPT-2 es grande.</p>
 </div>
 <div class="econ-quiz">
 <p class="econ-quiz-q">Tu prompt tiene 400 tokens de entrada y el modelo responde 20 tokens. Con precios de US$ 0,30 (entrada) y US$ 2,50 (salida) por millón de tokens, ¿cuánto cuesta procesar 100.000 reclamos?</p>
@@ -196,8 +196,8 @@ $$
 
 Para escribir una respuesta completa repite un ciclo muy simple: **predecir → elegir un token → pegarlo al final →
 volver a predecir**. Una respuesta de 50 tokens son 50 vueltas de este ciclo. Por eso los modelos «escriben» de a
-poco en la pantalla y por eso la salida cuesta más que la entrada: cada token de salida es una pasada completa por
-el modelo.
+poco en la pantalla y por eso la salida cuesta más que la entrada: los tokens de entrada se procesan todos juntos,
+en una sola pasada, mientras que cada token de salida exige una pasada completa por el modelo.
 
 El modelo de lenguaje más simple que existe es el de **bigramas**: mira solo la palabra anterior y cuenta, en un
 montón de textos, qué palabra suele venir después. Es un buen punto de partida para entender la idea, y para ver
@@ -336,7 +336,7 @@ reporte mensual, ¿qué temperatura usarías y por qué?
 <p class="econ-quiz-q">¿Cuál es la descripción más precisa de lo que hace un LLM al generar una respuesta?</p>
 <div class="econ-quiz-opts">
 <button class="econ-quiz-opt" data-why="Los LLM no consultan una base de datos de respuestas: generan texto nuevo token a token. Por eso pueden inventar.">Busca la respuesta correcta en una base de datos gigante de textos.</button>
-<button class="econ-quiz-opt" data-why="Primero no planifica la respuesta completa y luego la escribe: genera de a un token, y cada token nuevo pasa a ser parte del contexto del siguiente.">Decide la respuesta completa y luego la escribe de una sola vez.</button>
+<button class="econ-quiz-opt" data-why="No decide la respuesta completa de antemano: genera de a un token, y cada token nuevo pasa a ser parte del contexto del siguiente.">Decide la respuesta completa y luego la escribe de una sola vez.</button>
 <button class="econ-quiz-opt" data-correct>Calcula la probabilidad de cada posible siguiente token, elige uno, lo agrega al texto y repite.</button>
 </div>
 <p class="econ-quiz-fb">✅ Es un ciclo de «predecir → elegir → agregar». Todo lo que sabe hacer (responder, resumir, clasificar) sale de ese mecanismo, entrenado con cantidades enormes de texto.</p>
@@ -418,8 +418,9 @@ W_q = np.array([[0, 3, 0, 0],    # un objeto pregunta: ¿qué acción me afecta?
                 [0, 3, 0, 0]])   # un conector pregunta: ¿qué acciones conecto?
 W_k = np.eye(4)                  # la etiqueta muestra lo que la palabra es
 
-Q, K, V = E @ W_q, E @ W_k, E
-puntajes = Q @ K.T / np.sqrt(K.shape[1])            # ¿cuánto calza cada pregunta con cada etiqueta?
+Q, K, V = E @ W_q, E @ W_k, E                      # (en un modelo real, V también pasa por una matriz W_v)
+d_k = K.shape[1]                                     # dimensión de las claves (aquí 4)
+puntajes = Q @ K.T / np.sqrt(d_k)                    # ¿cuánto calza cada pregunta con cada etiqueta?
 A = np.exp(puntajes) / np.exp(puntajes).sum(axis=1, keepdims=True)   # softmax por fila
 
 print("Atención de «la₂»:", " · ".join(f"{w} {a:.0%}" for w, a in zip(palabras, A[4])))
@@ -439,7 +440,8 @@ plt.tight_layout()
 ```
 
 **🎯 Reto:** cambia el 4 de la fila del pronombre en `W_q` por un 1. ¿Qué pasa con la atención de «la₂» hacia
-«tarjeta»? Ahora intenta que «porque» mire más a «clonaron» que a «Bloqueé».
+«tarjeta»? Luego intenta que «porque» mire más a «clonaron» que a «Bloqueé» cambiando solo `W_q`. ¿Por qué es
+imposible? (Pista: compara sus filas en `E`. Lo que falta es información de **posición**, que verás más abajo).
 {: .py-run-reto }
 
 </div>
@@ -448,11 +450,12 @@ plt.tight_layout()
     En notación matricial, una capa de atención calcula:
 
     $$
-    \text{Atención}(Q, K, V) = \text{softmax}\!\left(\frac{Q K^\top}{\sqrt{d}}\right) V
+    \text{Atención}(Q, K, V) = \text{softmax}\!\left(\frac{Q K^\top}{\sqrt{d_k}}\right) V
     $$
 
-    \(Q K^\top\) son los productos punto entre preguntas y etiquetas (la similitud que viste en la Clase 2), la
-    división por \(\sqrt{d}\) evita números gigantes, el softmax convierte cada fila en pesos que suman 1, y la
+    \(Q K^\top\) son los productos punto entre preguntas y etiquetas (la similitud que viste en la Clase 2). La
+    división por \(\sqrt{d_k}\) (\(d_k\) es el largo de cada vector clave) evita puntajes gigantes que harían que el
+    softmax pusiera casi todo el peso en una sola palabra. El softmax convierte cada fila en pesos que suman 1, y la
     multiplicación por \(V\) mezcla la información. Un modelo real usa varias «cabezas» de atención en paralelo (cada
     una se especializa en algo: sintaxis, referencias, temas…) y apila decenas de capas.
 
@@ -565,9 +568,9 @@ A eso se le llama **alucinación**. Tres hechos que conviene tener presentes:
 
 !!! tip "💼 En el negocio"
     Para un banco, la pregunta no es solo «¿qué modelo es mejor?», sino «¿qué datos puedo enviar y a quién?». En Chile,
-    la nueva **Ley 21.719 de protección de datos personales**, que entra en vigencia en diciembre de 2026, exige
-    justificar para qué se tratan los datos y minimizar lo que se comparte. Un patrón muy común es: **anonimizar** y
-    luego usar un modelo por API para tareas no críticas, o usar un **modelo abierto en servidores propios** cuando los
+    la nueva **Ley 21.719 de protección de datos personales**, que entra en vigencia el 1 de diciembre de 2026, exige
+    justificar para qué se tratan los datos y usar solo los necesarios (lo verás con más detalle en la Clase 5). Un
+    patrón muy común es: **anonimizar** y luego usar un modelo por API para tareas no críticas, o usar un **modelo abierto en servidores propios** cuando los
     datos no pueden salir de la empresa. En tu informe del Sprint 3, la privacidad es un criterio de decisión tan
     importante como el F1.
 
@@ -685,7 +688,7 @@ print(p1)
 tok = lambda s: round(len(s) / 3.5)        # aproximación del Tema 1
 for nombre, p in [("zero-shot", p0), ("few-shot", p1)]:
     costo_100k = tok(p) * 0.30 / 1e6 * 100_000
-    print(f"\n{nombre:<9}: ~{tok(p)} tokens de entrada → US$ {costo_100k:.2f} por 100.000 reclamos")
+    print(f"\n{nombre:<9}: ~{tok(p)} tokens de entrada → US$ {costo_100k:.2f} por 100.000 reclamos (solo la entrada)")
 ```
 
 **🎯 Reto:** agrega una **definición** de una línea a cada categoría (por ejemplo, «Fraude: cargos o transferencias que
@@ -798,7 +801,7 @@ descartarse: ¿qué le dirías al modelo en el reintento?
 <button class="econ-quiz-opt" data-why="Ocultar el costo impide que la gerencia decida bien. Un aumento de 4 veces puede ser irrelevante o decisivo según el volumen.">Solo como una mejora de 4 puntos de F1, que es lo que importa.</button>
 <button class="econ-quiz-opt" data-why="Descartar sin hacer la cuenta tampoco es correcto: si el costo total es bajo, la mejora puede valer la pena.">Como un fracaso, porque el costo subió más que el F1.</button>
 </div>
-<p class="econ-quiz-fb">✅ Cuatro puntos de F1 en 100.000 reclamos son ~4.000 reclamos mejor clasificados al mes. Si eso cuesta US$ 30 más, probablemente vale la pena; si cuesta US$ 3.000, hay que pensarlo. Haz la cuenta.</p>
+<p class="econ-quiz-fb">✅ Si esos cuatro puntos se traducen en ~4 % más de aciertos, en 100.000 reclamos son ~4.000 reclamos mejor clasificados al mes. Si eso cuesta US$ 30 más, probablemente vale la pena; si cuesta US$ 3.000, hay que pensarlo. Haz la cuenta.</p>
 </div>
 </div>
 
@@ -902,7 +905,7 @@ que antes casi no importaban:
 | **% de respuestas inválidas** | Un JSON roto o una categoría inventada es un error del sistema |
 | **Costo por 1.000 casos** | \(1.000 \times (\text{tokens}_{in} \cdot p_{in} + \text{tokens}_{out} \cdot p_{out}) / 10^6\) |
 | **Latencia** (mediana y percentil 95) | Un clasificador local tarda milisegundos; una API, cientos de milisegundos o segundos |
-| **Datos etiquetados necesarios** | El LLM zero-shot necesita 0; el TF-IDF, miles |
+| **Datos etiquetados necesarios** | Para entrenar, el LLM zero-shot necesita 0 y el TF-IDF, miles (para evaluar, ambos necesitan el mismo test etiquetado) |
 
 <div class="py-run" markdown>
 
@@ -1023,8 +1026,8 @@ Toma ~60–90 min (la mayor parte es esperar a la API).</p>
 </div>
 
 Para la parte de Gemini necesitas una clave gratuita de la API. Sigue la [guía de la API de Gemini](../guias/gemini.md)
-y guárdala en los **Secretos** de Colab con el nombre `GEMINI_API_KEY`. Nunca pegues la clave dentro del código ni
-la subas al buzón.
+y guárdala en los **Secretos** de Colab con el nombre `GEMINI_API_KEY`. Nunca pegues la clave dentro del código:
+el buzón **rechaza** los notebooks que contienen una clave de API.
 
 ## 🔗 Conexión con tu proyecto (Sprint 3) {#sprint-3}
 
@@ -1036,8 +1039,8 @@ caso. Checklist de lo que debes entregar:
 - [ ] **Clasificación zero-shot** con un LLM sobre **≥100 casos del mismo set de test** de los Sprints 1 y 2, con
       salida estructurada (JSON con esquema).
 - [ ] **Clasificación few-shot** con ejemplos tomados **solo del set de entrenamiento**, y comparación con zero-shot.
-- [ ] **Extracción estructurada** en JSON (por ejemplo: categoría, urgencia, producto, monto, si requiere contacto
-      urgente y un resumen breve) sobre al menos 20 casos, con una revisión de qué tan bien extrae.
+- [ ] **Extracción estructurada** en JSON de **al menos 4 campos** (por ejemplo: categoría, urgencia, producto, monto,
+      si requiere contacto urgente y un resumen breve) sobre al menos 20 casos, con una revisión de qué tan bien extrae.
 - [ ] **Tabla comparativa** contra el Sprint 2 (y el baseline del Sprint 1): F1 macro, % de respuestas inválidas,
       costo por 1.000 casos, latencia mediana y p95, datos etiquetados necesarios.
 - [ ] **Análisis de errores**: matriz de confusión y al menos 5 errores comentados (¿error del modelo, caso ambiguo

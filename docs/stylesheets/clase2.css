@@ -178,7 +178,7 @@
 .c2-col.is-emb .ia-bar-fill { background: var(--usm-gold); }
 .md-typeset .c2-col-h { margin: 0.35rem 0 0.2rem; font-weight: 700; font-size: 0.8rem; }
 .c2-res.is-off .c2-res-t { opacity: 0.7; }
-.c2-res.is-off .c2-res-n { background: var(--md-default-fg-color--lighter); }
+.c2-res.is-off .c2-res-n { background: var(--md-default-fg-color--light); color: var(--md-default-bg-color); }
 
 @media (max-width: 600px) {
   .c2-nn-meta { grid-template-columns: 1fr 3rem; }

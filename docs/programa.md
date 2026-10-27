@@ -53,7 +53,7 @@ Al finalizar el curso, el estudiante será capaz de:
 
 El curso es **intensivo y en modo tutoría**, con tres piezas que se repiten cada semana:
 
-- **Cápsula de autoestudio (~2,5 h).** Cada clase es una página de este sitio con explicaciones,
+- **Cápsula de autoestudio (2,5 a 3 h).** Cada clase es una página de este sitio con explicaciones,
   simuladores interactivos, código Python ejecutable en el navegador, preguntas de autoevaluación y un
   notebook de Google Colab que aplica los contenidos a los datos del proyecto. Se estudia **antes de la
   tutoría del jueves siguiente** y mientras se avanza en el sprint.

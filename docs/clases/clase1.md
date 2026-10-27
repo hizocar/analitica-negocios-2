@@ -19,8 +19,8 @@
       una red neuronal en **Keras**. Es la base de tu **Sprint 1**.
 
     **Para la tutoría del jueves 29 (kickoff):** llega con tu equipo armado (2–3 personas) o con la intención de
-    armarlo ahí, y con una idea de qué caso prefieren: **FinTrust** (reclamos de un banco) o **MercaSur** (reseñas
-    de un retail). Si alcanzas a leer el Tema 5 antes, mejor: es lo primero que harás con los datos.
+    armarlo ahí, y con una idea de qué caso prefieren: **FinTrust** (reclamos de un banco), **MercaSur** (reseñas
+    de un retail) o un **caso propio**. Si alcanzas a leer el Tema 5 antes, mejor: es lo primero que harás con los datos.
 
 ## 🎯 Objetivos
 
@@ -159,10 +159,13 @@ marcar un cobro duplicado como urgente?
 Una neurona sola traza una **frontera recta**: a un lado "sí", al otro "no". El problema es que muchos patrones
 de negocio **no se separan con una recta**:
 
-- Clientes que se van de MercaSur: los que compran **muy poco** (no enganchan) *y* los que compran **muchísimo**
-  (revendedores que encontraron un mejor precio). Los del medio se quedan. Eso es un **anillo**, no una recta.
-- Reclamos urgentes en FinTrust: "monto alto **y** cliente nuevo" o "monto bajo **y** muchas palabras de alarma".
-  Es un "o exclusivo" (**XOR**): ninguna recta lo separa.
+- Clientes que se van de MercaSur: si los ubicas según **cada cuánto compran** y **cuánto gastan**, los que se van
+  están en los **extremos** (los que casi no compran y no enganchan, y los revendedores que compran muchísimo y se
+  cambian apenas encuentran mejor precio). Los cercanos al promedio se quedan. Eso es un **anillo** alrededor del
+  centro, no una recta.
+- Compras sospechosas en FinTrust: una compra **en el extranjero** con el cliente **en Chile**, o una compra **en
+  Chile** con el cliente **de viaje**. Lo sospechoso es que *no coincidan*: es un "o exclusivo" (**XOR**) y ninguna
+  recta lo separa.
 
 La solución es poner **capas ocultas** entre la entrada y la salida. Cada neurona oculta traza **su propia recta**;
 la neurona de salida **combina** esas rectas y puede formar curvas, bandas o regiones cerradas. Eso es una
@@ -173,7 +176,7 @@ $$ \text{entrada } x \;\longrightarrow\; \underbrace{h = f(W_1 x + b_1)}_{\text{
 <div class="ia-widget" data-widget="c1-frontera"></div>
 
 !!! info "La activación es lo que hace la magia"
-    Si las capas ocultas **no** tuvieran activación (o fuera lineal), apilar capas no serviría de nada: una
+    Si las capas ocultas **no** tuvieran activación (o esta fuera lineal), apilar capas no serviría de nada: una
     combinación lineal de combinaciones lineales sigue siendo lineal, y la red entera volvería a ser una recta.
     La no linealidad (ReLU, tanh) es lo que permite "doblar" la frontera.
 
@@ -216,8 +219,8 @@ for ax, (nombre, modelo) in zip(axes, modelos.items()):
 plt.tight_layout()
 ```
 
-**🎯 Reto:** cambia `hidden_layer_sizes=(8,)` por `(1,)` y luego por `(2,)`. ¿Con cuántas neuronas ocultas la red
-logra "encerrar" el centro? ¿Por qué con una sola neurona oculta se parece tanto a la logística?
+**🎯 Reto:** cambia `hidden_layer_sizes=(8,)` por `(1,)`, luego por `(2,)` y por `(3,)`. ¿Con cuántas neuronas ocultas
+la red logra "encerrar" el centro? ¿Por qué con una sola neurona oculta se parece tanto a la logística?
 {: .py-run-reto }
 
 </div>
@@ -340,7 +343,7 @@ plt.tight_layout()
 ```
 
 **🎯 Reto:** prueba con `lr = 0.5` y `lr = 8`. Busca la tasa más grande que todavía baja de forma suave. ¿Qué pasa
-con la curva de `30`, y por qué se parece a la bola del simulador cuando la tasa es mayor que 2?
+con la curva de `30`, y por qué se parece a la bola del simulador cuando la tasa es demasiado grande?
 {: .py-run-reto }
 
 </div>
@@ -358,9 +361,9 @@ con la curva de `30`, y por qué se parece a la bola del simulador cuando la tas
 <div class="econ-quiz-opts">
 <button class="econ-quiz-opt" data-why="−log(0,40) ≈ 0,92, mientras que −log(0,02) ≈ 3,9: A se equivoca menos.">El modelo A, porque 0,40 está más lejos de 1 que de 0.</button>
 <button class="econ-quiz-opt" data-correct>El modelo B: casi descartó la respuesta correcta, y eso se castiga fuerte.</button>
-<button class="econ-quiz-opt" data-why="La entropía cruzada solo mira la probabilidad de la clase correcta, y ahí los modelos son muy distintos.">Igual, porque ninguno de los dos acertó (ambos &lt; 0,5).</button>
+<button class="econ-quiz-opt" data-why="La entropía cruzada solo mira la probabilidad de la clase correcta, y ahí los modelos son muy distintos. Además, con 6 clases 0,40 puede ser la probabilidad más alta: el modelo A podría incluso haber acertado.">Igual, porque ninguno de los dos acertó (ambos &lt; 0,5).</button>
 </div>
-<p class="econ-quiz-fb">✅ −log(0,02) ≈ 3,9 frente a −log(0,40) ≈ 0,92. La pérdida castiga mucho más la seguridad equivocada que la duda, aunque en exactitud los dos “fallan” igual.</p>
+<p class="econ-quiz-fb">✅ −log(0,02) ≈ 3,9 frente a −log(0,40) ≈ 0,92. La pérdida castiga mucho más la seguridad equivocada que la duda. Ojo: con 6 clases, 0,40 puede ser la probabilidad más alta, así que el modelo A quizás hasta acertó la categoría.</p>
 </div>
 <div class="econ-quiz">
 <p class="econ-quiz-q">Durante el entrenamiento, la pérdida salta así: 0,69 → 0,52 → 2,10 → 0,61 → 3,40… ¿Qué cambias primero?</p>
@@ -442,10 +445,11 @@ mejor = int(np.argmin(perdida_val))
 print(f"Mejor época según validación: {mejor + 1}  (pérdida val = {perdida_val[mejor]:.3f})")
 print(f"Época 250: pérdida train = {perdida_tr[-1]:.3f}, pérdida val = {perdida_val[-1]:.3f}")
 
+epocas = range(1, 251)
 plt.figure(figsize=(7, 3.5))
-plt.plot(perdida_tr, label="entrenamiento", color="#e5b300")
-plt.plot(perdida_val, label="validación", color="#005f96")
-plt.axvline(mejor, ls="--", color="#b30828", label="aquí convenía parar")
+plt.plot(epocas, perdida_tr, label="entrenamiento", color="#e5b300")
+plt.plot(epocas, perdida_val, label="validación", color="#005f96")
+plt.axvline(mejor + 1, ls="--", color="#b30828", label="aquí convenía parar")
 plt.xlabel("época"); plt.ylabel("entropía cruzada"); plt.ylim(0, 1.2); plt.legend()
 plt.tight_layout()
 ```
@@ -496,7 +500,8 @@ las curvas y con la mejor época?
 Antes de cualquier modelo, **mira los datos**. Los casos FinTrust y MercaSur vienen sucios a propósito, como los
 datos reales: reclamos duplicados, textos vacíos o basura ("reclamo", "ok"), categorías escritas de cinco formas
 distintas ("Fraude", "FRAUDE", "fraude ", …), montos negativos o días de resolución imposibles. Si entrenas con
-"Fraude" y "FRAUDE" como clases distintas, el modelo aprende 12 categorías en vez de 6 y tus métricas no significan nada.
+"Fraude" y "FRAUDE" como clases distintas, el modelo cree que hay 20 categorías en vez de 6 (lo verás en la auditoría)
+y tus métricas no significan nada.
 
 <div class="py-run" markdown>
 
@@ -578,7 +583,7 @@ df["categoria"].value_counts()
 
 La idea más simple para convertir texto en números es la **bolsa de palabras**: hacemos una columna por cada palabra
 del vocabulario y contamos cuántas veces aparece en cada reclamo. Se pierde el orden ("me cobraron y no pagué" y "no
-me cobraron y pagué" quedan casi iguales), pero funciona sorprendentemente bien para clasificar temas.
+me cobraron y pagué" quedan idénticos), pero funciona sorprendentemente bien para clasificar temas.
 
 <div class="c1-bow" markdown>
 
@@ -600,6 +605,10 @@ Problema: palabras como "la", "no" o "me" aparecen en casi todos los reclamos y 
   en pocos reclamos y pesa mucho; "la" aparece en casi todos y pesa poco.
 
 $$ \text{tf-idf}(\text{palabra}, \text{reclamo}) = \text{tf} \times \log\frac{N}{\text{n.º de reclamos con esa palabra}} $$
+
+donde \( N \) es el total de reclamos. (scikit-learn usa una versión suavizada de esta fórmula y además normaliza
+cada fila para que reclamos largos y cortos sean comparables; por eso sus números no calzan exactos con la cuenta a
+mano, pero la idea es la misma.)
 
 El resultado: cada reclamo se convierte en un vector (una fila) con miles de columnas, casi todas en cero, donde
 las palabras **frecuentes en ese reclamo pero raras en general** tienen los valores más altos. Esa matriz es la
@@ -837,6 +846,8 @@ for umbral in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]:
                   "costo total ($)": fn * COSTO_FN + fp * COSTO_FP})
 tabla = pd.DataFrame(filas)
 print("Umbral de menor costo:", tabla.loc[tabla["costo total ($)"].idxmin(), "umbral"])
+print("Reclamos con probabilidad de fraude 'dudosa' (entre 0,2 y 0,6):",
+      int(((p_fraude > 0.2) & (p_fraude < 0.6)).sum()), "de", len(p_fraude))
 
 # Los "fraudes" que el modelo no ve ni con umbral 0,1: ¿son fraude de verdad?
 print("\nReclamos etiquetados como Fraude con probabilidad < 0,1:")
@@ -845,12 +856,18 @@ for t in X_te[es_fraude & (p_fraude < 0.1)]:
 tabla
 ```
 
-Mira los "fraudes" que el modelo no detecta ni con umbral 0,1: ¿de verdad son fraudes? Son **ruido de etiqueta**
-(reclamos mal etiquetados por una persona). Ningún umbral ni ninguna red los arregla: el techo de tu F1 lo pone
-la calidad de las etiquetas.
+¿Te sorprende que el umbral de menor costo quede en 0,5 y no más abajo? En esta muestra el modelo separa el fraude
+tan bien que casi ningún reclamo cae en la zona dudosa: los fraudes reales tienen probabilidad alta, así que bajar el
+umbral solo suma falsas alarmas. En el simulador, en cambio, los puntajes de fraudes y no fraudes se traslapan, y ahí
+mover el umbral sí paga.
 
-**🎯 Reto:** ¿qué pasa con el umbral óptimo si la falsa alarma cuesta $150.000 (por ejemplo, porque bloquea la
-tarjeta del cliente)? Cambia `COSTO_FP` y explícalo en una frase como se lo dirías a la gerenta de riesgo.
+¿Y los "fraudes" que el modelo no detecta ni con umbral 0,1? Léelos: ¿de verdad son fraudes? Son **ruido de
+etiqueta** (reclamos mal etiquetados por una persona). Ningún umbral ni ninguna red los arregla: el techo de tu F1 lo
+pone la calidad de las etiquetas.
+
+**🎯 Reto:** cambia `COSTO_FP` a `150_000` (por ejemplo, porque la falsa alarma bloquea la tarjeta del cliente).
+¿Se mueve el umbral óptimo? Haz lo mismo en el simulador (falsa alarma = $150 mil) y explica en una frase, como se lo
+dirías a la gerenta de riesgo, por qué en un caso se mueve y en el otro no.
 {: .py-run-reto }
 
 </div>
@@ -907,18 +924,24 @@ Toma ~45 minutos leyéndolo con calma (el entrenamiento corre en menos de 2 minu
 Antes, el **domingo 1 de noviembre** se inscribe el equipo y el caso por [buzón](../proyecto/buzon.md) (sin nota). Para el Sprint 1, tu
 notebook debe incluir:
 
-- [ ] **Pregunta de negocio** en una o dos frases: qué decisión apoya el clasificador y quién lo usaría
+- [ ] **Pregunta de negocio** en 2–3 líneas: qué decisión apoya el clasificador y quién lo usaría
       (p. ej. "derivar automáticamente cada reclamo al equipo correcto en menos de un minuto").
 - [ ] **Auditoría de calidad** con números: duplicados, nulos, textos vacíos o basura, categorías mal escritas y
-      valores imposibles (montos negativos, días o ratings fuera de rango). Una tabla "problema → cuántos → qué hicimos".
+      valores imposibles (montos negativos, días o ratings fuera de rango). Una tabla resumen "problema → decisión →
+      filas afectadas".
 - [ ] **Función de limpieza** reutilizable y el `value_counts()` de las clases **antes y después**.
 - [ ] **EDA de texto:** distribución de clases, largo de los textos y palabras más frecuentes por clase, con una
       conclusión breve de cada gráfico.
 - [ ] **Baseline:** TF-IDF + regresión logística, con el vectorizador ajustado solo en entrenamiento.
 - [ ] **Red neuronal MLP en Keras** sobre TF-IDF, con dropout, early stopping y sus **curvas de entrenamiento**
       (pérdida en entrenamiento y validación).
-- [ ] **Comparación en test:** F1 macro de ambos modelos, `classification_report` y matriz de confusión del mejor.
+- [ ] **Comparación en test:** F1 macro, `classification_report` y matriz de confusión de **ambos** modelos.
 - [ ] **Lectura de negocio** (3–5 líneas): qué error es el más caro en tu caso y qué modelo recomiendas por ahora.
+
+**Cómo se entrega:** descarga el notebook (*Archivo → Descargar → Descargar .ipynb*), nómbralo
+`S1_FinTrust_Apellido1_Apellido2_Apellido3.ipynb` (o `S1_MercaSur_…`) y súbelo al
+[buzón del Sprint 1](../proyecto/buzon.md). Basta con que un integrante lo entregue. El buzón acepta dos días más
+con −1,0 punto por día de atraso. Detalles y rúbrica en [Sprints y buzón](../proyecto/sprints.md).
 
 </div>
 

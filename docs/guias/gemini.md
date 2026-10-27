@@ -66,18 +66,21 @@ La capa gratuita limita las **solicitudes por minuto y por día** (los valores a
 proyecto:
 
 - Trabaja con **muestras** (100–200 casos), no con los 6.000 textos.
-- Pon una pausa entre llamadas (`time.sleep(4)`) y reintenta si aparece el error `429`.
+- Pon una pausa entre llamadas (`time.sleep(4)`) y reintenta si aparece el error `429` (superaste el
+  límite) o `503` (el modelo está saturado; pasa en horas de alta demanda y se resuelve esperando).
 - **Guarda los resultados** en un CSV apenas los obtengas, para no repetir llamadas si se reinicia la sesión.
 
 ```python
 import time
+from google.genai import errors
 
 def llamar_con_reintentos(prompt, intentos=4, espera=10):
     for i in range(intentos):
         try:
             return client.models.generate_content(model=MODELO, contents=prompt)
-        except Exception as e:
-            if "429" in str(e) and i < intentos - 1:
+        except errors.APIError as e:
+            # 429: límite de la capa gratuita · 503: modelo saturado → vale la pena esperar y reintentar
+            if e.code in (429, 503) and i < intentos - 1:
                 time.sleep(espera * (i + 1))   # espera cada vez más
             else:
                 raise

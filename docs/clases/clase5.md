@@ -9,7 +9,7 @@
 
 !!! example "Cómo estudiar esta cápsula"
     Esta es la última cápsula y es distinta a las anteriores: casi no hay modelos nuevos. Aquí aprendes a
-    **convertir tus cuatro sprints en una decisión** que un gerente pueda tomar. Son **6 temas**; cada uno
+    **convertir tus tres sprints y tu asistente RAG en una decisión** que un gerente pueda tomar. Son **6 temas**; cada uno
     parte con una **pregunta guía**, sigue con la explicación y un ejemplo con FinTrust o MercaSur, y termina con
     preguntas de práctica (cada alternativa incorrecta te explica por qué no lo es).
 
@@ -22,7 +22,7 @@
 
     **Para la tutoría del jueves 26 trae:** (1) tu tabla comparativa de enfoques, aunque tenga valores
     preliminares; (2) tu recomendación escrita en **una sola frase**; y (3) un borrador de 8–10 láminas.
-    En la tutoría revisamos el Sprint 3 y **ensayamos el pitch**: cada equipo presenta sus primeros 2 minutos.
+    En la tutoría revisamos el Sprint 3 y **ensayamos el pitch**: cada equipo presenta su lámina de conclusión en 1 minuto.
 
 ## 🎯 Objetivos
 
@@ -57,7 +57,7 @@ Haz clic en un tema para ir directo a él.
 
 Cuando una empresa contrata un proveedor no compra solo **calidad**: mira el **precio**, el **plazo de entrega**,
 cuánto cuesta **mantener** la relación, si puede confiarle **información sensible** y si le puede **explicar** lo que
-hace. Con los modelos pasa lo mismo. Durante el semestre construiste cinco «proveedores» para el mismo problema:
+hace. Con los modelos pasa lo mismo. Durante el curso construiste cinco «proveedores» para el mismo problema:
 
 | Enfoque (sprint) | Analogía | Qué hace bien | Su talón de Aquiles |
 |---|---|---|---|
@@ -76,7 +76,7 @@ caso como FinTrust: tu tabla final debe usar **los valores que tú mediste** en 
 | Costo por 1.000 casos | ~0 (CPU propia) | ~0 | centavos de dólar (CPU/GPU) | ~US$ 0,1–1 (API) | ~US$ 1–5 (prompts largos) |
 | Latencia por caso | < 10 ms | < 10 ms | 20–100 ms | 0,5–3 s | 1–5 s |
 | Datos etiquetados necesarios | miles | miles | cientos | ninguno (o 5–10 ejemplos) | ninguno, pero sí documentos curados |
-| Mantención | baja: reentrenar | media | media | media: prompts y versiones del modelo | alta: documentos, índice, prompts |
+| Mantención | baja: reentrenar | media | media | baja-media: prompts y versiones del modelo | alta: documentos, índice, prompts |
 | Privacidad | todo queda en casa | todo queda en casa | todo queda en casa | el texto sale a un tercero | el texto y las políticas salen a un tercero |
 | Explicabilidad | alta (pesos por palabra) | baja | baja | media (puede justificar, no siempre fiel) | media-alta (cita la fuente) |
 
@@ -144,7 +144,8 @@ print("\n% de veces que gana cada enfoque al perturbar los pesos:")
 ```
 
 **🎯 Reto:** sube `pocos_datos` a 5 y baja `privacidad` a 1 (una startup sin datos etiquetados). ¿Quién gana ahora y
-qué tan robusta es esa victoria?
+qué tan robusta es esa victoria? Y si de verdad no tienes etiquetas, ¿puede ganar un modelo que no puedes entrenar?
+(Una restricción dura se aplica **antes** de la matriz, descartando enfoques, no como un peso más.)
 {: .py-run-reto }
 
 </div>
@@ -205,12 +206,13 @@ $$
 \text{Ahorro bruto} &= V \cdot a \cdot \tfrac{m}{60} \cdot c_h \\
 \text{Costo de errores} &= V \cdot a \cdot e \cdot c_e \qquad (e = \text{tasa de error en los casos automatizados},\ c_e = \text{costo por error})\\
 \text{Beneficio neto mensual} &= \text{Ahorro bruto} - \text{Costo de errores} - \text{Costo API} - \text{Mantención} \\
-\text{Payback (meses)} &= \frac{\text{Inversión inicial}}{\text{Beneficio neto mensual}}
+\text{Payback (meses)} &= \frac{\text{Inversión inicial}}{\text{Beneficio neto mensual}} \qquad (\text{solo si el beneficio neto es positivo})\\
+\text{ROI a 12 meses} &= \frac{12 \cdot \text{Beneficio neto mensual} - \text{Inversión inicial}}{\text{Inversión inicial}}
 \end{aligned}
 $$
 
 El **punto de equilibrio** responde la pregunta incómoda: ¿hasta qué tasa de error sigue conviniendo? Es la \( e \)
-que deja el beneficio neto en cero.
+que deja el beneficio neto en cero; despejando, \( e^{*} = \dfrac{\text{Ahorro bruto} - \text{Costo API} - \text{Mantención}}{V \cdot a \cdot c_e} \).
 
 <div class="ia-widget" data-widget="c5-roi"></div>
 
@@ -267,7 +269,8 @@ esc[["horas_liberadas", "ahorro", "costo_errores", "neto_mes", "payback_meses", 
 ```
 
 **🎯 Reto:** en el escenario pesimista, ¿a cuánto tendría que bajar `costo_error` para que el beneficio neto sea
-positivo? (Pista: piensa en sacar Fraude de la automatización.)
+positivo? (Pista: despeja `costo_error` con neto = 0.) ¿Es realista ese valor, o sacar Fraude de la automatización
+no basta y necesitas otra palanca?
 {: .py-run-reto }
 
 </div>
@@ -325,6 +328,10 @@ comparar dos modelos hay un detalle clave: ambos se evaluaron sobre **los mismos
 **casos** y en cada remuestreo calculamos la **diferencia** de accuracy (o de F1). Eso es un bootstrap **pareado**:
 aprovecha que los dos modelos suelen fallar en los mismos casos difíciles y por eso es más preciso que comparar dos
 intervalos por separado.
+
+Cómo leer el resultado: si el intervalo percentil del 95 % (del 2,5 % al 97,5 % de las diferencias remuestreadas)
+**incluye el cero**, no hay evidencia suficiente para decir que un modelo es mejor. Ojo: el intervalo **no es un valor
+p**, y el «% de remuestreos en que B gana» tampoco es la probabilidad de que B sea mejor; úsalo solo como descripción.
 
 <div class="ia-widget" data-widget="c5-bootstrap"></div>
 
@@ -494,8 +501,10 @@ antes de tu presentación final. Para este curso basta con quedarse con ideas ge
 
 - Establece **principios** para tratar datos personales, entre ellos **finalidad** (usarlos para lo que se
   recolectaron), **proporcionalidad** (usar solo los necesarios), **seguridad** y **transparencia**.
-- Reconoce **derechos** a las personas sobre sus datos (como acceso, rectificación, supresión, oposición y
-  portabilidad) e incluye reglas sobre **decisiones automatizadas** que las afecten.
+- Exige una **base de licitud** para tratar datos: el **consentimiento** del titular u otra que la ley contemple
+  (por ejemplo, cumplir un contrato o una obligación legal).
+- Reconoce **derechos** a las personas sobre sus datos (como acceso, rectificación, supresión, oposición,
+  portabilidad y bloqueo) e incluye reglas sobre **decisiones automatizadas** que las afecten.
 - La Agencia fiscaliza y la ley contempla **sanciones** para quienes la incumplan.
 
 En la práctica, para tu proyecto: **anonimiza** antes de mandar textos a una API, **no guardes** más datos de los
@@ -597,8 +606,9 @@ def clave(s):   # minúsculas, sin tildes ni espacios sobrantes
 
 df["cat"] = df["categoria"].map(clave)
 grupos = {"app": "App", "app movil": "App", "aplicacion": "App", "web": "Web", "sitio web": "Web",
-          "sucursal": "Sucursal", "callcenter": "Teléfono", "call center": "Teléfono", "telefono": "Teléfono"}
-df["canal_n"] = df["canal"].map(clave).map(grupos).fillna("Redes sociales")
+          "sucursal": "Sucursal", "callcenter": "Teléfono", "call center": "Teléfono", "telefono": "Teléfono",
+          "twitter/x": "Redes sociales", "instagram": "Redes sociales", "redes sociales": "Redes sociales"}
+df["canal_n"] = df["canal"].map(clave).map(grupos).fillna("Otro")
 
 tr, te = train_test_split(df, test_size=0.3, stratify=df["cat"], random_state=42)
 vec = TfidfVectorizer(ngram_range=(1, 2), min_df=2, sublinear_tf=True)
@@ -620,7 +630,9 @@ tabla.round(3)
 ```
 
 **🎯 Reto:** el segmento «MAYÚSCULAS» parece peor. Mira su `n` y su intervalo: ¿es un sesgo real o podría ser ruido?
-¿Qué harías para averiguarlo antes de presentarlo como hallazgo?
+¿Qué harías para averiguarlo antes de presentarlo como hallazgo? Y si un segmento chico acierta el 100 %, su intervalo
+bootstrap queda en [1; 1]: con cero errores el bootstrap no puede mostrar incertidumbre, y eso **no** prueba que el
+modelo sea perfecto en ese segmento.
 {: .py-run-reto }
 
 </div>
@@ -732,7 +744,7 @@ Un gerente no sabe qué es F1 macro, y no tiene por qué saberlo. Tu trabajo es 
 | F1 macro = 0,91 | «Funciona parejo en las seis categorías, incluso en las que tienen pocos casos» | El F1 macro es un promedio por categoría |
 | Recall de Fraude = 0,95 | «De cada 20 fraudes, 19 llegan directo a Seguridad; el que se escapa lo atrapa la revisión humana» | Di qué pasa con el que se escapa |
 | Precisión de Fraude = 0,80 | «Cuando el sistema dice "fraude", acierta 4 de cada 5 veces» | No confundir con recall |
-| IC 95 % [0,86; 0,92] | «Entre 86 y 92 de cada 100, según los casos que lleguen» | Muestra el rango, no solo el punto |
+| IC 95 % [0,86; 0,92] | «Acierta entre 86 y 92 de cada 100; ese es el margen de error de nuestra medición» | Muestra el rango, no solo el punto |
 | Latencia 1,2 s; US$ 0,4 por 1.000 | «Responde antes de que el ejecutivo abra la ficha; procesar todo el mes cuesta menos que un almuerzo» | Usa las cifras que mediste |
 
 <div class="py-run" markdown>
@@ -851,13 +863,15 @@ checklist de abajo al lado. Lo que sigue te ayuda a no olvidar nada; si algo no 
 **📓 El notebook** (usa la plantilla)
 
 - Corre **de principio a fin** sin errores (*Reiniciar y ejecutar todo*).
-- Las 11 secciones de la plantilla, con texto que explica cada resultado.
-- Asistente RAG evaluado con las preguntas de evaluación, incluida la trampa.
-- Tabla comparativa final con calidad, costo, latencia y una columna de comentario.
-- Sin claves de API escritas en el código (usa los *Secrets* de Colab).
+- Todas las secciones de la plantilla (cubren los 8 puntos del enunciado), cada una con texto que explica y concluye.
+- Los tres enfoques de clasificación evaluados sobre el **mismo test**.
+- Asistente RAG con chunking justificado, **hit@k**, respuestas con cita y la pregunta trampa.
+- Tabla comparativa final: F1 macro, costo por 1.000 casos, latencia, datos etiquetados necesarios y riesgos.
+- Celda final **«Uso de IA»** (qué herramientas usaron y para qué).
+- Lee los datos desde una URL y no tiene claves de API (usa los *Secrets* de Colab).
 </div>
 <div class="usm-card" markdown>
-**🖼️ Las láminas** (PDF)
+**🖼️ Las láminas** (PDF, en su propio buzón)
 
 - 8–10 láminas + anexos, con **títulos de acción**.
 - Recomendación en la lámina 1, con una cifra.
@@ -868,7 +882,7 @@ checklist de abajo al lado. Lo que sigue te ayuda a no olvidar nada; si algo no 
 <div class="usm-card" markdown>
 **🎤 La presentación** (jue 3 dic)
 
-- 10 minutos + 5 de preguntas; ensaya con cronómetro.
+- 10 minutos + 5 de preguntas; ensaya con cronómetro. Hablan todos los integrantes.
 - Demo del asistente con **video de respaldo**.
 - Todos los integrantes pueden responder la recomendación.
 - Respuestas preparadas para las 5 preguntas típicas.
@@ -933,17 +947,19 @@ Drive (<em>Archivo → Guardar una copia en Drive</em>) y complétala con tu equ
 
 - [ ] Tabla comparativa preliminar de los 5 enfoques (calidad, costo por 1.000 casos, latencia).
 - [ ] Recomendación escrita en **una frase** con una cifra de impacto.
-- [ ] Borrador de 8–10 láminas con títulos de acción; listos para ensayar los primeros 2 minutos.
+- [ ] Borrador de 8–10 láminas con títulos de acción y la lámina de conclusión lista para ensayarla en 1 minuto.
 
-**Para el [buzón](../proyecto/buzon.md) del domingo 29 de noviembre, 23:59:**
+**Para los [buzones](../proyecto/buzon.md) del domingo 29 de noviembre, 23:59** (son **dos**: «Final · Notebook» para el
+`.ipynb` y «Final · Láminas» para el PDF; aceptan hasta dos días más con −1,0 punto por día):
 
-- [ ] Notebook basado en la plantilla, que corre de principio a fin.
-- [ ] Asistente RAG evaluado con las preguntas de evaluación del caso (incluida la pregunta trampa).
-- [ ] Tabla comparativa final de enfoques **sobre el mismo test**, con intervalo bootstrap o McNemar para las diferencias que uses para decidir.
-- [ ] Matriz de decisión con pesos explícitos y justificados.
-- [ ] Valor de negocio: ROI en tres escenarios, con supuestos visibles y punto de equilibrio.
-- [ ] Riesgos y limitaciones: PII y anonimización, prompt injection, sesgo por segmento, humano en el ciclo, monitoreo, Ley 21.719.
-- [ ] Láminas en PDF (8–10 + anexos), con la recomendación en la lámina 1.
+- [ ] Notebook basado en la plantilla, que corre de principio a fin, lee los datos desde una URL y **no tiene claves de API** (el buzón lo rechaza si encuentra una).
+- [ ] Pregunta de negocio, datos y limpieza, y los tres enfoques de clasificación evaluados **sobre el mismo test**.
+- [ ] Asistente RAG evaluado con las preguntas del caso: hit@k, corrección con criterio explícito y pregunta trampa.
+- [ ] Tabla comparativa final (F1 macro, costo por 1.000 casos, latencia, datos etiquetados, riesgos); recomendado: intervalo bootstrap o McNemar para las diferencias que uses para decidir.
+- [ ] Recomendación con estimación de valor (ROI o ahorro) y supuestos visibles; recomendado: tres escenarios, punto de equilibrio y matriz de decisión con pesos justificados.
+- [ ] Riesgos y limitaciones: PII y anonimización, alucinaciones, prompt injection, sesgo por segmento, humano en el ciclo, monitoreo, Ley 21.719.
+- [ ] Celda final «Uso de IA».
+- [ ] Láminas en PDF (8–10 + anexos), con la recomendación en la lámina 1, subidas a su propio buzón.
 
 **Para el jueves 3 de diciembre:**
 
@@ -960,7 +976,7 @@ Drive (<em>Archivo → Guardar una copia en Drive</em>) y complétala con tu equ
 | Bootstrap pareado | Remuestrear **casos** y calcular la diferencia entre modelos en cada remuestreo |
 | McNemar | Solo los desacuerdos importan: ¿se reparten como una moneda justa? |
 | Riesgos | Alucinación, sesgo por segmento, datos personales, prompt injection, automatización excesiva, deriva |
-| Ley 21.719 | Regula los datos personales en Chile y crea su Agencia; vigente desde el 1 de diciembre de 2026 |
+| Ley 21.719 | Regula los datos personales en Chile y crea su Agencia; entra en vigencia el 1 de diciembre de 2026 |
 | Humano en el ciclo | Diseño, no parche: la persona revisa Fraude, urgencia alta y baja confianza |
 | Pitch piramidal | Recomendación con cifra → 3 argumentos (funciona, vale la pena, es seguro) → evidencia |
 | Traducir métricas | «9 de cada 10 llegan al área correcta» en vez de «accuracy 0,90», sin cambiar lo que significa |

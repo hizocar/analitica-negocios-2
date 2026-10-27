@@ -15,11 +15,11 @@
       calculados con el mismo modelo que usarás en Colab.
     - **🧪 Practica en Python**: presiona **▶ Ejecutar en el navegador**. La primera vez tarda ~15 s en cargar
       Python; después es inmediato. Puedes editar el código y cada bloque trae un **🎯 Reto**.
-    - **🧑‍💻 Notebook de Colab**: al final está el notebook que calcula los embeddings de los 6.000 textos de tu
+    - **🧑‍💻 Notebook de Colab**: al final está el notebook que calcula los embeddings de los ~6.000 textos de tu
       caso. Es la base de tu **Sprint 2**.
 
-    **Para la tutoría del jueves trae:** tus embeddings ya calculados (archivo `.npy`), las 5 consultas de negocio
-    que vas a probar en tu buscador y una duda concreta sobre tus resultados.
+    **Para la tutoría del jueves 12 de noviembre (avance del Sprint 2) trae:** tus embeddings ya calculados (archivo
+    `.npy`), las 5 consultas de negocio que vas a probar en tu buscador y una duda concreta sobre tus resultados.
 
 ## 🎯 Objetivos
 
@@ -63,10 +63,11 @@ de clientes de FinTrust:
 |---|---|---|
 | A · «Me clonaron la tarjeta» | me, clonaron, la, tarjeta | Fraude |
 | B · «Aparecen compras que yo no hice» | aparecen, compras, que, yo, no, hice | Fraude |
-| C · «Quiero cambiar la fecha de pago de mi tarjeta» | quiero, cambiar, la, fecha, pago, … tarjeta | Trámite |
+| D · «Quiero cambiar la fecha de pago de mi tarjeta» | quiero, cambiar, la, fecha, pago, … tarjeta | Trámite |
 
-Para un humano, A y B son el mismo caso (fraude) y C es otra cosa (un trámite). Para TF-IDF es al revés:
-A y B **no comparten ninguna palabra** → similitud 0. A y C comparten «la» y «tarjeta» → se "parecen".
+Para un humano, A y B son el mismo caso (fraude) y D es otra cosa (un trámite). Para TF-IDF es al revés:
+A y B **no comparten ninguna palabra** → similitud 0. A y D comparten «la» y «tarjeta» → se "parecen". (En el
+código de abajo agregamos un tercer fraude, C, escrito con otras palabras).
 
 <div class="py-run" markdown>
 
@@ -101,8 +102,8 @@ parece más según TF-IDF? ¿Y por qué B y C sí tienen algo de similitud? (pis
 </div>
 
 Lo que acabas de ver no es un defecto de tu código: es el **techo de cualquier método basado en contar palabras**.
-B y C se parecen solo por «que» y «no», palabras que no dicen nada del problema. Y A y D se parecen por «tarjeta»,
-aunque uno es un fraude y el otro un trámite.
+B y C se parecen solo por «que» y «no», palabras que no dicen nada del problema. Y A y D se parecen por «la» y
+«tarjeta», aunque uno es un fraude y el otro un trámite.
 
 !!! tip "💼 En el negocio"
     Tus clientes no escriben como tus datos de entrenamiento. Llegan reclamos nuevos por WhatsApp o redes sociales
@@ -151,7 +152,7 @@ tiene sus coordenadas.
 |---|---|---|
 | Largo del vector | Tamaño del vocabulario (miles) | Fijo y chico (384 en nuestro modelo) |
 | ¿Cuántos ceros? | Casi todos | Casi ninguno |
-| «tarjeta» vs. «plástico» | Columnas distintas, sin relación | Vectores cercanos |
+| «crédito» vs. «préstamo» | Columnas distintas, sin relación | Vectores cercanos (coseno 0,76 en nuestro modelo) |
 | ¿Quién define los números? | Una regla (contar palabras) | Una red neuronal entrenada con millones de textos |
 
 Un ejemplo de juguete con solo 3 dimensiones (inventadas para que se entienda; en un modelo real no tienen nombre):
@@ -176,8 +177,9 @@ tiene sentido.
 ### ¿Cómo aprende la red esos números? (intuición)
 
 La idea central viene de la lingüística: **"dime con quién andas y te diré quién eres"**. Palabras que aparecen en
-contextos parecidos significan cosas parecidas: «tarjeta» y «plástico» aparecen junto a «clonaron», «bloquear»,
-«cupo»… así que terminan con vectores cercanos.
+contextos parecidos significan cosas parecidas: «crédito» y «préstamo» aparecen junto a «cuotas», «tasa»,
+«pagar»… así que terminan con vectores cercanos. La otra cara: el modelo solo conoce bien lo que vio a menudo. Un
+chilenismo como «plástico» (por tarjeta) le resulta casi desconocido: su coseno con «tarjeta» es apenas 0,31.
 
 1. **Embeddings de palabras (word2vec):** una red pequeña lee millones de oraciones y aprende a **predecir las
    palabras vecinas** de cada palabra. Para lograrlo, se ve obligada a darle vectores parecidos a palabras que se usan igual.
@@ -248,7 +250,7 @@ largo 1; en el Tema 3 verás por qué eso es cómodo). ¿Puedes adivinar la cate
 <button class="econ-quiz-opt" data-correct>El embedding es denso y lo aprende una red, de modo que textos con significado parecido quedan cerca aunque usen palabras distintas.</button>
 <button class="econ-quiz-opt" data-why="Ambos se pueden usar como variables en una regresión logística. La diferencia está en qué capturan, no en si sirven para clasificar.">El embedding solo sirve para buscar; TF-IDF sirve para clasificar.</button>
 </div>
-<p class="econ-quiz-fb">✅ Correcto. TF-IDF es disperso (casi todo ceros) y definido por una regla; el embedding es denso y aprendido. Por eso «tarjeta» y «plástico» quedan cerca en el embedding.</p>
+<p class="econ-quiz-fb">✅ Correcto. TF-IDF es disperso (casi todo ceros) y definido por una regla; el embedding es denso y aprendido. Por eso «crédito» y «préstamo» quedan cerca en el embedding.</p>
 </div>
 <div class="econ-quiz">
 <p class="econ-quiz-q">En el mapa 🗺️, un reclamo aparece lejos en el dibujo, pero el simulador dice que es el vecino n.º 2. ¿Cómo se explica?</p>
@@ -337,7 +339,7 @@ plt.colorbar(label="coseno promedio"); plt.title("¿Se parecen más los reclamos
 M.round(2)
 ```
 
-**🎯 Reto:** cambia `j` por un reclamo de otra categoría (por ejemplo `j = 2`, de la app). ¿Cuánto baja el coseno?
+**🎯 Reto:** cambia `j` por un reclamo de otra categoría (por ejemplo `j = 8`, de la app). ¿Cuánto baja el coseno?
 En la matriz, ¿qué par de categorías distintas se parece más? ¿Tiene sentido para el negocio?
 {: .py-run-reto }
 
@@ -380,7 +382,8 @@ Un buscador semántico es la aplicación más directa de los embeddings, y funci
 Mira tres cosas en el buscador:
 
 - **Cuando la consulta usa otras palabras** («phishing», «servicio telefónico», «pagar mi deuda antes de tiempo»),
-  los embeddings encuentran los reclamos correctos y TF-IDF se agarra de palabras vacías como «de», «con» o «el».
+  los embeddings encuentran los reclamos correctos y TF-IDF se agarra de palabras sueltas: vacías como «de», «con» o
+  «el», o ambiguas como «deuda» (y trae reclamos que piden un «certificado de deuda»).
 - **Cuando la palabra clave aparece tal cual** («estafa telefónica» → «creo que fue una **estafa**»), **TF-IDF gana**.
   Los embeddings no son infalibles: aquí confundieron "telefónica" con problemas del call center y de la app.
 - Algunos resultados correctos traen una **etiqueta rara** (un reclamo de la app etiquetado "Crédito y tasas"): es
@@ -473,7 +476,7 @@ embedding. La diferencia de fondo:
 
 - **TF-IDF + logística** aprende **todo desde tus datos**: si una palabra no apareció en tus ejemplos etiquetados, no existe.
 - **Embeddings + logística** parte con el **conocimiento del modelo pre-entrenado** (que leyó millones de frases):
-  «plástico» ya está cerca de «tarjeta» aunque tus 50 ejemplos nunca digan «plástico».
+  «préstamo» ya está cerca de «crédito» aunque tus 50 ejemplos nunca digan «préstamo».
 
 Por eso esperamos que los embeddings ayuden **cuando hay pocos datos etiquetados** y **cuando los clientes escriben
 distinto** a como venían escribiendo. Pongámoslo a prueba con dos conjuntos de evaluación:
@@ -577,8 +580,9 @@ ax[0].set_ylabel("F1 macro"); ax[0].legend()
 R.round(2)
 ```
 
-**🎯 Reto:** agrega `12` a la lista de tamaños (2 ejemplos por categoría). ¿Quién gana con tan poquitos datos?
-¿Cuántos reclamos etiquetados necesitaría FinTrust para que TF-IDF alcance a los embeddings en el test del caso?
+**🎯 Reto:** agrega `12` a la lista de tamaños (unos 2 ejemplos por categoría). ¿Quién gana con tan poquitos datos?
+¿Desde cuántos ejemplos TF-IDF iguala o supera a los embeddings en el test del caso? ¿Y en las paráfrasis la
+brecha se cierra en algún momento?
 {: .py-run-reto }
 
 </div>
@@ -599,12 +603,13 @@ modelo. F1 macro, **embeddings / TF-IDF** (en el notebook tus números pueden va
 La lectura honesta:
 
 - **Con textos del mismo estilo** que el entrenamiento, TF-IDF es un rival durísimo: con 25–50 ejemplos empatan
-  (FinTrust) y desde ~100 ejemplos TF-IDF gana por un poco; con miles, **empatan**. Nuestros datos son muy
-  repetitivos (los clientes usan frases parecidas), y eso favorece a TF-IDF.
-- **Con redacciones nuevas** (paráfrasis), los embeddings ganan **por 15 a 20 puntos en todos los tamaños**. Esa
-  es su verdadera ventaja: **generalizan el significado**, no memorizan palabras.
-- Con **muy pocos** datos etiquetados (25–50) los embeddings son al menos competitivos y mucho más robustos. Si
-  etiquetar cuesta caro (un analista leyendo reclamos), eso es plata.
+  en FinTrust (en MercaSur TF-IDF gana por 5–8 puntos), entre 100 y 1.000 ejemplos TF-IDF gana por un poco y con
+  todos los datos **empatan**. Nuestros datos son muy repetitivos (los clientes usan frases parecidas), y eso
+  favorece a TF-IDF.
+- **Con redacciones nuevas** (paráfrasis), los embeddings ganan **en todos los tamaños**, casi siempre por 15 a 20
+  puntos (entre 11 y 21). Esa es su verdadera ventaja: **generalizan el significado**, no memorizan palabras.
+- Con **muy pocos** datos etiquetados (25–50), en el test del caso los embeddings empatan o quedan algo atrás, pero
+  son mucho más robustos ante textos nuevos. Si etiquetar cuesta caro (un analista leyendo reclamos), eso es plata.
 
 !!! warning "⚠️ Error común: «los embeddings siempre ganan»"
     No. Son una herramienta, no magia. Si tienes miles de ejemplos etiquetados del mismo estilo que los textos que
@@ -647,8 +652,9 @@ en el espacio de embeddings los textos parecidos quedan cerca, podemos buscar **
 
 1. Elige cuántos grupos quieres: **k**.
 2. Pon k "centros" al azar en el espacio.
-3. Asigna cada reclamo al centro más cercano.
-4. Mueve cada centro al **promedio** de sus reclamos y repite 3–4 hasta que nada cambie.
+3. Asigna cada reclamo al centro más cercano (K-means usa distancia euclidiana; como nuestros vectores tienen
+   largo 1, eso equivale casi a agrupar por coseno, como viste en el Tema 3).
+4. Mueve cada centro al **promedio** de sus reclamos y repite los pasos 3 y 4 hasta que nada cambie.
 
 **¿Cómo elegir k?** Una ayuda es el **coeficiente de silueta** (*silhouette*): para cada punto compara qué tan
 cerca está de su propio grupo vs. del grupo vecino. Va de −1 a 1; más alto = grupos más compactos y separados. En
@@ -697,7 +703,7 @@ las **palabras más frecuentes** de cada grupo (sacando palabras vacías como «
 
 <p class="py-run-t">🧪 Practica en Python · K-means + nombres de cada tema</p>
 
-Agrupamos en k = 6 y comparamos los grupos con las categorías **solo al final**, para ver si los temas que
+Agrupamos en `K = 6` y comparamos los grupos con las categorías **solo al final**, para ver si los temas que
 "descubrió" el algoritmo se parecen a los que definió el banco.
 
 ```python
@@ -708,7 +714,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 df = pd.read_csv(DATA + "clase2_embeddings_muestra.csv")
 E = df.filter(regex=r"^e\d+$").to_numpy()
-cluster = KMeans(n_clusters=6, n_init=5, random_state=0).fit_predict(E)
+K = 6                                           # número de grupos
+cluster = KMeans(n_clusters=K, n_init=5, random_state=0).fit_predict(E)
 
 # Palabras vacías y frases de cortesía que no dicen nada del tema
 VACIAS = """a al algo como cómo con de del el en es esta este fue ha hace hay he hola la las le lo los me mi mis
@@ -719,7 +726,7 @@ cv = CountVectorizer(stop_words=VACIAS, token_pattern=r"(?u)\b[a-záéíóúñ]{
 X = cv.fit_transform(df.texto.str.lower())
 vocab = np.array(cv.get_feature_names_out())
 
-for c in range(6):
+for c in range(K):
     en_c = cluster == c
     top = vocab[np.asarray(X[en_c].sum(axis=0)).ravel().argsort()[::-1][:5]]
     print(f"Grupo {c} ({en_c.sum()} reclamos): {', '.join(top)}")
@@ -730,8 +737,8 @@ pd.crosstab(cluster, df.categoria, rownames=["grupo"])
 ```
 
 **🎯 Reto:** ponle un nombre de negocio a cada grupo (p. ej. "Problemas con la app al transferir"). ¿Hay algún
-grupo que mezcle dos categorías del banco? Prueba con k = 8: ¿aparecen subtemas útiles (como "transacciones en el
-extranjero")?
+grupo que mezcle dos categorías del banco? Prueba con `K = 8`: ¿aparecen subtemas útiles? (Por ejemplo, ¿se separa
+la atención en "nadie me contacta" y "me derivan de un área a otra"?)
 {: .py-run-reto }
 
 </div>
@@ -794,13 +801,14 @@ reutilizarlos en la Clase 4 (RAG). Tiempo total: ~45 min.</p>
 
 ## 🔗 Conexión con tu proyecto (Sprint 2)
 
-El **Sprint 2** se entrega por [buzón](../proyecto/buzon.md) hasta el **domingo 15 de noviembre a las 23:59**. Usa el notebook como punto
+El **Sprint 2** (10 %) se entrega como notebook `.ipynb` por [buzón](../proyecto/buzon.md) hasta el **domingo 15 de
+noviembre a las 23:59** (el buzón acepta hasta dos días de atraso, con −1,0 punto por día). Usa el notebook como punto
 de partida y adapta todo a **tu pregunta de negocio** del Sprint 1. Checklist de lo que debe incluir:
 
 - [ ] **Embeddings** de todos los textos limpios de tu caso con `sentence-transformers` (indica el modelo y el tiempo de cálculo) y guardados con `np.save`.
 - [ ] **Clasificador sobre embeddings** (regresión logística) comparado con tus baselines del Sprint 1 (TF-IDF + logística y MLP) en el **mismo test**, con F1 macro y matriz de confusión.
-- [ ] **Curva con pocos datos**: F1 macro de embeddings vs. TF-IDF entrenando con **50, 200 y 1.000** ejemplos (idealmente promediando varios sorteos).
-- [ ] **Buscador semántico** con **5 consultas de negocio** propias: muestra el top-5 de cada una, comenta cuántos resultados son relevantes y compara con TF-IDF en al menos una.
+- [ ] **Curva con pocos datos**: F1 macro de embeddings vs. TF-IDF entrenando con **50, 200 y 1.000** ejemplos (idealmente promediando varios sorteos), evaluada en tu test **y** en textos redactados con otras palabras (**paráfrasis**), con lo que eso significa para una empresa con pocas etiquetas o clientes que escriben distinto.
+- [ ] **Buscador semántico**: una función `buscar(consulta, k)` y **5 consultas de negocio** propias; muestra el top-5 de cada una, comenta cuántos resultados son relevantes y compara con TF-IDF en al menos una (¿encontró lo que TF-IDF no?).
 - [ ] **Mapa de temas**: K-means sobre embeddings, justificación de k (silueta + interpretación), **nombre de cada cluster** con sus palabras frecuentes y 2–3 ejemplos.
 - [ ] Un párrafo de **conclusión de negocio**: ¿cuándo recomendarías embeddings y cuándo TF-IDF para tu caso? Usa tus números.
 

@@ -318,9 +318,9 @@
     const setRep = stat(root, "Texto repetido", "—");
     const setClave = stat(root, "Dato clave", "—", "is-gold");
     const cardClave = root.querySelectorAll(".econ-stat")[3];
-    note(root, "💡 <strong>Prueba esto:</strong> con FT-POL-01, tamaño 150 y solapamiento 0 el dato clave (~115 " +
+    note(root, "💡 <strong>Prueba esto:</strong> con FT-POL-01, tamaño 150 y solapamiento 0 el dato clave (122 " +
       "caracteres) queda partido. Con solapamientos chicos a veces queda entero y a veces no: depende de dónde caigan " +
-      "los cortes. Solo cuando el solapamiento es <em>al menos tan largo como la idea</em> (120) queda entero siempre… " +
+      "los cortes. Solo cuando el solapamiento se acerca al <em>largo de la idea</em> (desde 120) queda entero siempre… " +
       "y mira cuánto texto repetido te cuesta. Luego cambia a <em>Por párrafos</em>: cada chunk es una regla completa. " +
       "El símbolo ¶ marca un fin de párrafo.");
 

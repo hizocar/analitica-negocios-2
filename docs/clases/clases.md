@@ -1,6 +1,6 @@
 # 🏫 Clases
 
-Cada clase es una **cápsula de autoestudio** de unas 2,5 horas. Estúdiala durante la semana y llega a la
+Cada clase es una **cápsula de autoestudio** de 2,5 a 3 horas. Estúdiala durante la semana y llega a la
 **tutoría del jueves** con tus dudas y tu avance. El detalle de fechas está en el
 [Calendario](../calendario.md).
 

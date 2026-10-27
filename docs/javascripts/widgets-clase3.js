@@ -172,7 +172,7 @@
     }
     render(true);
     note(root, "💡 <strong>Qué mirar:</strong> el espacio viaja pegado al inicio de la ficha, las palabras frecuentes son una " +
-      "sola ficha y las largas o raras se parten (<em>cobra·ron</em>). El mismo reclamo en inglés usa menos tokens, y en " +
+      "sola ficha y las largas o raras se parten (<em>cobr·aron</em>). El mismo reclamo en inglés usa menos tokens, y en " +
       "MAYÚSCULAS se dispara. Sube las «instrucciones fijas»: en la práctica, el prompt pesa más que el reclamo. " +
       "<br><em>Tokenizador aproximado con fines didácticos; cada modelo tiene el suyo (en el notebook cuentas tokens reales). " +
       "Conversión a pesos con un dólar supuesto de $950.</em>");
@@ -185,6 +185,7 @@
     ["comisión", 3.0], ["cuota", 2.4], ["mantención", 1.9], ["compra", 1.6], ["vez", 1.2],
     ["multa", 0.4], ["fortuna", -0.4], ["barbaridad", -0.7], ["pizza", -2.2], ["jirafa", -3.4],
   ];
+  const RARA = 6;   // desde «fortuna» en adelante: palabras poco probables (se marcan en dorado)
 
   function softmaxT(logits, T) {
     if (T < 0.02) {
@@ -260,15 +261,15 @@
       const picks = Array.from({ length: n }, () => sample(probs));
       const last = CANDS[picks[picks.length - 1]][0];
       slot.textContent = last;
-      slot.classList.toggle("is-rare", picks[picks.length - 1] >= 5);
+      slot.classList.toggle("is-rare", picks[picks.length - 1] >= RARA);
       motion.pop(slot);
       if (n === 1) {
-        const c = h("span", { class: "ia-chip" + (picks[0] >= 5 ? " is-hot" : "") }, CANDS[picks[0]][0]);
+        const c = h("span", { class: "ia-chip" + (picks[0] >= RARA ? " is-hot" : "") }, CANDS[picks[0]][0]);
         hist.prepend(c);
         while (hist.children.length > 14) hist.lastChild.remove();
         if (canAnimate()) motion.enter(c);
       } else {
-        hist.replaceChildren(...picks.map((i) => h("span", { class: "ia-chip" + (i >= 5 ? " is-hot" : "") }, CANDS[i][0])));
+        hist.replaceChildren(...picks.map((i) => h("span", { class: "ia-chip" + (i >= RARA ? " is-hot" : "") }, CANDS[i][0])));
         if (canAnimate()) motion.stagger(hist.children, { kf: { opacity: [0, 1], scale: [0.85, 1] } });
       }
       setDist(String(new Set(picks).size) + (n > 1 ? " de 20" : " de 1"));
@@ -277,8 +278,8 @@
     render();
     note(root, "💡 <strong>Qué mirar:</strong> con <strong>T = 0</strong> el modelo elige siempre la más probable " +
       "(«comisión»): es <em>determinista</em>, lo que quieres para clasificar o extraer datos. Con T alta la distribución se " +
-      "aplana y aparecen «fortuna», «pizza» o «jirafa» (marcadas en dorado): más variedad, pero también más riesgo de " +
-      "decir algo raro. <em>Probabilidades ilustrativas.</em>");
+      "aplana y aparecen «fortuna», «barbaridad» y hasta «pizza» o «jirafa» (marcadas en dorado): más variedad, pero " +
+      "también más riesgo de decir algo raro. <em>Probabilidades ilustrativas.</em>");
   });
 
   /* ======================================================================
@@ -350,8 +351,13 @@
       build();
     }, 0);
 
-    const W = 640, H = 230, PAD = 24, Y = 190;
-    const plot = svg("svg", { viewBox: `0 0 ${W} ${H}`, class: "ia-svg c3-att", role: "img", "aria-label": "Arcos de atención entre palabras" });
+    // Dos disposiciones: horizontal (pantalla ancha) y vertical (celular), para que el diagrama
+    // escale al ancho disponible sin quedar cortado ni con letra ilegible.
+    const W = 640, H = 230, PAD = 24, Y = 190;          // horizontal
+    const VW = 340, RH = 36, VPAD = 12;                  // vertical: ancho del viewBox y alto de cada fila
+    const mq = window.matchMedia ? window.matchMedia("(max-width: 600px)") : null;
+    let vert = !!(mq && mq.matches);
+    const plot = svg("svg", { class: "ia-svg c3-att", role: "img", "aria-label": "Arcos de atención entre palabras" });
     const gArcs = svg("g");
     const gWords = svg("g");
     plot.append(gArcs, gWords);
@@ -366,27 +372,40 @@
     let M = [];
     let wordEls = [];
     let rowEls = [];
+    let vBoxW = 80;                                      // ancho de las cajas de palabra (modo vertical)
     const xOf = (i, n) => PAD + ((i + 0.5) * (W - 2 * PAD)) / n;
+    const yOf = (i) => VPAD + RH * (i + 0.5);
 
     function build() {
       M = matriz(cur.words, cur.spec);
       const n = cur.words.length;
+      vBoxW = 14 + Math.max(...cur.words.map((w) => w.length)) * 8.2;
+      plot.setAttribute("viewBox", vert ? `0 0 ${VW} ${2 * VPAD + n * RH}` : `0 0 ${W} ${H}`);
+      plot.classList.toggle("is-vertical", vert);
+      gArcs.replaceChildren();
       gWords.replaceChildren();
       wordEls = cur.words.map((w, i) => {
-        const x = xOf(i, n);
-        const bw = Math.min((W - 2 * PAD) / n - 8, 12 + w.length * 8.2);
+        let box, label;
+        if (vert) {
+          const y = yOf(i);
+          box = svg("rect", { x: 8, y: y - 15, width: vBoxW, height: 30, rx: 7 });
+          label = svg("text", { x: 8 + vBoxW / 2, y: y + 5, "text-anchor": "middle" }, w);
+        } else {
+          const x = xOf(i, n);
+          const bw = Math.min((W - 2 * PAD) / n - 8, 12 + w.length * 8.2);
+          box = svg("rect", { x: x - bw / 2, y: Y - 18, width: bw, height: 30, rx: 7 });
+          label = svg("text", { x, y: Y + 2, "text-anchor": "middle" }, w);
+        }
         const g = svg("g", {
           class: "c3-att-word", tabindex: "0", role: "button", "aria-label": "Ver la atención de " + w,
           onmouseenter: () => select(i), onfocus: () => select(i), onclick: () => select(i),
           onkeydown: (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(i); } },
-        },
-        svg("rect", { x: x - bw / 2, y: Y - 18, width: bw, height: 30, rx: 7 }),
-        svg("text", { x, y: Y + 2, "text-anchor": "middle" }, w));
+        }, box, label);
         gWords.append(g);
         return g;
       });
-      // Mapa de calor
-      heat.style.gridTemplateColumns = `auto repeat(${n}, minmax(2.3rem, 1fr))`;
+      // Mapa de calor (en celular, columnas más angostas y encabezados verticales vía CSS)
+      heat.style.gridTemplateColumns = `auto repeat(${n}, minmax(${vert ? "1.45rem" : "2.3rem"}, 1fr))`;
       const kids = [h("span", { class: "ia-heat-lbl" }, "")];
       cur.words.forEach((w) => kids.push(h("span", { class: "ia-heat-lbl c3-col" }, w)));
       rowEls = [];
@@ -419,11 +438,22 @@
       gArcs.replaceChildren();
       row.forEach((w, j) => {
         if (j === i) return;
-        const xj = xOf(j, n);
-        const top = Y - 26 - (28 + Math.abs(xi - xj) * 0.32);
         const isMax = w === mxOther;
+        let d, lx, ly, anchor;
+        if (vert) {
+          // Arcos hacia la derecha de la columna de palabras
+          const x0 = 8 + vBoxW + 4, yi = yOf(i), yj = yOf(j);
+          const ctrl = x0 + 30 + Math.abs(yi - yj) * 1.1;
+          d = `M ${x0} ${yi} Q ${ctrl} ${(yi + yj) / 2} ${x0} ${yj}`;
+          lx = (x0 + ctrl) / 2 + 6; ly = (yi + yj) / 2 + 4; anchor = "start";
+        } else {
+          const xj = xOf(j, n);
+          const top = Y - 26 - (28 + Math.abs(xi - xj) * 0.32);
+          d = `M ${xi} ${Y - 20} Q ${(xi + xj) / 2} ${top} ${xj} ${Y - 20}`;
+          lx = (xi + xj) / 2; ly = (Y - 20 + top) / 2 - 4; anchor = "middle";
+        }
         const p = svg("path", {
-          d: `M ${xi} ${Y - 20} Q ${(xi + xj) / 2} ${top} ${xj} ${Y - 20}`,
+          d,
           class: "c3-arc" + (isMax ? " is-max" : ""),
           "stroke-width": (1 + w * 22).toFixed(1),
           "stroke-opacity": (0.25 + 0.75 * (w / mxOther)).toFixed(2),
@@ -432,7 +462,7 @@
         gArcs.append(p);
         paths.push(p);
         if (w >= 0.1) {
-          const t = svg("text", { x: (xi + xj) / 2, y: (Y - 20 + top) / 2 - 4, "text-anchor": "middle", class: "c3-arc-lbl" }, Math.round(w * 100) + " %");
+          const t = svg("text", { x: lx, y: ly, "text-anchor": anchor, class: "c3-arc-lbl" }, Math.round(w * 100) + " %");
           gArcs.append(t);
           labels.push(t);
         }
@@ -461,6 +491,10 @@
     }
 
     build();
+    if (mq) {
+      const onChange = (e) => { if (e.matches !== vert) { vert = e.matches; build(); } };
+      if (mq.addEventListener) mq.addEventListener("change", onChange); else if (mq.addListener) mq.addListener(onChange);
+    }
     note(root, "💡 <strong>Qué mirar:</strong> la segunda «la» mira sobre todo a «tarjeta»: así el modelo entiende que lo " +
       "clonado es la tarjeta. Y «banco» mira a «pagar/cuota» en una oración y a «senté/plaza» en la otra: la misma palabra " +
       "termina con un vector distinto según su contexto. <br><em>Pesos ilustrativos elegidos a mano para mostrar la " +
@@ -543,7 +577,7 @@
       const fullText = parts.map((p) => p[1]).join("\n\n");
       const nTok = tokenizar(fullText).length;
       setTok(String(nTok));
-      setCost(fmtUSD(((nTok + 12) * 0.3 * 100000) / 1e6));
+      setCost(fmtUSD(((nTok * 0.3 + 12 * 2.5) * 100000) / 1e6));   // entrada US$ 0,30 y salida US$ 2,50 por millón
       const [txt, kind, msg] = respuesta();
       resp.textContent = txt;
       verdict.textContent = msg;
@@ -557,7 +591,8 @@
     render(false);
     note(root, "💡 <strong>Qué mirar:</strong> cada pieza resuelve un problema distinto: las <em>categorías</em> evitan que " +
       "invente etiquetas, el <em>formato</em> permite procesar la respuesta con código y los <em>ejemplos</em> enseñan a " +
-      "desempatar casos ambiguos (pero cuestan tokens). El costo supone US$ 0,30 por millón de tokens de entrada y ~12 de salida. " +
+      "desempatar casos ambiguos (pero cuestan tokens). El costo supone US$ 0,30 por millón de tokens de entrada y ~12 tokens de " +
+      "salida a US$ 2,50 por millón. " +
       "<br><em>Respuestas simuladas para ilustrar comportamientos típicos; en el notebook pruebas con Gemini de verdad.</em>");
   });
 })();

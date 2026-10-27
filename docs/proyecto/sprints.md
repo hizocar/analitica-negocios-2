@@ -10,7 +10,7 @@ En la tutoría del jueves siguiente recibes la nota, un semáforo y los comentar
 | **Sprint 1** · Datos y primeros modelos | [Clase 1](../clases/clase1.md) | Domingo 8 nov, 23:59 | 10 % | Jueves 12 nov |
 | **Sprint 2** · Embeddings | [Clase 2](../clases/clase2.md) | Domingo 15 nov, 23:59 | 10 % | Jueves 19 nov |
 | **Sprint 3** · LLM | [Clase 3](../clases/clase3.md) | Domingo 22 nov, 23:59 | 10 % | Jueves 26 nov |
-| **Entrega final** · RAG, comparación y slides | [Clases 4 y 5](../clases/clase4.md) | Domingo 29 nov, 23:59 | 40 % | Jueves 3 dic |
+| **Entrega final** · RAG, comparación y slides | [Clases 4](../clases/clase4.md) y [5](../clases/clase5.md) | Domingo 29 nov, 23:59 | 40 % | Jueves 3 dic |
 
 ## 📮 Cómo entregar por buzón
 

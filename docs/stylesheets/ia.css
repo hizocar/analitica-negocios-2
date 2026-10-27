@@ -141,7 +141,8 @@
   border-radius: 4px;
   font-variant-numeric: tabular-nums;
 }
-.ia-heat-lbl { padding: 0.3rem 0.35rem; font-weight: 700; white-space: nowrap; }
+/* Las etiquetas pueden partirse en espacios para que la matriz quepa en un teléfono */
+.ia-heat-lbl { padding: 0.3rem 0.35rem; font-weight: 700; line-height: 1.25; }
 
 /* ---------- Lienzo SVG responsivo ---------- */
 .ia-svg { width: 100%; height: auto; display: block; margin: 0.5rem 0; overflow: visible; }

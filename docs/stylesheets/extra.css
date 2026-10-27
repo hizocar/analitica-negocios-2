@@ -12,6 +12,7 @@
   --usm-navy-dark: #10193b;
   --usm-blue: #005f96;
   --usm-gold: #e5b300;
+  --usm-gold-text: #8a6500; /* dorado para texto sobre fondo claro (contraste 5,3:1) */
   --usm-red: #b30828;
 
   --md-primary-fg-color: var(--usm-navy);
@@ -27,6 +28,7 @@
   --usm-navy-dark: #0c1330;
   --usm-blue: #3d9bd6;
   --usm-gold: #f2c334;
+  --usm-gold-text: var(--usm-gold);
   --usm-red: #e15268;
 
   --md-primary-fg-color: var(--usm-navy-dark);
@@ -54,13 +56,17 @@
 }
 
 /* Gold accent underline on active tabs/links */
-.md-tabs__link--active,
-.md-nav__link--active {
+.md-tabs__link--active {
   color: var(--usm-gold) !important;
 }
 
+/* La navegación lateral y los enlaces van sobre fondo claro: dorado oscuro legible */
+.md-nav__link--active {
+  color: var(--usm-gold-text) !important;
+}
+
 .md-typeset a:hover {
-  color: var(--usm-gold);
+  color: var(--usm-gold-text);
 }
 
 /* Footer ------------------------------------------------------------------ */
@@ -582,12 +588,15 @@
 .econ-control label {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem; /* que el valor no se pegue a una etiqueta larga en pantallas angostas */
   font-size: 0.74rem;
   font-weight: 600;
   margin-bottom: 0.15rem;
 }
 
 .econ-control label output {
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
   color: var(--usm-blue);
 }
@@ -1350,7 +1359,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--usm-gold);
+  color: var(--usm-gold-text);
 }
 
 .md-typeset h2.econ-parte.is-ayudantia {

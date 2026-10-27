@@ -63,6 +63,8 @@ a ejecutar.
 - [ ] No hay claves de API escritas en el código (usa Secretos, ver [guía de Gemini](gemini.md)).
 - [ ] La primera celda tiene los integrantes, el caso y el enlace de Colab.
 - [ ] La última celda declara el uso de IA.
+- [ ] Descargaste el notebook (*Archivo → Descargar → Descargar .ipynb*) y lo subiste al
+      [buzón de la entrega](../proyecto/buzon.md).
 
 ## 6. Problemas frecuentes
 
@@ -72,4 +74,6 @@ a ejecutar.
 | La sesión se desconecta | Colab se apaga tras un rato de inactividad: vuelve a ejecutar desde el inicio. Guarda resultados pesados en Drive o con `np.save`. |
 | `CUDA out of memory` | Baja el `batch_size` o reinicia la sesión. |
 | `429 RESOURCE_EXHAUSTED` en Gemini | Superaste el límite por minuto de la capa gratuita: espera un minuto, usa `time.sleep` entre llamadas y procesa muestras más chicas. |
+| `503 UNAVAILABLE` en Gemini | El modelo está saturado en ese momento: espera unos segundos y reintenta (ver [guía de Gemini](gemini.md#4-limites-de-la-capa-gratuita)). |
 | El notebook entregado no muestra resultados | Ejecuta todo antes de descargar el `.ipynb`: las salidas se guardan dentro del archivo. |
+| El buzón rechaza el notebook por una clave de API | La clave quedó escrita en una celda o en una salida. Bórrala, **revócala** en AI Studio, crea una nueva en los Secretos y vuelve a descargar el notebook. |
