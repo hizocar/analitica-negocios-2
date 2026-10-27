@@ -14,13 +14,15 @@ En la tutoría del jueves siguiente recibes la nota, un semáforo y los comentar
 
 ## 📮 Cómo entregar por buzón
 
+[📬 Ir a los buzones](buzon.md){.usm-btn}
+
 1. Descarga tu notebook desde Colab: *Archivo → Descargar → Descargar .ipynb*.
 2. Nómbralo así: `S1_FinTrust_Apellido1_Apellido2_Apellido3.ipynb` (cambia `S1` por `S2`, `S3` o `FINAL`,
    y el caso por `MercaSur` o `Propio` si corresponde).
 3. En la **primera celda** del notebook escribe los nombres del equipo, el caso y el **enlace de Colab**
    compartido con permiso de lectura.
-4. Súbelo al **buzón del curso** antes del domingo a las 23:59. Basta con que **un integrante** entregue
-   por el equipo.
+4. Súbelo al **[buzón de la entrega](buzon.md)** antes del domingo a las 23:59. Basta con que **un
+   integrante** entregue por el equipo. El buzón acepta dos días más con −1,0 punto por día de atraso.
 
 !!! warning "Antes de subir"
     - Ejecuta *Entorno de ejecución → Reiniciar y ejecutar todo* y verifica que no haya errores.

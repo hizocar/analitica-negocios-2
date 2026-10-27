@@ -1017,7 +1017,7 @@ Para la parte de Gemini necesitas una clave gratuita guardada en los Secretos de
 
 ## 🔗 Conexión con tu proyecto (Entrega final)
 
-La **Entrega final** se sube al buzón el **domingo 29 de noviembre, 23:59**. Esta clase cubre la parte del
+La **Entrega final** se sube al [buzón](../proyecto/buzon.md) el **domingo 29 de noviembre, 23:59**. Esta clase cubre la parte del
 asistente RAG; la Clase 5 te ayudará a convertir todo en una recomendación y en slides. Revisa que tu entrega
 tenga:
 

@@ -794,7 +794,7 @@ reutilizarlos en la Clase 4 (RAG). Tiempo total: ~45 min.</p>
 
 ## 🔗 Conexión con tu proyecto (Sprint 2)
 
-El **Sprint 2** se entrega por buzón hasta el **domingo 15 de noviembre a las 23:59**. Usa el notebook como punto
+El **Sprint 2** se entrega por [buzón](../proyecto/buzon.md) hasta el **domingo 15 de noviembre a las 23:59**. Usa el notebook como punto
 de partida y adapta todo a **tu pregunta de negocio** del Sprint 1. Checklist de lo que debe incluir:
 
 - [ ] **Embeddings** de todos los textos limpios de tu caso con `sentence-transformers` (indica el modelo y el tiempo de cálculo) y guardados con `np.save`.

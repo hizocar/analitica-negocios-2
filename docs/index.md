@@ -11,7 +11,7 @@ asistentes que responden con los documentos de la empresa.</p>
 
 <div class="usm-facts" markdown>
 <div class="usm-fact"><span class="usm-fact-label">Tutoría</span><span class="usm-fact-value">Jueves 18:30 – 19:30</span></div>
-<div class="usm-fact"><span class="usm-fact-label">Entregas</span><span class="usm-fact-value">Domingos 23:59 · buzón</span></div>
+<div class="usm-fact"><span class="usm-fact-label">Entregas</span><span class="usm-fact-value">Domingos 23:59 · <a href="proyecto/buzon/">buzón</a></span></div>
 <div class="usm-fact"><span class="usm-fact-label">Evaluación</span><span class="usm-fact-value">1 proyecto final (100 %)</span></div>
 <div class="usm-fact"><span class="usm-fact-label">Prerrequisito</span><span class="usm-fact-value">Analítica para los Negocios I</span></div>
 <div class="usm-fact"><span class="usm-fact-label">Inicio</span><span class="usm-fact-value">Jueves 29 de octubre</span></div>
@@ -19,7 +19,8 @@ asistentes que responden con los documentos de la empresa.</p>
 </div>
 
 > 🗓️ Revisa el detalle semana a semana en [**Calendario**](calendario.md), el material de cada
-> cápsula en [**Clases**](clases/clases.md) y lo que hay que entregar en [**Sprints y buzón**](proyecto/sprints.md).
+> cápsula en [**Clases**](clases/clases.md) lo que hay que entregar en [**Sprints y buzón**](proyecto/sprints.md) y dónde subirlo en
+> [**Buzones de entrega**](proyecto/buzon.md).
 
 ## 📌 ¿De qué se trata?
 

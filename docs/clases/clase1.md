@@ -904,7 +904,7 @@ Toma ~45 minutos leyéndolo con calma (el entrenamiento corre en menos de 2 minu
 
 ### 📬 Sprint 1 · Datos y primeros modelos <span class="ia-badge is-gold">domingo 8 de noviembre, 23:59</span> <span class="ia-badge">10 %</span>
 
-Antes, el **domingo 1 de noviembre** se inscribe el equipo y el caso por buzón (sin nota). Para el Sprint 1, tu
+Antes, el **domingo 1 de noviembre** se inscribe el equipo y el caso por [buzón](../proyecto/buzon.md) (sin nota). Para el Sprint 1, tu
 notebook debe incluir:
 
 - [ ] **Pregunta de negocio** en una o dos frases: qué decisión apoya el clasificador y quién lo usaría

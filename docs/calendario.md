@@ -1,7 +1,7 @@
 # 🗓️ Calendario del curso
 
 **Intensivo, 29 de octubre al 3 de diciembre de 2026** · Tutoría los **jueves de 18:30 a 19:30** · Entregas
-por **buzón los domingos hasta las 23:59**.
+por **[buzón](proyecto/buzon.md) los domingos hasta las 23:59**.
 
 !!! tip "El ritmo de cada semana"
     **Jueves:** tutoría (revisión de avances con semáforo y presentación de la cápsula nueva) →
@@ -23,7 +23,7 @@ por **buzón los domingos hasta las 23:59**.
   integrantes), elección de caso (FinTrust, MercaSur o caso propio) y primer vistazo a los datos.
 - **Cápsula:** [Clase 1 · Redes neuronales en la práctica](clases/clase1.md): neurona, redes multicapa,
   descenso de gradiente, sobreajuste y texto como datos (TF-IDF).
-- **Domingo 1** — 📮 Inscripción de equipo y caso por buzón (sin nota). Si propones un caso propio,
+- **Domingo 1** — 📮 Inscripción de equipo y caso por [buzón](proyecto/buzon.md) (sin nota). Si propones un caso propio,
   adjunta la propuesta de una página.
 </div>
 

@@ -12,7 +12,7 @@ semana a tu caso, así que la entrega final es la integración de lo que ya hici
 ## 👥 Equipos
 
 - Grupos de **2 o 3 integrantes**.
-- Equipo y caso se inscriben por buzón hasta el **domingo 1 de noviembre** (sin nota).
+- Equipo y caso se inscriben por [buzón](buzon.md) hasta el **domingo 1 de noviembre** (sin nota).
 - Todos los integrantes deben entender todo el notebook: en la tutoría y en la presentación se puede
   preguntar a cualquiera por cualquier parte.
 

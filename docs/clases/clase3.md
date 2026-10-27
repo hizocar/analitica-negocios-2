@@ -1028,7 +1028,7 @@ la subas al buzón.
 
 ## 🔗 Conexión con tu proyecto (Sprint 3) {#sprint-3}
 
-El **Sprint 3 se entrega el domingo 22 de noviembre a las 23:59 por buzón**. Usa el notebook como base y adáptalo a tu
+El **Sprint 3 se entrega el domingo 22 de noviembre a las 23:59 por buzón** ([abrir buzón](../proyecto/buzon.md)). Usa el notebook como base y adáptalo a tu
 caso. Checklist de lo que debes entregar:
 
 - [ ] **Anonimización** antes de llamar a la API: función aplicada a todos los textos enviados, cuántos casos tenían

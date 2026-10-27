@@ -935,7 +935,7 @@ Drive (<em>Archivo → Guardar una copia en Drive</em>) y complétala con tu equ
 - [ ] Recomendación escrita en **una frase** con una cifra de impacto.
 - [ ] Borrador de 8–10 láminas con títulos de acción; listos para ensayar los primeros 2 minutos.
 
-**Para el buzón del domingo 29 de noviembre, 23:59:**
+**Para el [buzón](../proyecto/buzon.md) del domingo 29 de noviembre, 23:59:**
 
 - [ ] Notebook basado en la plantilla, que corre de principio a fin.
 - [ ] Asistente RAG evaluado con las preguntas de evaluación del caso (incluida la pregunta trampa).

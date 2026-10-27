@@ -113,6 +113,7 @@ nav:
   - Proyecto:
       - "Enunciado y rúbrica": proyecto/enunciado.md
       - "Sprints y buzón": proyecto/sprints.md
+      - "📬 Buzones de entrega": proyecto/buzon.md
   - Datasets: datasets/datasets.md
   - Guías:
       - "Google Colab": guias/colab.md
