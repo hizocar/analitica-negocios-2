@@ -63,17 +63,30 @@
 .c5-roi-svg .c5-wf-bar.is-neg { fill: var(--usm-red); opacity: 0.85; }
 .c5-roi-svg .c5-wf-bar.is-net { fill: var(--usm-gold); }
 .c5-roi-svg .c5-wf-conn { stroke: var(--md-default-fg-color--lighter); stroke-dasharray: 3 3; }
-.ia-svg text.c5-wf-lbl { font-size: 11px; font-weight: 600; }
-.ia-svg text.c5-wf-val { font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; }
+/* --c5-k (lo fija widgets-clase5.js) agranda la letra solo si el SVG se dibuja tan chico que bajaría de ~11 px;
+   con espacio de sobra vale 1 y todo queda igual */
+.ia-svg text.c5-wf-lbl { font-size: calc(11px * var(--c5-k, 1)); font-weight: 600; }
+.ia-svg text.c5-wf-val { font-size: calc(11px * var(--c5-k, 1)); font-weight: 700; font-variant-numeric: tabular-nums; }
 .econ-stat.is-red { border-left-color: var(--usm-red); }
+/* Celular: la cascada se dibuja en filas sobre un viewBox de 300 de ancho (escala ~1) */
+.ia-svg.c5-roi-svg.is-mobile, .ia-svg.c5-bs-svg.is-mobile { max-width: 400px; margin-left: auto; margin-right: auto; }
+.ia-svg.c5-roi-svg.is-mobile text.c5-wf-lbl,
+.ia-svg.c5-roi-svg.is-mobile text.c5-wf-val { font-size: calc(12.5px * var(--c5-k, 1)); }
 
 /* ---------- c5-bootstrap: histograma ---------- */
+.ia-svg.c5-bs-svg text { font-size: calc(11px * var(--c5-k, 1)); }   /* ticks: 11 px como el resto de .ia-svg */
 .ia-svg .c5-bs-bar { fill: var(--usm-blue); opacity: 0.75; }
 .ia-svg .c5-bs-band { fill: var(--usm-gold); opacity: 0.22; }
 .ia-svg .c5-bs-zero { stroke: var(--usm-red); stroke-width: 2; stroke-dasharray: 4 3; }
 .ia-svg .c5-bs-obs { stroke: var(--usm-gold); stroke-width: 3; }
-.ia-svg text.c5-bs-zero-t { fill: var(--usm-red); font-size: 10px; font-weight: 700; }
-.ia-svg text.c5-muted { fill: var(--md-default-fg-color--light); font-size: 10px; }
+.ia-svg text.c5-bs-zero-t {
+  fill: var(--usm-red); font-size: calc(10px * var(--c5-k, 1)); font-weight: 700;
+  /* halo del color de fondo: la línea dorada y las barras que pasan por detrás no tapan el rótulo */
+  paint-order: stroke; stroke: var(--md-default-bg-color); stroke-width: 3px; stroke-linejoin: round;
+}
+.ia-svg text.c5-muted { fill: var(--md-default-fg-color--light); font-size: calc(10px * var(--c5-k, 1)); }
+/* Celular: viewBox de 300 de ancho → misma letra que el texto de la página */
+.ia-svg.c5-bs-svg.is-mobile text { font-size: calc(12.5px * var(--c5-k, 1)); }
 
 /* ---------- c5-piramide ---------- */
 .c5-pyr { display: grid; gap: 0.45rem; margin: 0.6rem 0; justify-items: center; }
@@ -135,8 +148,31 @@
 @media (max-width: 700px) {
   .c5-pyr-level.is-top, .c5-pyr-level.is-arg { max-width: 100%; }
   .md-typeset ol.c5-rank > li.c5-rank-row { grid-template-columns: 1.5rem minmax(5.5rem, 8rem) 1fr 2.4rem; gap: 0.4rem; }
-  /* el SVG de 640 de ancho se reduce a ~50 % en un celular: textos de la cascada más grandes */
-  .ia-svg text.c5-wf-lbl, .ia-svg text.c5-wf-val { font-size: 15px; }
+}
+
+@media (max-width: 600px) {
+  /* Ranking: la barra baja a una segunda línea para que el nombre no se corte y la barra se vea */
+  .md-typeset ol.c5-rank > li.c5-rank-row {
+    grid-template-columns: 1.5rem 1fr auto;
+    grid-template-areas: "pos name val" "pos track track";
+    row-gap: 0.3rem;
+  }
+  .c5-rank-pos { grid-area: pos; }
+  .c5-rank-name { grid-area: name; white-space: normal; }
+  .c5-rank-track { grid-area: track; }
+  .c5-rank-val { grid-area: val; }
+  /* ROI: con montos extremos («$2.000.000») la etiqueta y su valor no caben lado a lado:
+     columnas que pueden encogerse y el valor baja a su propia línea, alineado a la derecha */
+  .ia-widget[data-widget="c5-roi"] .econ-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ia-widget[data-widget="c5-roi"] .econ-control label { flex-wrap: wrap; }
+  .ia-widget[data-widget="c5-roi"] .econ-control label output { margin-left: auto; }
+  /* cifras sin cortes («−» separado del número, «pp]» sola): la tarjeta toma la fila si hace falta */
+  .ia-widget[data-widget="c5-roi"] .econ-stat strong,
+  .ia-widget[data-widget="c5-bootstrap"] .econ-stat:nth-child(-n+2) strong { white-space: nowrap; }
+  /* Pirámide: botones ▲ ▼ con área táctil cómoda */
+  .c5-card { padding-right: 0.35rem; }
+  .c5-card-ctl { gap: 0.3rem; }
+  .c5-card-btn { font-size: 0.72rem; padding: 0.5rem 0.65rem; min-width: 2.2rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

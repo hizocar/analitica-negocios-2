@@ -464,7 +464,7 @@ imposible? (Pista: compara sus filas en `E`. Lo que falta es información de **p
 <div class="ia-flow">
 <div class="ia-flow-step"><strong>1 · Tokens</strong>El texto se parte en fichas (Tema 1).</div>
 <div class="ia-flow-step"><strong>2 · Embeddings + posición</strong>Cada ficha se vuelve un vector, y se le suma información de su posición.</div>
-<div class="ia-flow-step is-on"><strong>3 · Capas de atención</strong>Cada vector mira a los demás y se actualiza (y pasa por una pequeña red como la de la Clase 1). Se repite N veces.</div>
+<div class="ia-flow-step is-on"><strong>3 · Capas de atención</strong>Cada vector mira a los demás y se actualiza (y pasa por una red densa como la de la Clase 1). Se repite N veces.</div>
 <div class="ia-flow-step is-done"><strong>4 · Salida</strong>Probabilidad del siguiente token (decoder) o un vector que representa el texto (encoder).</div>
 </div>
 
@@ -1021,7 +1021,7 @@ y vuelve a mirar la tabla. ¿En qué escenario de negocio el LLM zero-shot pasa 
 modelo abierto de Hugging Face (mDeBERTa), y con <strong>Gemini</strong>: anonimización, clasificación zero-shot y
 few-shot con salida estructurada (Pydantic), extracción de campos en JSON, F1 macro sobre ≥100 casos de test, tokens,
 costo y latencia. Funciona para FinTrust y MercaSur, y si no tienes clave de Gemini salta esas celdas sin caerse.
-Toma ~60–90 min (la mayor parte es esperar a la API).</p>
+Toma ~60–90 min (incluye unos 5–10 min de pausas entre las llamadas a la API).</p>
 <a class="ia-colab-btn" href="https://colab.research.google.com/github/hizocar/analitica-negocios-2/blob/main/docs/notebooks/clase3_llms.ipynb" target="_blank" rel="noopener">▶ Abrir en Colab</a>
 </div>
 

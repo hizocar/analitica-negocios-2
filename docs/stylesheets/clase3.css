@@ -53,7 +53,8 @@
   stroke-width: 1.2;
   transition: fill 0.16s ease-out, stroke 0.16s ease-out;
 }
-.c3-att .c3-att-word text { font-size: 13px; font-weight: 600; pointer-events: none; fill: var(--md-default-fg-color); }
+/* --c3-k (lo fija widgets-clase3.js) agranda la letra solo si el SVG se dibuja tan chico que bajaría de ~11 px */
+.c3-att .c3-att-word text { font-size: calc(13px * var(--c3-k, 1)); font-weight: 600; pointer-events: none; fill: var(--md-default-fg-color); }
 .c3-att .c3-att-word:hover rect,
 .c3-att .c3-att-word:focus-visible rect { stroke: var(--usm-blue); stroke-width: 2; }
 .c3-att .c3-att-word.is-on rect {
@@ -63,8 +64,17 @@
 }
 .c3-att .c3-arc { fill: none; stroke: var(--usm-blue); stroke-linecap: round; }
 .c3-att .c3-arc.is-max { stroke: var(--usm-gold); }
-.c3-att text.c3-arc-lbl { font-size: 10.5px; font-weight: 700; fill: var(--md-default-fg-color--light); }
-.c3-att.is-vertical text.c3-arc-lbl { font-size: 12px; }
+.c3-att text.c3-arc-lbl {
+  font-size: calc(10.5px * var(--c3-k, 1));
+  font-weight: 700;
+  fill: var(--md-default-fg-color--light);
+  /* halo del color de fondo: el porcentaje se lee aunque un arco pase por debajo */
+  paint-order: stroke;
+  stroke: var(--md-default-bg-color);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+.c3-att.is-vertical text.c3-arc-lbl { font-size: calc(12px * var(--c3-k, 1)); }
 .md-typeset .c3-heat-t { font-size: 0.72rem; margin: 0.8rem 0 0; opacity: 0.8; }
 .c3-heat .c3-col { text-align: center; font-weight: 600; font-size: 0.64rem; }
 .c3-heat .c3-rowbtn {
@@ -79,18 +89,17 @@
 }
 .c3-heat .c3-rowbtn:hover { color: var(--usm-blue); }
 .c3-heat .ia-heat-cell.is-strong { color: #fff; font-weight: 700; }
-/* Celular: columnas angostas y encabezados de columna en vertical para que la matriz quepa sin desplazarse */
-@media (max-width: 600px) {
-  .c3-heat .ia-heat-cell { min-width: 0; padding: 0.3rem 0.05rem; }
-  .c3-heat .c3-col {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    text-align: left;
-    justify-self: center;
-    padding: 0.3rem 0 0.2rem;
-  }
-  .c3-heat .c3-rowbtn { padding: 0.3rem 0.25rem; }
+/* Widget angosto (.is-narrow, lo pone el JS según el ancho real): columnas angostas y encabezados de columna
+   en vertical para que la matriz quepa sin desplazarse */
+.c3-heat.is-narrow .ia-heat-cell { min-width: 0; padding: 0.3rem 0.05rem; }
+.c3-heat.is-narrow .c3-col {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: left;
+  justify-self: center;
+  padding: 0.3rem 0 0.2rem;
 }
+.c3-heat.is-narrow .c3-rowbtn { padding: 0.3rem 0.15rem; }
 .c3-heat .c3-row-on { box-shadow: inset 0 0 0 2px var(--usm-gold); }
 .c3-heat .c3-rowbtn.c3-row-on { box-shadow: none; color: var(--usm-gold-text); }
 

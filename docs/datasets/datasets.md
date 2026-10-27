@@ -1,8 +1,8 @@
 # 🗄️ Datasets
 
 Datos **ficticios** creados para el curso con [`tools/generar_datos.py`](https://github.com/hizocar/analitica-negocios-2/blob/main/tools/generar_datos.py).
-Son realistas y vienen **sucios a propósito**: duplicados, textos vacíos, categorías escritas de varias
-formas, valores imposibles, errores de etiquetado (~6 %) y **datos personales falsos** (RUT, teléfonos,
+Son realistas y vienen **sucios a propósito**: duplicados, textos basura sin contenido (como «reclamo» u «ok»),
+faltas de ortografía y frases repetidas dentro de un mismo texto, categorías escritas de varias formas, valores imposibles, errores de etiquetado (~6 %) y **datos personales falsos** (RUT, teléfonos,
 correos y nombres) que deberás anonimizar antes de enviarlos a una API.
 
 En Colab, léelos directo desde GitHub:
@@ -32,7 +32,7 @@ df = pd.read_csv(BASE + "reclamos_fintrust.csv")
 | `texto` | texto | Lo que escribió el cliente |
 | `monto_reclamado` | número | Monto en pesos, cuando aplica (⚠️ hay negativos) |
 | `dias_resolucion` | entero | Días que tomó resolverlo (⚠️ hay valores imposibles) |
-| `categoria` | **etiqueta** | Fraude · Cobro indebido · App y canales digitales · Crédito y tasas · Atención al cliente · Información y trámites |
+| `categoria` | **etiqueta** | Fraude · Cobro indebido · App y canales digitales · Crédito y tasas · Atención al cliente · Información y trámites (⚠️ escritas de varias formas: unifícalas antes de entrenar) |
 | `urgencia` | etiqueta | Alta · Media · Baja (⚠️ hay nulos) |
 
 ## 🛒 Caso B · MercaSur (retail online)
@@ -54,7 +54,7 @@ df = pd.read_csv(BASE + "reclamos_fintrust.csv")
 | `precio_clp` | entero | Precio pagado (⚠️ hay ceros) |
 | `rating` | número | Estrellas de 1 a 5 (⚠️ hay nulos y valores imposibles) |
 | `texto` | texto | Lo que escribió el cliente |
-| `aspecto` | **etiqueta** | Despacho · Calidad del producto · Precio · Atención · Devoluciones y garantía · Pago |
+| `aspecto` | **etiqueta** | Despacho · Calidad del producto · Precio · Atención · Devoluciones y garantía · Pago (⚠️ escritas de varias formas: unifícalas antes de entrenar) |
 
 ## 📚 Documentos para RAG
 

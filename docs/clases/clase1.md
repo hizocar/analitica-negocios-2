@@ -193,7 +193,7 @@ from sklearn.datasets import make_circles
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
 
-# 400 clientes: centro = se quedan (0), anillo = se van (1)
+# 400 clientes: anillo = se van (y = 0), centro = se quedan (y = 1)
 X, y = make_circles(n_samples=400, noise=0.12, factor=0.45, random_state=1)
 
 modelos = {
@@ -405,7 +405,7 @@ controlar cómo le va. Luego comparamos las dos curvas:
 Las dos herramientas que usarás en Keras:
 
 - **Early stopping:** vigila la pérdida de validación; si no mejora en *N* épocas seguidas (la **paciencia**), detiene
-  el entrenamiento y **recupera los pesos de la mejor época**.
+  el entrenamiento y, con `restore_best_weights=True`, **recupera los pesos de la mejor época**.
 - **Dropout:** en cada paso de entrenamiento **apaga al azar** un porcentaje de neuronas (p. ej. 30 %). La red no
   puede depender de una sola neurona "estrella" y se ve obligada a repartir lo aprendido. Es como entrenar a un
   equipo rotando a los jugadores: nadie se vuelve imprescindible.
@@ -498,8 +498,8 @@ las curvas y con la mejor época?
 ### 5.1 Antes de modelar: auditar y limpiar
 
 Antes de cualquier modelo, **mira los datos**. Los casos FinTrust y MercaSur vienen sucios a propósito, como los
-datos reales: reclamos duplicados, textos vacíos o basura ("reclamo", "ok"), categorías escritas de cinco formas
-distintas ("Fraude", "FRAUDE", "fraude ", …), montos negativos o días de resolución imposibles. Si entrenas con
+datos reales: reclamos duplicados, textos vacíos o basura ("reclamo", "ok"), categorías escritas de varias formas
+distintas ("Fraude", "FRAUDE", "fraude", "Fraude ", …), montos negativos o días de resolución imposibles. Si entrenas con
 "Fraude" y "FRAUDE" como clases distintas, el modelo cree que hay 20 categorías en vez de 6 (lo verás en la auditoría)
 y tus métricas no significan nada.
 
@@ -529,7 +529,8 @@ df["categoria"].value_counts()
 ```
 
 **🎯 Reto:** haz lo mismo con la columna `canal` (`df["canal"].value_counts()`). ¿Cuántos canales distintos hay
-*de verdad*? Si eliges MercaSur, cambia el archivo por `resenas_mercasur_muestra.csv` y audita `aspecto` y `rating`.
+*de verdad*? Si eliges MercaSur, cambia el archivo por `resenas_mercasur_muestra.csv` y adapta la auditoría a sus columnas: `aspecto` en vez de
+`categoria`, y `rating` en vez de montos, días y urgencia (que no existen en MercaSur).
 {: .py-run-reto }
 
 </div>
@@ -642,7 +643,7 @@ tabla["conteo total"] = conteos.toarray().sum(axis=0)
 tabla.round(2).sort_values("R3", ascending=False)
 ```
 
-**🎯 Reto:** agrega un cuarto reclamo: `"la app me cobró una comisión que no reconozco"`. ¿Qué le pasa al peso de
+**🎯 Reto:** agrega un cuarto reclamo: `"la app me cobró una comisión que no reconozco"` (y `"R4"` en `columns`). ¿Qué le pasa al peso de
 "app" en R3 ahora que la palabra aparece en dos reclamos?
 {: .py-run-reto }
 
@@ -662,7 +663,7 @@ dos modelos → comparar con **F1 macro**.
 </div>
 
 ¿Por qué **F1 macro** y no exactitud? Porque las categorías no tienen el mismo tamaño. F1 macro calcula el F1 de
-**cada** categoría y los promedia **sin ponderar**: una categoría chica pero crítica (como Fraude) pesa lo mismo que
+**cada** categoría y los promedia **sin ponderar**: una categoría más chica pero crítica (como Fraude) pesa lo mismo que
 la más grande. Un modelo que ignora Fraude no puede esconderse detrás de un buen promedio.
 
 <div class="py-run" markdown>
@@ -884,7 +885,7 @@ dirías a la gerenta de riesgo, por qué en un caso se mueve y en el otro no.
 <div class="econ-quiz-opts">
 <button class="econ-quiz-opt" data-why="Subir el umbral marca menos reclamos como fraude: menos falsas alarmas, pero se escapan más fraudes, que son los caros.">Lo subo (p. ej. a 0,8), para estar muy seguro antes de marcar.</button>
 <button class="econ-quiz-opt" data-correct>Lo bajo (p. ej. a 0,3), aceptando más falsas alarmas a cambio de detectar más fraudes.</button>
-<button class="econ-quiz-opt" data-why="0,5 solo es óptimo si ambos errores cuestan lo mismo, lo que aquí no se cumple.">Lo dejo en 0,5, que es el umbral estándar.</button>
+<button class="econ-quiz-opt" data-why="En general, 0,5 solo es óptimo si ambos errores cuestan lo mismo, lo que aquí no se cumple.">Lo dejo en 0,5, que es el umbral estándar.</button>
 </div>
 <p class="econ-quiz-fb">✅ Cuando el falso negativo es mucho más caro, conviene sacrificar precisión para ganar <strong>recall</strong> en Fraude. Compruébalo en el simulador con el botón 🎯.</p>
 </div>

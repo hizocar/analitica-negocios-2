@@ -61,13 +61,15 @@ for m in client.models.list():
 
 ## 4. Límites de la capa gratuita
 
-La capa gratuita limita las **solicitudes por minuto y por día** (los valores actuales están en
-[ai.google.dev/gemini-api/docs/rate-limits](https://ai.google.dev/gemini-api/docs/rate-limits)). Para el
+La capa gratuita limita las **solicitudes por minuto y por día**. Los valores cambian con el tiempo y dependen
+de tu cuenta: revisa tus límites vigentes en [Google AI Studio](https://aistudio.google.com) y la explicación en
+[ai.google.dev/gemini-api/docs/rate-limits](https://ai.google.dev/gemini-api/docs/rate-limits). Para el
 proyecto:
 
 - Trabaja con **muestras** (100–200 casos), no con los 6.000 textos.
-- Pon una pausa entre llamadas (`time.sleep(4)`) y reintenta si aparece el error `429` (superaste el
-  límite) o `503` (el modelo está saturado; pasa en horas de alta demanda y se resuelve esperando).
+- Pon una pausa entre llamadas (`time.sleep(7)`, unas 8 llamadas por minuto, como en los notebooks) y reintenta
+  si aparece el error `429` (superaste el límite) o `503` (el modelo está saturado; pasa en horas de alta demanda
+  y se resuelve esperando).
 - **Guarda los resultados** en un CSV apenas los obtengas, para no repetir llamadas si se reinicia la sesión.
 
 ```python

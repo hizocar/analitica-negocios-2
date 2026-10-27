@@ -16,8 +16,10 @@ Uso:  python tools/generar_datos.py
 from __future__ import annotations
 
 import random
+import re
 import unicodedata
 from datetime import date, timedelta
+from difflib import SequenceMatcher
 from pathlib import Path
 
 import numpy as np
@@ -403,14 +405,212 @@ PLURALES_M = {"audífonos bluetooth", "jeans"}
 PLURALES_F = {"zapatillas", "mancuernas"}
 
 
-def rellenar_ms(t: str, p: str) -> str:
+def articulos_ms(t: str, p: str) -> str:
+    """Ajusta solo los artículos de la plantilla al género y número del producto (deja {d} sin llenar)."""
     if p in FEMENINOS:
         t = t.replace("del {p}", "de la {p}").replace("el {p}", "la {p}").replace("El {p}", "La {p}").replace("un {p}", "una {p}")
     elif p in PLURALES_M:
         t = t.replace("del {p}", "de los {p}").replace("el {p}", "los {p}").replace("El {p}", "Los {p}").replace("un {p}", "unos {p}")
     elif p in PLURALES_F:
         t = t.replace("del {p}", "de las {p}").replace("el {p}", "las {p}").replace("El {p}", "Las {p}").replace("un {p}", "unas {p}")
-    return t.replace("{p}", p).replace("{d}", str(rng.randint(2, 15)))
+    return t.replace("{p}", p)
+
+
+def rellenar_ms(t: str, p: str) -> str:
+    return articulos_ms(t, p).replace("{d}", str(rng.randint(2, 15)))
+
+
+# --------------------------------------------------------------------------
+# Corrección gramatical de las reseñas
+# Las plantillas de MercaSur están escritas para un producto masculino singular y articulos_ms() solo
+# ajusta el artículo. Esta corrección se aplica al final, sin consumir números aleatorios (el resto
+# del dataset no cambia): concordancia de verbos y adjetivos («las zapatillas llegaron») y frases que
+# no tienen sentido para el producto («los jeans dejaron de funcionar», «cambio de talla» de un
+# refrigerador). El ruido de escritura (tildes, mayúsculas, «...») se conserva; las frases a las que
+# ensuciar() les metió una errata quedan tal cual, como texto real mal escrito.
+# --------------------------------------------------------------------------
+
+NO_FUNCIONAN = {"jeans", "zapatillas", "mat de yoga", "carpa", "botella térmica", "juego de sábanas",
+                "set de toallas", "mochila", "polerón", "chaqueta impermeable", "mancuernas",
+                "silla de escritorio", "sartén antiadherente", "crema facial", "perfume"}
+COSMETICOS = {"crema facial", "perfume"}
+ROPA = {"jeans", "zapatillas", "polerón", "chaqueta impermeable"}
+
+# Plantilla original → versión con marcas de concordancia:
+# {El} {el} {del} {al} {un} {Lo} {lo} = artículos y pronombres · {o} = terminación o/a/os/as ·
+# {s} = plural de adjetivos en -e · {singular|plural} = verbo o palabra según el número.
+CONCORDANCIA = {
+    "El {p} llegó antes de lo prometido.": "{El} {p} {llegó|llegaron} antes de lo prometido.",
+    "Despacho rápido y el {p} venía bien embalado.": "Despacho rápido y {el} {p} {venía|venían} bien embalad{o}.",
+    "El repartidor fue muy amable y el {p} llegó perfecto.":
+        "El repartidor fue muy amable y {el} {p} {llegó|llegaron} perfect{o}.",
+    "Excelente calidad el {p}, se nota firme.": "Excelente calidad {el} {p}, se {nota|notan} firme{s}.",
+    "El {p} funciona perfecto, muy buena calidad.": "{El} {p} {funciona|funcionan} perfecto, muy buena calidad.",
+    "Superó mis expectativas, el {p} es tal cual la foto.":
+        "Superó mis expectativas, {el} {p} {es|son} tal cual la foto.",
+    "Llevo {d} semanas usando el {p} y anda impecable.":
+        "Llevo {d} semanas usando {el} {p} y {anda|andan} impecable{s}.",
+    "Muy buen precio para lo que es el {p}.": "Muy buen precio para lo que {es|son} {el} {p}.",
+    "Lo compré en oferta, imposible encontrar el {p} más barato.":
+        "{Lo} compré en oferta, imposible encontrar {el} {p} más barat{o}.",
+    "Con el descuento el {p} salió regalado.": "Con el descuento {el} {p} {salió|salieron} regalad{o}.",
+    "Hice efectiva la garantía del {p} y me lo cambiaron al tiro.":
+        "Hice efectiva la garantía {del} {p} y me {lo} cambiaron al tiro.",
+    "El {p} llegó con {d} días de atraso.": "{El} {p} {llegó|llegaron} con {d} días de atraso.",
+    "Nunca llegó el {p} y el seguimiento dice entregado.":
+        "Nunca {llegó|llegaron} {el} {p} y el seguimiento dice entregado.",
+    "El {p} dejó de funcionar a los {d} días.": "{El} {p} {dejó|dejaron} de funcionar a los {d} días.",
+    "Pésima calidad, el {p} se rompió altiro.": "Pésima calidad, {el} {p} se {rompió|rompieron} altiro.",
+    "El {p} no se parece en nada a la foto.": "{El} {p} no se {parece|parecen} en nada a la foto.",
+    "Carísimo el {p} para lo que es.": "Carísim{o} {el} {p} para lo que {es|son}.",
+    "En otra tienda el {p} estaba mucho más barato.":
+        "En otra tienda {el} {p} {estaba|estaban} mucho más barat{o}.",
+    "El {p} llegó en la fecha indicada, sin más.": "{El} {p} {llegó|llegaron} en la fecha indicada, sin más.",
+    "El {p} cumple, nada especial.": "{El} {p} {cumple|cumplen}, nada especial.",
+    "Calidad aceptable para el uso que le doy al {p}.": "Calidad aceptable para el uso que {le|les} doy {al} {p}.",
+    "Ni caro ni barato el {p}.": "Ni car{o} ni barat{o} {el} {p}.",
+}
+# Frases que no tienen sentido para productos que no «funcionan» (ropa, carpa, crema…)
+SENTIDO_NO_FUNCIONA = {
+    "El {p} dejó de funcionar a los {d} días.": "{El} {p} se {rompió|rompieron} a los {d} días.",
+    "El {p} funciona perfecto, muy buena calidad.": "{El} {p} {salió|salieron} perfect{o}, muy buena calidad.",
+    "Llevo {d} semanas usando el {p} y anda impecable.":
+        "Llevo {d} semanas usando {el} {p} y {sigue|siguen} impecable{s}.",
+}
+SENTIDO_COSMETICOS = {
+    "El {p} dejó de funcionar a los {d} días.": "{El} {p} se {echó|echaron} a perder a los {d} días.",
+    "Pésima calidad, el {p} se rompió altiro.": "Pésima calidad, {el} {p} se {echó|echaron} a perder altiro.",
+    "Excelente calidad el {p}, se nota firme.": "Excelente calidad {el} {p}, se nota que {es|son} buen{o}.",
+    "Llevo {d} semanas usando el {p} y anda impecable.": "Llevo {d} semanas usando {el} {p} y me encanta.",
+    "El material del {p} es muy delgado y frágil.": "El envase {del} {p} es muy delgado y frágil.",
+}
+SOLO_ROPA = {"El cambio de talla fue fácil y gratis.": "El cambio fue fácil y gratis."}
+
+_FORMAS = {
+    ("m", "s"): {"El": "El", "el": "el", "del": "del", "al": "al", "un": "un", "Lo": "Lo", "lo": "lo", "o": "o", "s": ""},
+    ("f", "s"): {"El": "La", "el": "la", "del": "de la", "al": "a la", "un": "una", "Lo": "La", "lo": "la", "o": "a", "s": ""},
+    ("m", "p"): {"El": "Los", "el": "los", "del": "de los", "al": "a los", "un": "unos", "Lo": "Los", "lo": "los", "o": "os", "s": "s"},
+    ("f", "p"): {"El": "Las", "el": "las", "del": "de las", "al": "a las", "un": "unas", "Lo": "Las", "lo": "las", "o": "as", "s": "s"},
+}
+
+
+def _concordar(marcada: str, p: str) -> str:
+    genero = "f" if p in FEMENINOS or p in PLURALES_F else "m"
+    numero = "p" if p in PLURALES_M or p in PLURALES_F else "s"
+    t = re.sub(r"\{([^{}|]+)\|([^{}|]+)\}", lambda m: m.group(1 if numero == "s" else 2), marcada)
+    for k, v in _FORMAS[(genero, numero)].items():
+        t = t.replace("{" + k + "}", v)
+    return t.replace("{p}", p)
+
+
+def _patron_tolerante(frase: str) -> re.Pattern:
+    """Regex que encuentra la frase aunque ensuciar() le haya quitado tildes, cambiado mayúsculas o puesto «...»."""
+    equiv = {"a": "aá", "e": "eé", "i": "ií", "o": "oó", "u": "uúü", "n": "nñ"}
+    base = {"á": "a", "é": "e", "í": "i", "ó": "o", "ú": "u", "ü": "u", "ñ": "n"}
+    partes = []
+    for trozo in re.split(r"(\{d\})", frase):
+        if trozo == "{d}":
+            partes.append(r"(\d+)")
+            continue
+        for c in trozo:
+            b = base.get(c.lower(), c.lower())
+            if b in equiv:
+                partes.append("[" + equiv[b] + "]")
+            elif c == ".":
+                partes.append(r"\.(?:\.\.)?")
+            elif c == " ":
+                partes.append(r"\s+")
+            else:
+                partes.append(re.escape(c))
+    return re.compile("".join(partes), re.IGNORECASE)
+
+
+def _con_estilo(correcta: str, encontrada: str, original: str) -> str:
+    """Aplica a la frase corregida el mismo ruido que tenía la frase encontrada."""
+    if any(c in original for c in "áéíóúñü") and not any(c in encontrada.lower() for c in "áéíóúñü"):
+        correcta = quitar_tildes(correcta)
+    if encontrada == encontrada.upper() and encontrada != encontrada.lower():
+        correcta = correcta.upper()
+    elif encontrada == encontrada.lower():
+        correcta = correcta.lower()
+    elif encontrada[0].islower():
+        correcta = correcta[0].lower() + correcta[1:]
+    if "..." in encontrada:
+        correcta = correcta.replace(".", "...")
+    return correcta
+
+
+_CORRECCIONES: dict[str, list] = {}
+
+
+def _correcciones(p: str) -> list:
+    """Pares (patrón de la frase incorrecta, frase original, frase corregida) para un producto."""
+    if p not in _CORRECCIONES:
+        plantillas = {t for banco in (MS_POS, MS_NEG, MS_NEU) for lista in banco.values() for t in lista}
+        pares = []
+        for t in sorted(plantillas, key=len, reverse=True):
+            marcada = CONCORDANCIA.get(t)
+            if p in NO_FUNCIONAN and t in SENTIDO_NO_FUNCIONA:
+                marcada = SENTIDO_NO_FUNCIONA[t]
+            if p in COSMETICOS and t in SENTIDO_COSMETICOS:
+                marcada = SENTIDO_COSMETICOS[t]
+            if p not in ROPA and t in SOLO_ROPA:
+                marcada = SOLO_ROPA[t]
+            if marcada is None:
+                continue
+            original, correcta = articulos_ms(t, p), _concordar(marcada, p)
+            if original != correcta:
+                pares.append((_patron_tolerante(original), original, correcta))
+        _CORRECCIONES[p] = pares
+    return _CORRECCIONES[p]
+
+
+def _normal(s: str) -> str:
+    return re.sub(r"\d+", "#", quitar_tildes(s.lower())).replace("{d}", "#").replace("...", ".")
+
+
+def _frases_con_erratas(texto: str, p: str) -> str:
+    """Segunda pasada: frases incorrectas a las que ensuciar() les metió una errata.
+
+    Umbral 0,85: entre la forma correcta de una plantilla y la incorrecta de OTRA la similitud máxima es
+    0,76, así que una frase correcta nunca se confunde con otra plantilla.
+    """
+    pares = _correcciones(p)
+    trozos = re.split(r"((?:\.\.\.|[.!?:])\s*)", texto)
+    for i in range(0, len(trozos), 2):
+        frase = trozos[i].strip()
+        if len(frase) < 15:
+            continue
+        sep = trozos[i + 1] if i + 1 < len(trozos) else ""
+        candidata = _normal(frase + sep.strip()[:1])
+        mejor, puntaje = None, 0.85
+        for _, original, correcta in pares:
+            r = SequenceMatcher(None, candidata, _normal(original)).ratio()
+            if r >= puntaje:
+                mejor, puntaje = (original, correcta), r
+        if mejor:
+            original, correcta = mejor
+            nueva = correcta
+            for d in re.findall(r"\d+", frase):
+                nueva = nueva.replace("{d}", d, 1)
+            if "{d}" in nueva:  # la errata cayó en el número: no se toca
+                continue
+            nueva = _con_estilo(nueva, frase, original).rstrip(".")
+            trozos[i] = trozos[i].replace(frase, nueva)
+    return "".join(trozos)
+
+
+def corregir_resenas(df: pd.DataFrame) -> pd.Series:
+    def corregir(texto: str, p: str) -> str:
+        for patron, original, correcta in _correcciones(p):
+            def reemplazo(m, original=original, correcta=correcta):
+                nueva = correcta
+                for d in m.groups():
+                    nueva = nueva.replace("{d}", d, 1)
+                return _con_estilo(nueva, m.group(0), original)
+            texto = patron.sub(reemplazo, texto)
+        return _frases_con_erratas(texto, p)
+    return pd.Series([corregir(t, p) for t, p in zip(df["texto"], df["producto"])], index=df.index)
 
 
 def generar_mercasur(n: int = 6000) -> pd.DataFrame:
@@ -732,6 +932,7 @@ def main() -> None:
     ft = generar_fintrust()
     ft.to_csv(OUT / "reclamos_fintrust.csv", index=False)
     ms = generar_mercasur()
+    ms["texto"] = corregir_resenas(ms)
     ms.to_csv(OUT / "resenas_mercasur.csv", index=False)
 
     escribir_docs(DOCS_FINTRUST, OUT / "docs_fintrust", "politicas_fintrust.csv", "FinTrust")

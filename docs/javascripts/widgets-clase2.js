@@ -32,6 +32,22 @@
     return p;
   }
 
+  /* El lienzo de cada SVG se elige según su ancho REAL en pantalla (no el de la ventana): bajo cierto umbral,
+     el lienzo de escritorio se vería con letra < 11 px, y se usa uno con escala 1 (1 unidad = 1 px).
+     onWidth(w) se llama al inicio y cada vez que cambia el ancho (girar el teléfono, cambiar la ventana,
+     abrir o cerrar las barras laterales). Devuelve la función que mide y avisa. */
+  function segunAncho(el, onWidth) {
+    let last = -1, raf = 0;
+    const medir = () => {
+      const w = Math.round(el.getBoundingClientRect().width);
+      if (w > 0 && w !== last) { last = w; onWidth(w); }
+    };
+    if (window.ResizeObserver) {
+      new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(medir); }).observe(el);
+    }
+    return medir;
+  }
+
   /* Interpola un conjunto de números (para transiciones entre ejemplos). */
   function tween(from, to, onUpdate, duration) {
     const M = window.Motion;
@@ -55,9 +71,16 @@
     getJSON("clase2_mapa.json").then((d) => {
       wait.remove();
       const P = d.puntos;
-      const W = 640, H = 400, PAD = 26;
-      const X = (x) => PAD + x * (W - 2 * PAD);
-      const Y = (y) => H - PAD - y * (H - 2 * PAD);
+      // Dos lienzos. Escritorio: 640×400 (desde 720 px de ancho real, para que el rótulo de 10 px se vea ≥ 11 px).
+      // Angosto: escala 1, tan ancho como el SVG en pantalla, rótulos de 12 px dentro de márgenes más altos.
+      const ANCHO = { W: 640, H: 400, L: 26, R: 26, T: 26, B: 26, ax1: [614, 394], ax2: [10, 18] };
+      const angosto = (w) => {
+        const W = Math.max(240, w), H = Math.max(316, Math.round(W * 0.625));
+        return { W, H, L: 12, R: 12, T: 36, B: 34, ax1: [W - 6, H - 7], ax2: [4, 16] };
+      };
+      let G = ANCHO, movil = false;
+      const X = (x) => G.L + x * (G.W - G.L - G.R);
+      const Y = (y) => G.H - G.B - y * (G.H - G.T - G.B);
 
       // Leyenda (sirve también como filtro visual por categoría)
       const legend = h("div", { class: "c2-legend", role: "group", "aria-label": "Categorías" });
@@ -73,18 +96,17 @@
       });
       root.append(legend);
 
-      const plot = svg("svg", { viewBox: `0 0 ${W} ${H}`, class: "ia-svg c2-map", role: "group",
+      const plot = svg("svg", { class: "ia-svg c2-map", role: "group",
         "aria-label": "Mapa 2D de 48 reclamos coloreados por categoría" });
       const gLines = svg("g", { class: "c2-lines" });
       const gPts = svg("g", {});
       const gLbl = svg("g", { class: "c2-lbls" });
-      plot.append(
-        svg("text", { x: W - PAD, y: H - 6, "text-anchor": "end", class: "c2-axis-t" }, "componente principal 1 →"),
-        svg("text", { x: 10, y: PAD - 8, class: "c2-axis-t" }, "↑ componente principal 2"),
-        gLines, gPts, gLbl);
+      const ax1 = svg("text", { "text-anchor": "end", class: "c2-axis-t" }, "componente principal 1 →");
+      const ax2 = svg("text", { class: "c2-axis-t" }, "↑ componente principal 2");
+      plot.append(ax1, ax2, gLines, gPts, gLbl);
 
       const dots = P.map((p, i) => {
-        const c = svg("circle", { cx: X(p.x), cy: Y(p.y), r: 6, class: "c2-dot c2-k" + p.c, tabindex: "0",
+        const c = svg("circle", { r: 6, class: "c2-dot c2-k" + p.c, tabindex: "0",
           role: "button", "aria-label": `${d.categorias[p.c]}: ${p.t}` });
         c.append(svg("title", {}, p.t));
         c.addEventListener("click", () => select(i));
@@ -93,6 +115,38 @@
         return c;
       });
       root.append(plot);
+
+      // En el lienzo angosto los puntos miden ~12 px: un toque cerca de un punto (≤ 22 px) también lo elige.
+      plot.addEventListener("click", (e) => {
+        if (!movil || e.target.classList.contains("c2-dot")) return;
+        const r = plot.getBoundingClientRect();
+        const k = r.width / G.W;
+        let best = -1, bd = 22;
+        P.forEach((p, i) => {
+          if (dots[i].classList.contains("is-dim") && cur == null) return;
+          const dd = Math.hypot(r.left + X(p.x) * k - e.clientX, r.top + Y(p.y) * k - e.clientY);
+          if (dd < bd) { bd = dd; best = i; }
+        });
+        if (best >= 0) select(best);
+      });
+
+      let cur = null; // índice del reclamo elegido (para redibujar al cambiar de lienzo)
+      function layout(w) {
+        w = Math.round(w);
+        const m = w < 720;
+        const g = m ? angosto(w) : ANCHO;
+        if (g.W === G.W && g.H === G.H && m === movil && plot.hasAttribute("viewBox")) return;
+        movil = m; G = g;
+        plot.setAttribute("viewBox", `0 0 ${G.W} ${G.H}`);
+        plot.classList.toggle("is-compact", m);
+        ax1.setAttribute("x", G.ax1[0]); ax1.setAttribute("y", G.ax1[1]);
+        ax2.setAttribute("x", G.ax2[0]); ax2.setAttribute("y", G.ax2[1]);
+        dots.forEach((el, i) => { el.setAttribute("cx", X(P[i].x)); el.setAttribute("cy", Y(P[i].y)); });
+        if (cur != null) drawSel(cur, false);
+      }
+      const medir = segunAncho(plot, layout);
+      layout(plot.getBoundingClientRect().width || 640);
+      medir();
 
       const ctr = controls(root);
       ctr.classList.add("c2-ctr-row");
@@ -123,6 +177,7 @@
       }
 
       function clear(keepInfo) {
+        cur = null;
         stopAnims();
         gLines.replaceChildren();
         gLbl.replaceChildren();
@@ -133,9 +188,70 @@
         }
       }
 
+      // Los vecinos suelen quedar muy juntos y los números de rango se taparían entre sí (o con los puntos). Para cada vecino se prueba alrededor del punto la primera posición libre.
+      function rankPos(i) {
+        const p = P[i];
+        const circ = [{ x: X(p.x), y: Y(p.y), r: 10 }].concat(p.nn.map((j) => ({ x: X(P[j].x), y: Y(P[j].y), r: 8 })));
+        const placed = [];
+        const LW = 9, LH = 11; // caja aproximada de un dígito de 13 px en negrita
+        const CANDS = [[11, 0, "start"], [-11, 0, "end"], [0, -13, "middle"], [0, 15, "middle"],
+          [9, -10, "start"], [-9, -10, "end"], [9, 12, "start"], [-9, 12, "end"]];
+        return p.nn.map((j) => {
+          const cx = X(P[j].x), cy = Y(P[j].y);
+          let best = null, bestCost = Infinity;
+          CANDS.forEach(([dx, dy, anc], n) => {
+            const x0 = anc === "start" ? cx + dx : anc === "end" ? cx + dx - LW : cx + dx - LW / 2;
+            const box = { x0, x1: x0 + LW, y0: cy + dy - LH / 2, y1: cy + dy + LH / 2 };
+            let cost = n * 0.01;
+            if (box.x0 < 2 || box.x1 > G.W - 2 || box.y0 < 2 || box.y1 > G.H - 2) cost += 100;
+            placed.forEach((b) => {
+              const ox = Math.min(b.x1, box.x1) - Math.max(b.x0, box.x0), oy = Math.min(b.y1, box.y1) - Math.max(b.y0, box.y0);
+              if (ox > 0 && oy > 0) cost += 10 + ox * oy;
+            });
+            circ.forEach((c) => {
+              const nx = Math.max(box.x0, Math.min(c.x, box.x1)), ny = Math.max(box.y0, Math.min(c.y, box.y1));
+              const pen = c.r + 1 - Math.hypot(c.x - nx, c.y - ny);
+              if (pen > 0) cost += 1 + pen;
+            });
+            if (cost < bestCost) { bestCost = cost; best = { box, attrs: { x: cx + dx, y: cy + dy + 4.5, "text-anchor": anc } }; }
+          });
+          placed.push(best.box);
+          return best.attrs;
+        });
+      }
+
+      // Parte SVG de la selección: rayos, números de rango y radios. anim = false redibuja sin animar
+      // (al cambiar de lienzo celular ↔ escritorio).
+      function drawSel(i, anim) {
+        const p = P[i];
+        stopAnims();
+        gLines.replaceChildren();
+        gLbl.replaceChildren();
+        const pos = rankPos(i);
+        // Rayos desde el punto elegido hacia cada vecino (en cascada)
+        p.nn.forEach((j, k) => {
+          const ln = svg("line", { x1: X(p.x), y1: Y(p.y), x2: X(p.x), y2: Y(p.y), class: "c2-ray" });
+          gLines.append(ln);
+          const lbl = svg("text", Object.assign({ class: "c2-rank" }, pos[k]), String(k + 1));
+          gLbl.append(lbl);
+          if (anim) {
+            animAttr(ln, "x2", X(P[j].x), { delay: k * 0.06 });
+            animAttr(ln, "y2", Y(P[j].y), { delay: k * 0.06 });
+          } else { ln.setAttribute("x2", X(P[j].x)); ln.setAttribute("y2", Y(P[j].y)); }
+        });
+        if (anim) {
+          animAttr(dots[i], "r", 10, { ease: motion.EASE.back });
+          p.nn.forEach((j, k) => animAttr(dots[j], "r", 8, { delay: 0.05 + k * 0.05, ease: motion.EASE.back }));
+        } else {
+          dots[i].setAttribute("r", 10);
+          p.nn.forEach((j) => dots[j].setAttribute("r", 8));
+        }
+      }
+
       function select(i) {
         legend.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", "false"));
         clear(true);
+        cur = i;
         const p = P[i];
         const nn = new Set(p.nn);
         dots.forEach((el, j) => {
@@ -143,19 +259,7 @@
           el.classList.toggle("is-nn", nn.has(j));
           el.classList.toggle("is-sel", j === i);
         });
-        // Rayos desde el punto elegido hacia cada vecino (en cascada)
-        const lines = p.nn.map((j, k) => {
-          const ln = svg("line", { x1: X(p.x), y1: Y(p.y), x2: X(p.x), y2: Y(p.y), class: "c2-ray" });
-          gLines.append(ln);
-          animAttr(ln, "x2", X(P[j].x), { delay: k * 0.06 });
-          animAttr(ln, "y2", Y(P[j].y), { delay: k * 0.06 });
-          const lbl = svg("text", { x: X(P[j].x) + 9, y: Y(P[j].y) + 4, class: "c2-rank" }, String(k + 1));
-          gLbl.append(lbl);
-          return ln;
-        });
-        animAttr(dots[i], "r", 10, { ease: motion.EASE.back });
-        p.nn.forEach((j, k) => animAttr(dots[j], "r", 8, { delay: 0.05 + k * 0.05, ease: motion.EASE.back }));
-        void lines;
+        drawSel(i, true);
 
         // Detalle con barras
         const same = p.nn.filter((j) => P[j].c === p.c).length;
@@ -229,18 +333,18 @@
       }).then(() => { motion.pulse(verdict); });
     });
 
-    const W = 640, H = 340, O = { x: 320, y: 175 }, U = 36; // U = píxeles por unidad
-    const plot = svg("svg", { viewBox: `0 0 ${W} ${H}`, class: "ia-svg c2-cos", role: "img",
+    // Dos lienzos. Escritorio: 640×340 (desde 600 px de ancho real). Angosto: alto 310 y tan ancho como el SVG en
+    // pantalla (mínimo 310), escala ≈ 1. U = unidades del lienzo por unidad del vector; en ambos caben vectores de
+    // largo 4 en cualquier dirección. hr = radio de la manilla de arrastre (más grande para el dedo).
+    const ANCHO = { W: 640, H: 340, O: { x: 320, y: 175 }, U: 36, gx: 8, gy: 4, hr: 13 };
+    const angosto = (w) => {
+      const W = Math.max(310, w);
+      return { W, H: 310, O: { x: W / 2, y: 155 }, U: 32, gx: Math.floor((W / 2 - 20) / 32), gy: 4, hr: 17 };
+    };
+    let W, H, O, U, movil = null;
+    const plot = svg("svg", { class: "ia-svg c2-cos", role: "img",
       "aria-label": "Dos vectores desde el origen con el ángulo entre ellos" });
     const grid = svg("g", {});
-    for (let k = -8; k <= 8; k++) {
-      grid.append(svg("line", { x1: O.x + k * U, y1: 10, x2: O.x + k * U, y2: H - 10, class: "ia-grid" }));
-    }
-    for (let k = -4; k <= 4; k++) {
-      grid.append(svg("line", { x1: 20, y1: O.y + k * U, x2: W - 20, y2: O.y + k * U, class: "ia-grid" }));
-    }
-    grid.append(svg("line", { x1: 20, y1: O.y, x2: W - 20, y2: O.y, class: "ia-axis" }),
-      svg("line", { x1: O.x, y1: 10, x2: O.x, y2: H - 10, class: "ia-axis" }));
     const defs = svg("defs", {},
       svg("marker", { id: "c2-arrA", viewBox: "0 0 10 10", refX: 8, refY: 5, markerWidth: 6, markerHeight: 6, orient: "auto-start-reverse" },
         svg("path", { d: "M0,0 L10,5 L0,10 z", class: "c2-vA-fill" })),
@@ -249,14 +353,40 @@
     const arc = svg("path", { class: "c2-arc" });
     const arcT = svg("text", { class: "c2-arc-t", "text-anchor": "middle" });
     const gap = svg("line", { class: "c2-gap" });
-    const vA = svg("line", { x1: O.x, y1: O.y, class: "c2-vA", "marker-end": "url(#c2-arrA)" });
-    const vB = svg("line", { x1: O.x, y1: O.y, class: "c2-vB", "marker-end": "url(#c2-arrB)" });
-    const hA = svg("circle", { r: 13, class: "c2-handle", tabindex: "-1" });
-    const hB = svg("circle", { r: 13, class: "c2-handle", tabindex: "-1" });
+    const vA = svg("line", { class: "c2-vA", "marker-end": "url(#c2-arrA)" });
+    const vB = svg("line", { class: "c2-vB", "marker-end": "url(#c2-arrB)" });
+    const hA = svg("circle", { class: "c2-handle", tabindex: "-1" });
+    const hB = svg("circle", { class: "c2-handle", tabindex: "-1" });
     const tA = svg("text", { class: "c2-vlbl c2-vA-t" }, "A");
     const tB = svg("text", { class: "c2-vlbl c2-vB-t" }, "B");
     plot.append(defs, grid, arc, gap, vB, vA, arcT, tA, tB, hA, hB);
     root.append(plot);
+
+    function layout(w) {
+      w = Math.round(w);
+      const m = w < 600;
+      const G = m ? angosto(w) : ANCHO;
+      if (G.W === W && m === movil) return false;
+      movil = m;
+      ({ W, H, O, U } = G);
+      plot.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      plot.classList.toggle("is-compact", m);
+      const gl = [];
+      for (let k = -G.gx; k <= G.gx; k++) {
+        gl.push(svg("line", { x1: O.x + k * U, y1: 10, x2: O.x + k * U, y2: H - 10, class: "ia-grid" }));
+      }
+      for (let k = -G.gy; k <= G.gy; k++) {
+        gl.push(svg("line", { x1: 20, y1: O.y + k * U, x2: W - 20, y2: O.y + k * U, class: "ia-grid" }));
+      }
+      gl.push(svg("line", { x1: 20, y1: O.y, x2: W - 20, y2: O.y, class: "ia-axis" }),
+        svg("line", { x1: O.x, y1: 10, x2: O.x, y2: H - 10, class: "ia-axis" }));
+      grid.replaceChildren(...gl);
+      [vA, vB].forEach((v) => { v.setAttribute("x1", O.x); v.setAttribute("y1", O.y); });
+      [hA, hB].forEach((c) => c.setAttribute("r", G.hr));
+      return true;
+    }
+    const medir = segunAncho(plot, (w) => { if (layout(w)) render(); });
+    layout(plot.getBoundingClientRect().width || 640);  // (medir() se llama después del primer render)
 
     const formula = h("p", { class: "c2-formula", "aria-live": "polite" });
     root.append(formula);
@@ -268,6 +398,9 @@
 
     // Arrastrar las puntas
     function drag(handle, which) {
+      // En pantallas táctiles, touch-action en elementos SVG no siempre basta: sin esto el navegador empieza a
+      // desplazar la página y cancela el arrastre (pointercancel) tras el primer movimiento.
+      handle.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
       handle.addEventListener("pointerdown", (e) => {
         e.preventDefault();
         handle.setPointerCapture(e.pointerId);
@@ -347,6 +480,7 @@
       }
     }
     render();
+    medir();
     note(root, "💡 Qué mirar: prueba “Igual dirección, distinto largo”. El coseno vale 1 (mismo significado) aunque " +
       "los vectores midan distinto; la distancia euclidiana, en cambio, dice que están lejos. En la práctica los embeddings " +
       "se <strong>normalizan</strong> (largo 1) y ahí coseno y distancia ordenan igual.");

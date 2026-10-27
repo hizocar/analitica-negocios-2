@@ -134,8 +134,8 @@ print(f"\nRAG (3 fragmentos) → {tokens_rag} tokens por pregunta · US$ {costo_
 ```
 
 **🎯 Reto:** cambia `preguntas_mes` a 200.000 (un banco grande). ¿Desde cuántos documentos el prompt largo cuesta
-más de US$ 1.000 al mes? Ojo: con 5.000 documentos el prompt ni siquiera cabría en la ventana de contexto de la
-mayoría de los modelos.
+más de US$ 1.000 al mes? Ojo: con 5.000 documentos (~950.000 tokens) el prompt ya no cabría en la ventana de
+contexto de la mayoría de los modelos y rozaría el límite de ~1 millón de tokens de Gemini 2.5 Flash.
 {: .py-run-reto }
 
 </div>
@@ -380,7 +380,7 @@ for pregunta in ["¿Cuál es la comisión de un avance en efectivo?",
 
 **🎯 Reto:** prueba `buscar("me clonaron la tarjeta y aparecen compras que no hice")`. No dice "desconocer" ni
 "fraude", pero TF-IDF igual llega a FT-POL-01: ¿qué palabra lo salvó? Ahora prueba solo `"me clonaron la tarjeta"`.
-Sin palabras en común con la política correcta, TF-IDF queda a ciegas: ese es el caso en que los embeddings
+Su única palabra en común con la política correcta es "tarjeta", que también aparece en otras políticas (y más veces en FT-POL-02), así que TF-IDF queda a ciegas: ese es el caso en que los embeddings
 *deberían* ayudar (en el simulador verás que el modelo pequeño no siempre lo logra).
 {: .py-run-reto }
 
@@ -508,7 +508,7 @@ dato para tu informe, y la razón por la que en la práctica se usan buscadores 
 <p class="econ-quiz-q">Un cliente escribe "me clonaron la tarjeta". La política dice "desconocer compras" y "fraude". ¿Qué recuperador tiene más chances de encontrarla?</p>
 <div class="econ-quiz-opts">
 <button class="econ-quiz-opt" data-correct>Embeddings, porque comparan significado y no solo palabras exactas.</button>
-<button class="econ-quiz-opt" data-why="TF-IDF necesita palabras en común: 'clonaron' no aparece en la política, y 'tarjeta' aparece en muchas, así que no distingue cuál es la correcta.">TF-IDF, porque pondera las palabras raras.</button>
+<button class="econ-quiz-opt" data-why="TF-IDF necesita palabras en común: 'clonaron' no aparece en la política, y 'tarjeta' aparece en varias, así que no distingue cuál es la correcta.">TF-IDF, porque pondera las palabras raras.</button>
 <button class="econ-quiz-opt" data-why="Sí hay diferencia: es justo el caso de paráfrasis, donde los métodos se separan.">Da lo mismo: ambos comparan textos.</button>
 </div>
 <p class="econ-quiz-fb">✅ Con paráfrasis, en principio, ganan los embeddings; con cifras y siglas exactas ("35 UF", "CAE") suele ganar TF-IDF. Por eso existen los buscadores híbridos, y por eso se mide con hit@k: con un modelo de embeddings pequeño la teoría no siempre se cumple.</p>
@@ -843,7 +843,7 @@ LLM (regla 3 del prompt) y no solo a un umbral.
 Lee la tabla con ojo de auditor. El baseline **recupera** bien (hit@3 = 0,94), pero **responde** bien solo unas 4
 de cada 10 preguntas: el cuello de botella está en la generación, no en la búsqueda. Y el umbral hace las dos cosas
 mal a la vez: rechaza una pregunta legítima (la del plazo de reclamos, con similitud 0,092) y deja pasar la trampa
-(0,271), porque "créditos" y "tasa" sí aparecen en las políticas. Esa es la vara que tu asistente con Gemini tiene
+(0,271), porque "FinTrust ofrece" y "créditos" sí aparecen en las políticas. Esa es la vara que tu asistente con Gemini tiene
 que superar en el notebook.
 
 !!! tip "💼 En el negocio"

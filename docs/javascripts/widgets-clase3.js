@@ -175,7 +175,7 @@
       "sola ficha y las largas o raras se parten (<em>cobr·aron</em>). El mismo reclamo en inglés usa menos tokens, y en " +
       "MAYÚSCULAS se dispara. Sube las «instrucciones fijas»: en la práctica, el prompt pesa más que el reclamo. " +
       "<br><em>Tokenizador aproximado con fines didácticos; cada modelo tiene el suyo (en el notebook cuentas tokens reales). " +
-      "Conversión a pesos con un dólar supuesto de $950.</em>");
+      "Los costos cuentan solo los tokens de entrada (sin la respuesta). Conversión a pesos con un dólar supuesto de $950.</em>");
   });
 
   /* ======================================================================
@@ -351,12 +351,22 @@
       build();
     }, 0);
 
-    // Dos disposiciones: horizontal (pantalla ancha) y vertical (celular), para que el diagrama
-    // escale al ancho disponible sin quedar cortado ni con letra ilegible.
+    // Dos disposiciones: horizontal (widget ancho) y vertical (angosto), elegidas según el ancho REAL del
+    // widget (no el de la ventana: en escritorio las barras laterales también lo angostan). Además, si el
+    // SVG se dibuja tan chico que la letra bajaría de ~11 px reales, se agranda con la variable CSS --c3-k
+    // (ver clase3.css) y las cajas de las palabras crecen en la misma proporción; con espacio de sobra,
+    // --c3-k = 1 y nada cambia.
     const W = 640, H = 230, PAD = 24, Y = 190;          // horizontal
     const VW = 340, RH = 36, VPAD = 12;                  // vertical: ancho del viewBox y alto de cada fila
-    const mq = window.matchMedia ? window.matchMedia("(max-width: 600px)") : null;
-    let vert = !!(mq && mq.matches);
+    const MOB_W = 600, MIN_PX = 11.2;
+    const innerW = () => {
+      const cs = getComputedStyle(root);
+      return root.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    };
+    const isVert = () => (root.clientWidth ? innerW() < MOB_W
+      : !!(window.matchMedia && window.matchMedia("(max-width: 680px)").matches));   // aún sin tamaño
+    let vert = isVert();
+    let k = 1;                                           // factor de letra (--c3-k)
     const plot = svg("svg", { class: "ia-svg c3-att", role: "img", "aria-label": "Arcos de atención entre palabras" });
     const gArcs = svg("g");
     const gWords = svg("g");
@@ -379,7 +389,7 @@
     function build() {
       M = matriz(cur.words, cur.spec);
       const n = cur.words.length;
-      vBoxW = 14 + Math.max(...cur.words.map((w) => w.length)) * 8.2;
+      vBoxW = 14 + Math.max(...cur.words.map((w) => w.length)) * 8.2 * k;
       plot.setAttribute("viewBox", vert ? `0 0 ${VW} ${2 * VPAD + n * RH}` : `0 0 ${W} ${H}`);
       plot.classList.toggle("is-vertical", vert);
       gArcs.replaceChildren();
@@ -392,7 +402,7 @@
           label = svg("text", { x: 8 + vBoxW / 2, y: y + 5, "text-anchor": "middle" }, w);
         } else {
           const x = xOf(i, n);
-          const bw = Math.min((W - 2 * PAD) / n - 8, 12 + w.length * 8.2);
+          const bw = Math.min((W - 2 * PAD) / n - 8, 12 + w.length * 8.2 * k);
           box = svg("rect", { x: x - bw / 2, y: Y - 18, width: bw, height: 30, rx: 7 });
           label = svg("text", { x, y: Y + 2, "text-anchor": "middle" }, w);
         }
@@ -405,7 +415,8 @@
         return g;
       });
       // Mapa de calor (en celular, columnas más angostas y encabezados verticales vía CSS)
-      heat.style.gridTemplateColumns = `auto repeat(${n}, minmax(${vert ? "1.45rem" : "2.3rem"}, 1fr))`;
+      heat.style.gridTemplateColumns = `auto repeat(${n}, minmax(${vert ? "1.15rem" : "2.3rem"}, 1fr))`;
+      heat.classList.toggle("is-narrow", vert);
       const kids = [h("span", { class: "ia-heat-lbl" }, "")];
       cur.words.forEach((w) => kids.push(h("span", { class: "ia-heat-lbl c3-col" }, w)));
       rowEls = [];
@@ -463,10 +474,10 @@
         paths.push(p);
         if (w >= 0.1) {
           const t = svg("text", { x: lx, y: ly, "text-anchor": anchor, class: "c3-arc-lbl" }, Math.round(w * 100) + " %");
-          gArcs.append(t);
           labels.push(t);
         }
       });
+      gArcs.append(...labels);                          // los porcentajes van encima de todos los arcos
       wordEls.forEach((g, k) => {
         g.classList.toggle("is-on", k === i);
         g.setAttribute("aria-pressed", String(k === i));
@@ -491,10 +502,27 @@
     }
 
     build();
-    if (mq) {
-      const onChange = (e) => { if (e.matches !== vert) { vert = e.matches; build(); } };
-      if (mq.addEventListener) mq.addEventListener("change", onChange); else if (mq.addListener) mq.addListener(onChange);
-    }
+    // Ajuste al ancho real: cambia de disposición y compensa la letra solo cuando haría falta
+    const fit = () => {
+      const vb = plot.viewBox.baseVal && plot.viewBox.baseVal.width, rw = plot.getBoundingClientRect().width;
+      if (!vb || !rw) return false;
+      const base = vert ? 12 : 10.5;                     // letra más chica del dibujo (unidades del viewBox)
+      const nk = Math.max(1, MIN_PX / (base * (rw / vb)));
+      if (Math.abs(nk - k) < 0.01) return false;
+      k = nk;
+      plot.style.setProperty("--c3-k", k.toFixed(3));
+      return true;
+    };
+    const check = () => {
+      if (!root.isConnected) { ro && ro.disconnect(); return; }
+      if (!root.clientWidth) return;
+      const v = isVert();
+      if (v !== vert) { vert = v; build(); }             // el ancho real del SVG depende de la disposición
+      if (fit()) build();                                // las cajas de las palabras dependen de --c3-k
+    };
+    const ro = window.ResizeObserver ? new ResizeObserver(() => check()) : null;
+    if (ro) ro.observe(root); else window.addEventListener("resize", check);
+    check();
     note(root, "💡 <strong>Qué mirar:</strong> la segunda «la» mira sobre todo a «tarjeta»: así el modelo entiende que lo " +
       "clonado es la tarjeta. Y «banco» mira a «pagar/cuota» en una oración y a «senté/plaza» en la otra: la misma palabra " +
       "termina con un vector distinto según su contexto. <br><em>Pesos ilustrativos elegidos a mano para mostrar la " +

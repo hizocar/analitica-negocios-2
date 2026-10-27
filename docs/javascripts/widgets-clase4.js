@@ -267,7 +267,8 @@
      ====================================================================== */
 
   /** Trozos de ~tam caracteres sin partir palabras, con ~sol caracteres de solapamiento.
-      Devuelve [inicio, fin) en el texto original (misma lógica que trocear() en Python). */
+      Devuelve [inicio, fin) en el texto original (lógica equivalente, ±1 carácter, a trocear() del
+      bloque Python: aquí un trozo puede medir exactamente tam y el salto de párrafo cuenta 2). */
   function trocearCar(texto, tam, sol) {
     const pal = [...texto.matchAll(/\S+/g)].map((m) => [m.index, m.index + m[0].length]);
     const out = [];
@@ -311,6 +312,8 @@
 
     const titulo = h("p", { class: "c4-doc-t" });
     const strip = svg("svg", { viewBox: "0 0 640 96", class: "ia-svg c4-strip", role: "img" });
+    let mapa = null;   // último estado dibujado en el mapa (para redibujarlo al cambiar el ancho)
+    let firma = "";    // disposición con la que se dibujó ("ancho" o el ancho del lienzo angosto)
     const lista = h("div", { class: "c4-chunk-list", tabindex: "0", "aria-label": "Lista de chunks" });
     root.append(titulo, strip, lista);
     const setN = stat(root, "Chunks", "—");
@@ -327,6 +330,14 @@
     function render(animar) {
       const d = D.docs[di];
       const texto = d.texto;
+      /* El solapamiento no puede acercarse al tamaño (si no, cada chunk avanzaría una sola palabra):
+         máximo = tamaño − 25, en pasos de 10 y tope 200 (con tamaño 150 → hasta 120). Si el tamaño baja,
+         el solapamiento se ajusta y se actualiza el valor mostrado. */
+      const maxSol = Math.min(200, Math.floor((+slTam.value - 25) / 10) * 10);
+      if (+slSol.max !== maxSol) slSol.max = maxSol;
+      if (+slSol.value > maxSol) slSol.value = maxSol;
+      const outSol = slSol.parentElement.querySelector("output");
+      if (outSol && outSol.textContent !== slSol.value) outSol.textContent = slSol.value;
       const tam = +slTam.value, sol = +slSol.value;
       [slTam, slSol].forEach((s) => { s.disabled = modo === "par"; });
       const trozos = modo === "par" ? trocearPar(texto) : trocearCar(texto, tam, sol);
@@ -335,22 +346,8 @@
 
       titulo.textContent = `${d.doc} · ${d.titulo} · ${texto.length} caracteres`;
 
-      /* Mapa: barra del documento, dato clave y chunks en dos filas para ver el solape */
-      const X0 = 14, W = 612, x = (c) => X0 + (c / texto.length) * W;
-      strip.replaceChildren();
-      strip.setAttribute("aria-label", `Mapa del documento con ${trozos.length} chunks`);
-      strip.append(svg("rect", { x: X0, y: 6, width: W, height: 10, rx: 3, class: "c4-docbar" }));
-      trocearPar(texto).slice(1).forEach(([s]) => strip.append(svg("line", { x1: x(s), x2: x(s), y1: 3, y2: 19, class: "c4-tick" })));
-      strip.append(svg("line", { x1: x(ks), x2: x(ke), y1: 23, y2: 23, class: entero >= 0 ? "c4-keyline" : "c4-keyline is-rota" }));
-      strip.append(svg("text", { x: x(ks), y: 33, class: "c4-svg-lbl" }, "dato clave"));
-      const rects = trozos.map(([s, e], i) => {
-        const y = 40 + (i % 2) * 26;
-        const g = svg("g", { class: "c4-k" + (i % PALETA) });
-        g.append(svg("rect", { x: x(s), y, width: Math.max(2, x(e) - x(s)), height: 20, rx: 4 }));
-        if (x(e) - x(s) > 16) g.append(svg("text", { x: (x(s) + x(e)) / 2, y: y + 14, "text-anchor": "middle", class: "c4-svg-num" }, String(i + 1)));
-        strip.append(g);
-        return g;
-      });
+      mapa = { texto, trozos, ks, ke, entero };
+      const rects = dibujarMapa();
 
       /* Lista de chunks con el solape sombreado y el dato clave subrayado */
       lista.replaceChildren();
@@ -378,10 +375,19 @@
         return card;
       });
 
-      const suma = trozos.reduce((acc, [s, e]) => acc + (e - s), 0);
-      const largoUtil = texto.replace(/\n\n/g, "").length;
+      /* Texto repetido = caracteres de todos los chunks / caracteres distintos que cubren − 1.
+         Ambos sin los saltos de párrafo ("\n\n"), para que numerador y denominador midan lo mismo:
+         con solapamiento 0 da exactamente 0 %. */
+      const sinPar = (a, b) => texto.slice(a, b).replace(/\n\n/g, "").length;
+      let suma = 0, largoUtil = 0, finPrev = 0;
+      trozos.forEach(([s, e]) => {
+        suma += sinPar(s, e);
+        if (e > finPrev) largoUtil += sinPar(Math.max(s, finPrev), e);
+        finPrev = Math.max(finPrev, e);
+      });
       setN(String(trozos.length));
-      setLargo(Math.round(suma / trozos.length) + " car.");
+      const sumaLargos = trozos.reduce((acc, [s, e]) => acc + (e - s), 0);   // como en las tarjetas
+      setLargo(Math.round(sumaLargos / trozos.length) + " car.");
       setRep(modo === "par" ? "0 %" : Math.max(0, Math.round((suma / largoUtil - 1) * 100)) + " %");
       const estado = entero >= 0 ? `✅ entero (chunk ${entero + 1})` : "✂️ cortado";
       setClave(estado);
@@ -393,6 +399,63 @@
       const ok = entero >= 0;
       if (ultimoEstado !== null && ultimoEstado !== ok) (ok ? motion.pop(cardClave) : motion.shake(cardClave));
       ultimoEstado = ok;
+    }
+
+    /* Mapa: barra del documento, dato clave y chunks en dos filas para ver el solape.
+       Dos disposiciones para que la letra se lea en cualquier pantalla:
+       · ancha (lienzo ≥ 704 px): viewBox de 640 como siempre (la letra de 10 queda ≥ 11 px);
+       · angosta (celular): viewBox del mismo ancho que el lienzo real (escala 1), filas un poco más
+         altas y letra de 12 px, de modo que no se achica al encoger el SVG. */
+    function disposicion() {
+      const w = strip.getBoundingClientRect().width;
+      if (!w || w >= 704) return { firma: "ancho", VW: 640, H: 96, X0: 14, yKey: 23, yLbl: 33, yFila: 40, dFila: 26, hFila: 20, yNum: 14, fs: 10 };
+      const VW = Math.max(240, Math.round(w));
+      return { firma: "a" + VW, VW, H: 98, X0: 8, yKey: 24, yLbl: 39, yFila: 47, dFila: 26, hFila: 22, yNum: 15.5, fs: 12 };
+    }
+    function dibujarMapa() {
+      const L = disposicion();
+      firma = L.firma;
+      const { texto, trozos, ks, ke, entero } = mapa;
+      const W = L.VW - 2 * L.X0, x = (c) => L.X0 + (c / texto.length) * W;
+      strip.setAttribute("viewBox", `0 0 ${L.VW} ${L.H}`);
+      strip.classList.toggle("is-angosto", L.firma !== "ancho");
+      strip.replaceChildren();
+      strip.setAttribute("aria-label", `Mapa del documento con ${trozos.length} chunks`);
+      strip.append(svg("rect", { x: L.X0, y: 6, width: W, height: 10, rx: 3, class: "c4-docbar" }));
+      trocearPar(texto).slice(1).forEach(([s]) => strip.append(svg("line", { x1: x(s), x2: x(s), y1: 3, y2: 19, class: "c4-tick" })));
+      strip.append(svg("line", { x1: x(ks), x2: x(ke), y1: L.yKey, y2: L.yKey, class: entero >= 0 ? "c4-keyline" : "c4-keyline is-rota" }));
+      const lbl = svg("text", { x: x(ks), y: L.yLbl, class: "c4-svg-lbl" }, "dato clave");
+      strip.append(lbl);
+      // Que la etiqueta no se salga por la derecha si el dato clave está al final del documento
+      let lw = 0;
+      try { lw = lbl.getComputedTextLength(); } catch (e) { /* sin layout */ }
+      lbl.setAttribute("x", Math.max(L.X0, Math.min(x(ks), L.X0 + W - (lw || L.fs * 5.2))));
+      const finEtiqueta = [-Infinity, -Infinity];   // borde derecho del último número dibujado en cada fila
+      const numeros = [];
+      const rects = trozos.map(([s, e], i) => {
+        const fila = i % 2, y = L.yFila + fila * L.dFila;
+        const g = svg("g", { class: "c4-k" + (i % PALETA) });
+        g.append(svg("rect", { x: x(s), y, width: Math.max(2, x(e) - x(s)), height: L.hFila, rx: 4 }));
+        // El número solo si cabe en su chunk y no pisa al anterior de la misma fila (con mucho solapamiento)
+        const cx = (x(s) + x(e)) / 2, nw = String(i + 1).length * L.fs * 0.62;
+        if (x(e) - x(s) > Math.max(16, nw + 4) && cx - nw / 2 > finEtiqueta[fila] + 3) {
+          numeros.push(svg("text", { x: cx, y: y + L.yNum, "text-anchor": "middle", class: "c4-svg-num c4-k" + (i % PALETA) }, String(i + 1)));
+          finEtiqueta[fila] = cx + nw / 2;
+        }
+        strip.append(g);
+        return g;
+      });
+      // Los números van encima de todas las barras (si los chunks se solapan, no quedan tapados)
+      strip.append(...numeros);
+      return rects.concat(numeros);
+    }
+    // Rearmar el mapa (sin animar) cuando el lienzo cambia de ancho y eso cambia la disposición
+    if (window.ResizeObserver) {
+      let pendiente = 0;
+      new ResizeObserver(() => {
+        cancelAnimationFrame(pendiente);
+        pendiente = requestAnimationFrame(() => { if (mapa && disposicion().firma !== firma) dibujarMapa(); });
+      }).observe(strip);
     }
     render(true);
   }

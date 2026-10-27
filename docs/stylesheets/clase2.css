@@ -70,10 +70,12 @@
   cursor: pointer;
   transition: opacity 0.28s cubic-bezier(0.2, 0, 0, 1);
 }
-.c2-map .c2-dot:focus-visible { outline: none; stroke: var(--usm-gold); stroke-width: 3; }
+.c2-map .c2-dot:focus { outline: none; } /* sin el recuadro del navegador al hacer clic o tocar */
 .c2-map .c2-dot.is-dim { opacity: 0.16; }
 .c2-map .c2-dot.is-sel { stroke: var(--md-default-fg-color); stroke-width: 2.5; }
 .c2-map .c2-dot.is-nn { stroke: var(--md-default-fg-color); stroke-width: 1.2; }
+/* Foco con teclado (Tab): anillo dorado, visible también sobre el punto elegido o atenuado */
+.c2-map .c2-dot.c2-dot:focus-visible { outline: none; opacity: 1; stroke: var(--usm-gold); stroke-width: 4; }
 .c2-map .c2-ray { stroke: var(--md-default-fg-color--light); stroke-width: 1.4; stroke-dasharray: 4 3; }
 .c2-map .c2-rank, .c2-map .c2-axis-t {
   paint-order: stroke;
@@ -82,6 +84,9 @@
 }
 .c2-map .c2-rank { font-weight: 700; font-size: 13px; }
 .c2-map .c2-axis-t { font-size: 10px; fill: var(--md-default-fg-color--light); }
+/* Lienzo angosto (escala 1, ver widgets-clase2.js): rótulos de ejes legibles */
+.c2-map.is-compact .c2-axis-t { font-size: 12px; }
+.c2-map.is-compact { touch-action: manipulation; }
 .econ-controls.c2-ctr-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 
 .c2-map-info { margin-top: 0.4rem; }
@@ -137,6 +142,7 @@
 .c2-cos .c2-vB-t { fill: var(--c2-vB); }
 .c2-cos .c2-arc { fill: color-mix(in srgb, var(--usm-gold) 35%, transparent); stroke: var(--usm-gold); stroke-width: 1.5; }
 .c2-cos .c2-arc-t { font-weight: 700; font-size: 13px; paint-order: stroke; stroke: var(--md-default-bg-color); stroke-width: 3px; }
+.c2-cos.is-compact .c2-arc-t { font-size: 14px; } /* lienzo angosto: ≥ 11 px aun en pantallas de 320 px */
 .c2-cos .c2-gap { stroke: var(--usm-red); stroke-width: 1.5; stroke-dasharray: 5 4; opacity: 0.8; }
 .c2-cos .c2-handle {
   fill: transparent;

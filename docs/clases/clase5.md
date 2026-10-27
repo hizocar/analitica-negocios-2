@@ -217,7 +217,8 @@ que deja el beneficio neto en cero; despejando, \( e^{*} = \dfrac{\text{Ahorro b
 <div class="ia-widget" data-widget="c5-roi"></div>
 
 !!! tip "💼 En el negocio"
-    Fíjate en qué deslizador mueve más el resultado: casi siempre es el **costo por error**, no el costo de la API.
+    Fíjate en cuánto más pesa el **costo por error** que el costo de la API: en el escenario base, los errores
+    cuestan unos $2,5 millones al mes y la API, $6.000.
     Por eso la mitigación más rentable suele ser **no automatizar Fraude ni los casos de urgencia alta**: bajas
     el costo promedio de cada error y el ahorro casi no cambia. Eso es una recomendación concreta para tu pitch.
 
@@ -715,7 +716,7 @@ Qué puede salir mal y cómo lo controlas: humano en el ciclo, anonimización, m
 
 Arriba de los tres va **una sola frase**: tu recomendación con una cifra. Por ejemplo: *«Recomendamos derivar
 automáticamente los reclamos con un clasificador TF-IDF y revisión humana de Fraude: libera unas 420 horas al mes y se
-paga en cuatro meses»*.
+paga en unos cuatro meses»*.
 
 <div class="ia-widget" data-widget="c5-piramide"></div>
 
