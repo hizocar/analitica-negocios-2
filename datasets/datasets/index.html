@@ -1161,8 +1161,8 @@
 
 <h1 id="datasets">🗄️ Datasets</h1>
 <p>Datos <strong>ficticios</strong> creados para el curso con <a href="https://github.com/hizocar/analitica-negocios-2/blob/main/tools/generar_datos.py"><code>tools/generar_datos.py</code></a>.
-Son realistas y vienen <strong>sucios a propósito</strong>: duplicados, textos vacíos, categorías escritas de varias
-formas, valores imposibles, errores de etiquetado (~6 %) y <strong>datos personales falsos</strong> (RUT, teléfonos,
+Son realistas y vienen <strong>sucios a propósito</strong>: duplicados, textos basura sin contenido (como «reclamo» u «ok»),
+faltas de ortografía y frases repetidas dentro de un mismo texto, categorías escritas de varias formas, valores imposibles, errores de etiquetado (~6 %) y <strong>datos personales falsos</strong> (RUT, teléfonos,
 correos y nombres) que deberás anonimizar antes de enviarlos a una API.</p>
 <p>En Colab, léelos directo desde GitHub:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
@@ -1249,7 +1249,7 @@ correos y nombres) que deberás anonimizar antes de enviarlos a una API.</p>
 <tr>
 <td><code>categoria</code></td>
 <td><strong>etiqueta</strong></td>
-<td>Fraude · Cobro indebido · App y canales digitales · Crédito y tasas · Atención al cliente · Información y trámites</td>
+<td>Fraude · Cobro indebido · App y canales digitales · Crédito y tasas · Atención al cliente · Información y trámites (⚠️ escritas de varias formas: unifícalas antes de entrenar)</td>
 </tr>
 <tr>
 <td><code>urgencia</code></td>
@@ -1342,7 +1342,7 @@ correos y nombres) que deberás anonimizar antes de enviarlos a una API.</p>
 <tr>
 <td><code>aspecto</code></td>
 <td><strong>etiqueta</strong></td>
-<td>Despacho · Calidad del producto · Precio · Atención · Devoluciones y garantía · Pago</td>
+<td>Despacho · Calidad del producto · Precio · Atención · Devoluciones y garantía · Pago (⚠️ escritas de varias formas: unifícalas antes de entrenar)</td>
 </tr>
 </tbody>
 </table>

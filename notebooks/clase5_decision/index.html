@@ -2101,7 +2101,7 @@ print("Caso:", CASO, "| etiqueta:", CONFIG["etiqueta"])</div>
 <h3 id="01-carga-y-limpieza-minima-funcion-reutilizable">0.1 Carga y limpieza mínima (función reutilizable)<a class="anchor-link" href="#01-carga-y-limpieza-minima-funcion-reutilizable">¶</a></h3><p>La misma limpieza de los sprints, empaquetada en una función:</p>
 <ul>
 <li>quita <strong>duplicados exactos</strong> de texto (¡antes de separar train y test, para evitar fuga de información!);</li>
-<li>elimina textos <strong>vacíos</strong> o sin contenido («...», «reclamo», «ok»);</li>
+<li>elimina textos <strong>vacíos</strong> o sin contenido («reclamo» en FinTrust, «ok» en MercaSur);</li>
 <li><strong>normaliza las categorías</strong> mal escritas («FRAUDE», «Fraude », «Cobros indebidos», «Calidad producto»…).</li>
 </ul>
 </div>
@@ -2220,7 +2220,7 @@ df["etiqueta"].value_counts()</div>
 <span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"enfoque"</span><span class="p">,</span> <span class="s2">"f1_macro"</span><span class="p">,</span> <span class="s2">"accuracy"</span><span class="p">,</span> <span class="s2">"costo_usd_1000"</span><span class="p">,</span> <span class="s2">"latencia_s"</span><span class="p">,</span> <span class="s2">"etiquetas"</span><span class="p">,</span> <span class="s2">"datos_salen"</span><span class="p">])</span>
 
 <span class="c1"># Columna "para el gerente": la accuracy traducida</span>
-<span class="n">tabla</span><span class="p">[</span><span class="s2">"para el gerente"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tabla</span><span class="p">[</span><span class="s2">"accuracy"</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s2">" de cada 10 al área correcta"</span>
+<span class="n">tabla</span><span class="p">[</span><span class="s2">"para el gerente"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tabla</span><span class="p">[</span><span class="s2">"accuracy"</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s2">" de cada 10 "</span> <span class="o">+</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s2">"acierto"</span><span class="p">]</span>
 <span class="n">tabla</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"f1_macro"</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-3">tabla = pd.DataFrame([
@@ -2233,7 +2233,7 @@ df["etiqueta"].value_counts()</div>
 ], columns=["enfoque", "f1_macro", "accuracy", "costo_usd_1000", "latencia_s", "etiquetas", "datos_salen"])
 
 # Columna "para el gerente": la accuracy traducida
-tabla["para el gerente"] = (tabla["accuracy"] * 10).round().astype(int).astype(str) + " de cada 10 al área correcta"
+tabla["para el gerente"] = (tabla["accuracy"] * 10).round().astype(int).astype(str) + " de cada 10 " + CONFIG["acierto"]
 tabla.sort_values("f1_macro", ascending=False)</div>
 </div>
 </div>

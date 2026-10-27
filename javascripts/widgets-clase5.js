@@ -9,8 +9,11 @@
 
   /* ---------- utilidades ---------- */
   const fmtNum = (v, d = 0) => v.toLocaleString("es-CL", { minimumFractionDigits: d, maximumFractionDigits: d });
-  const fmtCLP = (v) => (v < 0 ? "−$" : "$") + fmtNum(Math.abs(Math.round(v)));
-  const fmtM = (v) => (v < 0 ? "−" : "") + "$" + fmtNum(Math.abs(v) / 1e6, 2) + " M";
+  /** Signo de una cifra ya redondeada: solo si lo que se muestra no es cero (nunca «−$0,00» ni «+0,0»). */
+  const sgn = (v, txt, plus = "") => (/[1-9]/.test(txt) ? (v < 0 ? "−" : v > 0 ? plus : "") : "");
+  // «\u2060» (unión de palabras, invisible) impide que el «−» quede solo al final de una línea
+  const fmtCLP = (v) => { const t = fmtNum(Math.abs(Math.round(v))); const g = sgn(v, t); return (g && g + "\u2060") + "$" + t; };
+  const fmtM = (v) => { const t = fmtNum(Math.abs(v) / 1e6, 2); const g = sgn(v, t); return (g && g + "\u2060") + "$" + t + " M"; };
 
   /** FLIP: anima elementos desde su posición anterior a la nueva tras mutar el DOM. */
   function flip(els, mutate) {
@@ -39,6 +42,40 @@
       t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
+  }
+
+  /* Disposición según el ancho REAL del widget (no el de la pantalla: las barras laterales de Material lo achican).
+     Si el ancho útil es menor que MOB_W, el SVG usa el lienzo angosto de celular (.is-mobile, escala ≈ 1).
+     Además, si el SVG queda tan chico que la letra bajaría de ~11 px reales, se agranda con la variable CSS
+     --c5-k (ver clase5.css); cuando sobra espacio, --c5-k = 1 y el dibujo queda exactamente como siempre. */
+  const MOB_W = 600, MIN_PX = 11.2;
+  function innerW(root) {
+    const cs = getComputedStyle(root);
+    return root.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+  }
+  function isMob(root) {
+    if (root.clientWidth) return innerW(root) < MOB_W;
+    return !!(window.matchMedia && window.matchMedia("(max-width: 680px)").matches); // aún sin tamaño
+  }
+  /** Observa el ancho del widget: rearma el dibujo al cambiar de disposición y ajusta la letra.
+      getMob() → disposición actual · relayout(m) → rearma · base(m) → letra más chica del dibujo (unidades del viewBox). */
+  function watchLayout(root, plot, getMob, relayout, base) {
+    const fit = () => {
+      const vb = plot.viewBox.baseVal && plot.viewBox.baseVal.width, rw = plot.getBoundingClientRect().width;
+      if (!vb || !rw) return;
+      const k = Math.max(1, MIN_PX / (base(getMob()) * (rw / vb)));
+      plot.style.setProperty("--c5-k", k.toFixed(3));
+    };
+    const check = () => {
+      if (!root.isConnected) { ro && ro.disconnect(); return; }
+      if (!root.clientWidth) return;
+      const m = isMob(root);
+      if (m !== getMob()) relayout(m);
+      fit();
+    };
+    const ro = window.ResizeObserver ? new ResizeObserver(() => check()) : null;
+    if (ro) ro.observe(root); else window.addEventListener("resize", check);
+    check();
   }
 
   /** Deslizador con valor fijado desde código (actualiza la etiqueta y recalcula). */
@@ -179,28 +216,47 @@
     const setEq = stat(root, "Error máx. tolerable", "—");
     const netStrong = root.querySelector(".econ-stats .econ-stat strong");
 
-    // Cascada (waterfall) en SVG
-    const W = 640, H = 270, L = 70, R = 20, T = 18, B = 46;
-    const plot = svg("svg", { viewBox: `0 0 ${W} ${H}`, class: "ia-svg c5-roi-svg", role: "img",
+    // Cascada (waterfall) en SVG. Dos disposiciones: columnas (pantalla ancha) y filas horizontales
+    // (celular, viewBox angosto a escala ~1) para que rótulos y montos se lean sin agrandar el dibujo.
+    const W = 640, H = 270, L = 70, R = 20, T = 18, B = 46;               // columnas
+    const MW = 300, MRH = 42, MT = 4, MX0 = 108, MX1 = 294, MBH = 22;     // filas (celular)
+    const MH = 2 * MT + 5 * MRH;
+    let mob = isMob(root);
+    const plot = svg("svg", { class: "ia-svg c5-roi-svg", role: "img",
       "aria-label": "Cascada: ahorro bruto menos costo de errores, API y mantención da el beneficio neto mensual" });
     root.append(plot);
-    const zero = svg("line", { x1: L, x2: W - R, class: "ia-axis" });
-    plot.append(zero);
     const NAMES = ["Ahorro bruto", "− Errores", "− API", "− Mantención", "= Neto"];
     const slot = (W - L - R) / NAMES.length;
-    const bars = NAMES.map((n, i) => {
-      const x = L + i * slot + slot * 0.18;
-      const rect = svg("rect", { x, width: slot * 0.64, y: T, height: 0, rx: 4, class: "c5-wf-bar" });
-      const lbl = svg("text", { x: x + slot * 0.32, y: H - B + 18, "text-anchor": "middle", class: "c5-wf-lbl" }, n);
-      const val = svg("text", { x: x + slot * 0.32, y: T, "text-anchor": "middle", class: "c5-wf-val" }, "");
-      plot.append(rect, lbl, val);
-      return { rect, val, cls: i === 0 ? "is-pos" : i === 4 ? "is-net" : "is-neg" };
-    });
-    const conn = [0, 1, 2, 3].map(() => {
-      const l = svg("line", { class: "c5-wf-conn" });
-      plot.append(l);
-      return l;
-    });
+    let zero, bars, conn;
+    function build() {
+      plot.replaceChildren();
+      plot.classList.toggle("is-mobile", mob);
+      plot.setAttribute("viewBox", mob ? `0 0 ${MW} ${MH}` : `0 0 ${W} ${H}`);
+      zero = mob ? svg("line", { y1: MT, y2: MH - MT, class: "ia-axis" }) : svg("line", { x1: L, x2: W - R, class: "ia-axis" });
+      plot.append(zero);
+      bars = NAMES.map((n, i) => {
+        let rect, lbl, val;
+        if (mob) {
+          const top = MT + i * MRH;
+          rect = svg("rect", { x: MX0, width: 0, y: top + (MRH - MBH) / 2, height: MBH, rx: 4, class: "c5-wf-bar" });
+          lbl = svg("text", { x: 0, y: top + 17, class: "c5-wf-lbl" }, n);
+          val = svg("text", { x: 0, y: top + 35, class: "c5-wf-val" }, "");
+        } else {
+          const x = L + i * slot + slot * 0.18;
+          rect = svg("rect", { x, width: slot * 0.64, y: T, height: 0, rx: 4, class: "c5-wf-bar" });
+          lbl = svg("text", { x: x + slot * 0.32, y: H - B + 18, "text-anchor": "middle", class: "c5-wf-lbl" }, n);
+          val = svg("text", { x: x + slot * 0.32, y: T, "text-anchor": "middle", class: "c5-wf-val" }, "");
+        }
+        plot.append(rect, lbl, val);
+        return { rect, val, cls: i === 0 ? "is-pos" : i === 4 ? "is-net" : "is-neg" };
+      });
+      conn = [0, 1, 2, 3].map(() => {
+        const l = svg("line", { class: "c5-wf-conn" });
+        plot.append(l);
+        return l;
+      });
+    }
+    build();
 
     let animateNext = false;
     let last = null;
@@ -225,6 +281,36 @@
       ];
       const lo = Math.min(0, r.neto, ...steps.map((s) => Math.min(s[0], s[1])));
       const hi = Math.max(1, r.ahorro);
+      const anim = { duration: motion.DUR.slow, ease: motion.EASE.back };
+      if (mob) {
+        // Filas: el eje de valores es horizontal (x), cada concepto en su fila
+        const x = (v) => MX0 + (v - lo) / (hi - lo) * (MX1 - MX0);
+        zero.setAttribute("x1", x(0));
+        zero.setAttribute("x2", x(0));
+        steps.forEach(([a, b], i) => {
+          const left = x(Math.min(a, b));
+          const wd = Math.max(1, Math.abs(x(a) - x(b)));
+          const bar = bars[i];
+          bar.rect.setAttribute("class", "c5-wf-bar " + (i === 4 && r.neto < 0 ? "is-neg" : bar.cls));
+          if (animate) {
+            motion.attr(bar.rect, "x", left, anim);
+            motion.attr(bar.rect, "width", wd, anim);
+          } else {
+            bar.rect.setAttribute("x", left);
+            bar.rect.setAttribute("width", wd);
+          }
+          const amount = i === 0 ? r.ahorro : i === 4 ? r.neto : -(Math.abs(a - b));
+          bar.val.textContent = fmtM(amount);
+          if (i < 4) {
+            const yb = MT + i * MRH + (MRH + MBH) / 2;
+            conn[i].setAttribute("x1", x(b));
+            conn[i].setAttribute("x2", x(b));
+            conn[i].setAttribute("y1", yb);
+            conn[i].setAttribute("y2", yb + MRH - MBH);
+          }
+        });
+        return;
+      }
       const y = (v) => T + (hi - v) / (hi - lo) * (H - T - B);
       zero.setAttribute("y1", y(0));
       zero.setAttribute("y2", y(0));
@@ -234,8 +320,8 @@
         const bar = bars[i];
         bar.rect.setAttribute("class", "c5-wf-bar " + (i === 4 && r.neto < 0 ? "is-neg" : bar.cls));
         if (animate) {
-          motion.attr(bar.rect, "y", top, { duration: motion.DUR.slow, ease: motion.EASE.back });
-          motion.attr(bar.rect, "height", hgt, { duration: motion.DUR.slow, ease: motion.EASE.back });
+          motion.attr(bar.rect, "y", top, anim);
+          motion.attr(bar.rect, "height", hgt, anim);
         } else {
           bar.rect.setAttribute("y", top);
           bar.rect.setAttribute("height", hgt);
@@ -265,9 +351,12 @@
         motion.count(netStrong, last.neto, r.neto, fmtCLP);
         motion.pulse(netStrong);
       } else setNet(fmtCLP(r.neto));
-      setPay(r.neto > 0 ? fmtNum(r.inv / r.neto, 1) + " meses" : "No se paga");
+      // Sin inversión no hay nada que recuperar: payback y ROI lo dicen igual
+      const pay = r.inv / r.neto;
+      setPay(r.inv <= 0 ? "Sin inversión" : r.neto <= 0 ? "No se paga" : pay < 0.05 ? "< 0,1 meses" : fmtNum(pay, 1) + " meses");
       const roi12 = (12 * r.neto - r.inv) / r.inv * 100;
-      setRoi(r.inv <= 0 ? "Sin inversión" : (roi12 < 0 ? "−" : "") + fmtNum(Math.abs(roi12), 0) + " %");
+      const roiT = fmtNum(Math.abs(roi12), 0);
+      setRoi(r.inv <= 0 ? "Sin inversión" : sgn(roi12, roiT) + roiT + " %");
       setEq(!isFinite(r.eq) ? "Sin costo de error" : r.eq <= 0 ? "Ni con 0 % errores" : r.eq >= 1 ? "> 100 %" : fmtNum(r.eq * 100, 1) + " %");
       netStrong.closest(".econ-stat").classList.toggle("is-red", r.neto < 0);
       last = r;
@@ -282,6 +371,8 @@
     const r0 = compute();
     draw(r0, false);
     stats(r0, false);
+    // Al cruzar el umbral (girar el teléfono, cambiar el ancho) se rearma la cascada en la otra disposición
+    watchLayout(root, plot, () => mob, (m) => { mob = m; build(); draw(compute(), false); }, (m) => (m ? 12.5 : 11));
     note(root, "💡 Qué mirar: sube el <strong>costo por error</strong> hasta ~$40.000 (lo que puede costar un fraude mal derivado) y mira " +
       "cómo la barra de errores se come el ahorro. Luego simula dejar los casos caros a una persona: baja un poco el <strong>% automatizable</strong> " +
       "y devuelve el costo por error a un valor bajo. El neto mejora aunque automatices menos.");
@@ -312,28 +403,51 @@
     const setVer = stat(root, "Veredicto", "—");
     const verCard = root.querySelectorAll(".econ-stats .econ-stat")[3];
 
-    const W = 640, H = 240, L = 30, R = 20, T = 16, B = 40, NB = 31, RANGE = 0.2;
-    const plot = svg("svg", { viewBox: `0 0 ${W} ${H}`, class: "ia-svg", role: "img",
+    // Histograma en dos disposiciones: ancha (viewBox de 640) y celular (viewBox angosto a escala ~1).
+    // Eje simétrico alrededor de 0: ±20 pp como mínimo; si los remuestreos se salen, se amplía en pasos de 10 pp.
+    const NB = 31, RMIN = 0.2;
+    let RANGE = RMIN;
+    const TICKS = [-1, -0.5, 0, 0.5, 1];                       // fracciones del rango (posición fija en el eje)
+    const tickLbl = (k) => { const t = fmtNum(Math.abs(k * RANGE) * 100, 0); return sgn(k, t, "+") + t + " pp"; };
+    const GEO = {
+      wide: { W: 640, H: 240, L: 30, R: 20, T: 16, B: 40 },
+      mob: { W: 300, H: 210, L: 22, R: 22, T: 28, B: 40 },  // T mayor: «0 = empate» va sobre el gráfico
+    };
+    let mob = isMob(root);
+    let W, H, L, R, T, B;
+    const plot = svg("svg", { class: "ia-svg c5-bs-svg", role: "img",
       "aria-label": "Histograma de la diferencia de accuracy entre B y A en 1.000 remuestreos bootstrap" });
     root.append(plot);
     const xs = (d) => L + (d + RANGE) / (2 * RANGE) * (W - L - R);
-    const band = svg("rect", { y: T, height: H - T - B, x: xs(0), width: 0, class: "c5-bs-band" });
-    plot.append(band);
-    const binW = (W - L - R) / NB;
-    const hist = Array.from({ length: NB }, (_, i) => {
-      const r = svg("rect", { x: L + i * binW + 1, width: binW - 2, y: H - B, height: 0, rx: 2, class: "c5-bs-bar" });
-      plot.append(r);
-      return r;
-    });
-    plot.append(svg("line", { x1: L, x2: W - R, y1: H - B, y2: H - B, class: "ia-axis" }));
-    [-0.2, -0.1, 0, 0.1, 0.2].forEach((d) => {
-      plot.append(svg("text", { x: xs(d), y: H - B + 16, "text-anchor": "middle" }, (d > 0 ? "+" : d < 0 ? "−" : "") + fmtNum(Math.abs(d) * 100, 0) + " pp"));
-    });
-    plot.append(svg("text", { x: W - R, y: H - 6, "text-anchor": "end", class: "c5-muted" }, "diferencia de accuracy B − A"));
-    const zeroL = svg("line", { x1: xs(0), x2: xs(0), y1: T, y2: H - B, class: "c5-bs-zero" });
-    const obsL = svg("line", { x1: xs(0), x2: xs(0), y1: T, y2: H - B, class: "c5-bs-obs" });
-    const zeroT = svg("text", { x: xs(0) + 4, y: T + 10, class: "c5-bs-zero-t" }, "0 = empate");
-    plot.append(zeroL, obsL, zeroT);
+    let band, hist, obsL, ticks;
+    function build() {
+      ({ W, H, L, R, T, B } = mob ? GEO.mob : GEO.wide);
+      plot.replaceChildren();
+      plot.classList.toggle("is-mobile", mob);
+      plot.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      band = svg("rect", { y: T, height: H - T - B, x: xs(0), width: 0, class: "c5-bs-band" });
+      plot.append(band);
+      const binW = (W - L - R) / NB;
+      hist = Array.from({ length: NB }, (_, i) => {
+        const r = svg("rect", { x: L + i * binW + 1, width: binW - 2, y: H - B, height: 0, rx: 2, class: "c5-bs-bar" });
+        plot.append(r);
+        return r;
+      });
+      plot.append(svg("line", { x1: L, x2: W - R, y1: H - B, y2: H - B, class: "ia-axis" }));
+      ticks = TICKS.map((k) => {
+        const t = svg("text", { x: xs(k * RANGE), y: H - B + (mob ? 18 : 16), "text-anchor": "middle" }, tickLbl(k));
+        plot.append(t);
+        return t;
+      });
+      plot.append(svg("text", { x: W - R, y: H - 6, "text-anchor": "end", class: "c5-muted" }, "diferencia de accuracy B − A"));
+      const zeroL = svg("line", { x1: xs(0), x2: xs(0), y1: T, y2: H - B, class: "c5-bs-zero" });
+      obsL = svg("line", { x1: xs(0), x2: xs(0), y1: T, y2: H - B, class: "c5-bs-obs" });
+      const zeroT = mob
+        ? svg("text", { x: xs(0), y: T - 8, "text-anchor": "middle", class: "c5-bs-zero-t" }, "0 = empate")
+        : svg("text", { x: xs(0) + 4, y: T + 10, class: "c5-bs-zero-t" }, "0 = empate");
+      plot.append(zeroL, obsL, zeroT);
+    }
+    build();
 
     function simulate() {
       const n = +sN.value, pA = +sA.value / 100, pB = +sB.value / 100;
@@ -381,6 +495,9 @@
 
     function render(animate) {
       const s = simulate();
+      const ext = Math.max(Math.abs(s.diffs[0]), Math.abs(s.diffs[s.diffs.length - 1]), Math.abs(s.obs));
+      RANGE = Math.max(RMIN, Math.ceil(ext * 10 - 1e-9) / 10);
+      ticks.forEach((t, j) => { t.textContent = tickLbl(TICKS[j]); });
       const counts = new Array(NB).fill(0);
       s.diffs.forEach((d) => {
         const i = Math.floor((d + RANGE) / (2 * RANGE) * NB);
@@ -401,9 +518,9 @@
         band.setAttribute("x", bx); band.setAttribute("width", bw);
         obsL.setAttribute("x1", ox); obsL.setAttribute("x2", ox);
       }
-      const pp = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + fmtNum(Math.abs(v) * 100, 1) + " pp";
+      const pp = (v) => { const t = fmtNum(Math.abs(v) * 100, 1); return sgn(v, t, "+") + t + "\u00a0pp"; }; // «pp» no queda solo en otra línea
       setDiff(pp(s.obs));
-      setIC("[" + pp(s.lo) + " ; " + pp(s.hi) + "]");
+      setIC("[" + pp(s.lo) + "\u00a0; " + pp(s.hi) + "]");
       setWin(fmtNum(s.win * 100, 0) + " % de remuestreos");
       const real = s.lo > 0 || s.hi < 0;
       setVer(real ? (s.lo > 0 ? "✅ B es mejor" : "✅ A es mejor") : "🤷 Podría ser suerte");
@@ -411,6 +528,7 @@
       if (animate === true) (real ? motion.pop : motion.shake)(verCard);
     }
     render();
+    watchLayout(root, plot, () => mob, (m) => { mob = m; build(); render(); }, (m) => (m ? 12.5 : 10));
     note(root, "💡 Qué mirar: con 100 casos, 82 % vs 85 % produce un intervalo que cruza el cero (la franja dorada contiene la línea roja). " +
       "Sube a 1.000 casos: la franja se angosta y la misma diferencia pasa a ser real. Presiona «Sortear otro conjunto de test» para ver " +
       "cuánto cambia el resultado solo por azar: con 100 casos, a veces B «gana» por 6 puntos y a veces pierde.");
@@ -437,7 +555,7 @@
         why: "Es la recomendación con su cifra de impacto: va en la cima y en la lámina 1." },
       { t: "Funciona: 9 de cada 10 reclamos llegan solos al área correcta.", lv: 3,
         why: "Es una de las tres razones (calidad) que sostienen la recomendación: es un argumento." },
-      { t: "Vale la pena: ahorra ~$1,9 millones al mes y se paga en 4 meses.", lv: 3,
+      { t: "Vale la pena: ahorra ~$1,9 millones al mes y se paga en unos 4 meses.", lv: 3,
         why: "Es la razón de valor: un argumento, que luego se respalda con los escenarios de ROI." },
       { t: "Es seguro: los fraudes y los casos de baja confianza siempre pasan por una persona.", lv: 3,
         why: "Es la razón de riesgo/implementación: completa los tres argumentos MECE." },

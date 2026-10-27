@@ -1258,13 +1258,15 @@ disponibles con:</p>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="4-limites-de-la-capa-gratuita">4. Límites de la capa gratuita</h2>
-<p>La capa gratuita limita las <strong>solicitudes por minuto y por día</strong> (los valores actuales están en
-<a href="https://ai.google.dev/gemini-api/docs/rate-limits">ai.google.dev/gemini-api/docs/rate-limits</a>). Para el
+<p>La capa gratuita limita las <strong>solicitudes por minuto y por día</strong>. Los valores cambian con el tiempo y dependen
+de tu cuenta: revisa tus límites vigentes en <a href="https://aistudio.google.com">Google AI Studio</a> y la explicación en
+<a href="https://ai.google.dev/gemini-api/docs/rate-limits">ai.google.dev/gemini-api/docs/rate-limits</a>. Para el
 proyecto:</p>
 <ul>
 <li>Trabaja con <strong>muestras</strong> (100–200 casos), no con los 6.000 textos.</li>
-<li>Pon una pausa entre llamadas (<code>time.sleep(4)</code>) y reintenta si aparece el error <code>429</code> (superaste el
-  límite) o <code>503</code> (el modelo está saturado; pasa en horas de alta demanda y se resuelve esperando).</li>
+<li>Pon una pausa entre llamadas (<code>time.sleep(7)</code>, unas 8 llamadas por minuto, como en los notebooks) y reintenta
+  si aparece el error <code>429</code> (superaste el límite) o <code>503</code> (el modelo está saturado; pasa en horas de alta demanda
+  y se resuelve esperando).</li>
 <li><strong>Guarda los resultados</strong> en un CSV apenas los obtengas, para no repetir llamadas si se reinicia la sesión.</li>
 </ul>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>

@@ -50,6 +50,42 @@
   const line = (x1, y1, x2, y2, cls) => svg("line", { x1, y1, x2, y2, class: cls });
   const txt = (x, y, s, attrs = {}) => svg("text", Object.assign({ x, y }, attrs), s);
 
+  /* Disposición angosta (celular): si el ancho útil del widget es menor que MOB_W, cada SVG se dibuja en un
+     lienzo de 320 de ancho con los paneles apilados y lleva la clase .c1-mob (escala ≈ 1: 12,5 unidades de
+     letra ≈ 12 px reales). En pantallas anchas el dibujo es el de siempre (640 de ancho).
+     Además, si el SVG queda tan chico que la letra bajaría de ~11 px reales, se agranda con la variable CSS
+     --c1-k (ver clase1.css); cuando sobra espacio, --c1-k = 1 y nada cambia. */
+  const MOB_W = 600, MIN_PX = 11.2;
+  function innerW(root) {
+    const cs = getComputedStyle(root);
+    return root.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+  }
+  function isMob(root) {
+    if (root.clientWidth) return innerW(root) < MOB_W;
+    return !!(window.matchMedia && window.matchMedia("(max-width: 680px)").matches); // aún sin tamaño
+  }
+  /** Observa el ancho del widget: rearma el dibujo (fn) al cambiar de disposición y ajusta el tamaño de letra. */
+  function onLayoutChange(root, plot, fn) {
+    let mob = plot.classList.contains("c1-mob");
+    const fit = () => {
+      const vb = plot.viewBox.baseVal && plot.viewBox.baseVal.width, rw = plot.getBoundingClientRect().width;
+      if (!vb || !rw) return;
+      const base = mob ? 12.5 : 10.5; // letra más chica del dibujo, en unidades del viewBox
+      const k = Math.max(1, MIN_PX / (base * (rw / vb)));
+      plot.style.setProperty("--c1-k", k.toFixed(3));
+    };
+    const check = () => {
+      if (!root.isConnected) { ro && ro.disconnect(); return; }
+      if (!root.clientWidth) return;
+      const m = isMob(root);
+      if (m !== mob) { mob = m; fn(m); }
+      fit();
+    };
+    const ro = window.ResizeObserver ? new ResizeObserver(() => check()) : null;
+    if (ro) ro.observe(root); else { window.addEventListener("resize", check); }
+    check();
+  }
+
   /* ======================================================================
      1) c1-neurona
      ====================================================================== */
@@ -81,52 +117,69 @@
     const formula = h("p", { class: "c1-formula", "aria-live": "polite" });
     root.append(formula);
 
-    const plot = svg("svg", { viewBox: "0 0 640 270", class: "ia-svg", role: "img",
+    const plot = svg("svg", { class: "ia-svg", role: "img",
       "aria-label": "Diagrama de una neurona con dos entradas y gráfico de su función de activación" });
     root.append(plot);
 
-    // --- diagrama de la neurona (izquierda)
-    const N = { x: 205, y: 140 }, I1 = { x: 48, y: 78 }, I2 = { x: 48, y: 202 }, B = { x: 205, y: 34 }, O = { x: 300, y: 140 };
-    const e1 = line(I1.x + 22, I1.y, N.x - 34, N.y, "c1-edge");
-    const e2 = line(I2.x + 22, I2.y, N.x - 34, N.y, "c1-edge");
-    const eb = line(B.x, B.y + 14, N.x, N.y - 34, "c1-edge");
-    const eo = line(N.x + 34, N.y, O.x - 24, O.y, "c1-edge c1-edge-out");
-    const lw1 = txt(118, 96, "", { class: "c1-wlbl", "text-anchor": "middle" });
-    const lw2 = txt(118, 196, "", { class: "c1-wlbl", "text-anchor": "middle" });
-    const lb = txt(B.x + 16, B.y + 4, "", { class: "c1-wlbl" });
-    const in1 = txt(I1.x, I1.y + 4, "", { "text-anchor": "middle", class: "c1-node-t" });
-    const in2 = txt(I2.x, I2.y + 4, "", { "text-anchor": "middle", class: "c1-node-t" });
-    const outCircle = svg("circle", { cx: O.x, cy: O.y, r: 24, class: "c1-out" });
-    const outT = txt(O.x, O.y + 4, "", { "text-anchor": "middle", class: "c1-node-t" });
-    plot.append(
-      e1, e2, eb, eo,
-      svg("circle", { cx: I1.x, cy: I1.y, r: 22, class: "c1-node" }), in1,
-      svg("circle", { cx: I2.x, cy: I2.y, r: 22, class: "c1-node" }), in2,
-      txt(I1.x, I1.y - 30, "x₁ alarma", { "text-anchor": "middle", class: "c1-small" }),
-      txt(I2.x, I2.y + 38, "x₂ monto", { "text-anchor": "middle", class: "c1-small" }),
-      svg("circle", { cx: B.x, cy: B.y, r: 13, class: "c1-node" }),
-      txt(B.x, B.y + 4, "1", { "text-anchor": "middle", class: "c1-node-t" }), lb,
-      svg("circle", { cx: N.x, cy: N.y, r: 34, class: "c1-neuron" }),
-      txt(N.x, N.y - 4, "Σ  →  f", { "text-anchor": "middle", class: "c1-node-t" }),
-      txt(N.x, N.y + 13, "", { "text-anchor": "middle", class: "c1-small c1-actname" }),
-      lw1, lw2, outCircle, outT,
-      txt(O.x, O.y + 40, "salida", { "text-anchor": "middle", class: "c1-small" })
-    );
-    const actName = plot.querySelector(".c1-actname");
+    // Disposiciones: escritorio (diagrama a la izquierda, gráfico a la derecha) y celular (apilados)
+    const LAY = {
+      desk: { vb: "0 0 640 270", N: { x: 205, y: 140 }, I1: { x: 48, y: 78 }, I2: { x: 48, y: 202 }, B: { x: 205, y: 34 }, O: { x: 300, y: 140 },
+        w1: [74, 62], w2: [74, 219], P: { x0: 360, x1: 625, y0: 28, y1: 240 }, xt: 14, zl: 16, zc: 30, nr: 34, wa: "start" },
+      mob: { vb: "0 0 320 456", N: { x: 168, y: 130 }, I1: { x: 38, y: 70 }, I2: { x: 38, y: 190 }, B: { x: 168, y: 28 }, O: { x: 284, y: 130 },
+        w1: [66, 62], w2: [66, 207], P: { x0: 42, x1: 304, y0: 274, y1: 410 }, xt: 15, zl: 19, zc: 37, nr: 38, wa: "start" },
+    };
+    let mob = isMob(root), Lc, P;
+    let e1, e2, eb, eo, lw1, lw2, lb, in1, in2, outCircle, outT, actName, gAxes, curve, guideV, guideH, dot, zLbl;
 
-    // --- gráfico de la activación (derecha)
-    const P = { x0: 360, x1: 625, y0: 28, y1: 240 }, ZR = 6;
+    function build() {
+      Lc = LAY[mob ? "mob" : "desk"]; P = Lc.P;
+      plot.setAttribute("viewBox", Lc.vb);
+      plot.classList.toggle("c1-mob", mob);
+      // --- diagrama de la neurona (izquierda / arriba)
+      const { N, I1, I2, B, O, nr } = Lc; // nr: radio de la neurona
+      e1 = line(I1.x + 22, I1.y, N.x - nr, N.y, "c1-edge");
+      e2 = line(I2.x + 22, I2.y, N.x - nr, N.y, "c1-edge");
+      eb = line(B.x, B.y + 14, N.x, N.y - nr, "c1-edge");
+      eo = line(N.x + nr, N.y, O.x - 24, O.y, "c1-edge c1-edge-out");
+      // los pesos van junto a cada entrada (w₁ arriba, w₂ abajo), lejos de las aristas aunque sean gruesas
+      lw1 = txt(Lc.w1[0], Lc.w1[1], "", { class: "c1-wlbl", "text-anchor": Lc.wa });
+      lw2 = txt(Lc.w2[0], Lc.w2[1], "", { class: "c1-wlbl", "text-anchor": Lc.wa });
+      lb = txt(B.x + 16, B.y + 4, "", { class: "c1-wlbl" });
+      in1 = txt(I1.x, I1.y + 4, "", { "text-anchor": "middle", class: "c1-node-t" });
+      in2 = txt(I2.x, I2.y + 4, "", { "text-anchor": "middle", class: "c1-node-t" });
+      outCircle = svg("circle", { cx: O.x, cy: O.y, r: 24, class: "c1-out" });
+      outT = txt(O.x, O.y + 4, "", { "text-anchor": "middle", class: "c1-node-t" });
+      actName = txt(N.x, N.y + 13, "", { "text-anchor": "middle", class: "c1-small c1-actname" });
+      // --- gráfico de la activación (derecha / abajo)
+      gAxes = svg("g", {});
+      curve = svg("path", { class: "c1-curve", fill: "none" });
+      guideV = line(0, 0, 0, 0, "c1-guide");
+      guideH = line(0, 0, 0, 0, "c1-guide");
+      dot = svg("circle", { r: 7, class: "c1-dot" });
+      zLbl = txt(0, P.y1 + Lc.zl, "", { "text-anchor": "middle", class: "c1-small" });
+      plot.replaceChildren(
+        e1, e2, eb, eo,
+        svg("circle", { cx: I1.x, cy: I1.y, r: 22, class: "c1-node" }), in1,
+        svg("circle", { cx: I2.x, cy: I2.y, r: 22, class: "c1-node" }), in2,
+        txt(I1.x, I1.y - 30, "x₁ alarma", { "text-anchor": "middle", class: "c1-small" }),
+        txt(I2.x, I2.y + 38, "x₂ monto", { "text-anchor": "middle", class: "c1-small" }),
+        svg("circle", { cx: B.x, cy: B.y, r: 13, class: "c1-node" }),
+        txt(B.x, B.y + 4, "1", { "text-anchor": "middle", class: "c1-node-t" }), lb,
+        svg("circle", { cx: N.x, cy: N.y, r: nr, class: "c1-neuron" }),
+        txt(N.x, N.y - 4, "Σ  →  f", { "text-anchor": "middle", class: "c1-node-t" }),
+        actName,
+        lw1, lw2, outCircle, outT,
+        txt(O.x, O.y + 40, "salida", { "text-anchor": "middle", class: "c1-small" }),
+        gAxes, curve, guideV, guideH, dot, zLbl,
+        txt((P.x0 + P.x1) / 2, P.y1 + Lc.zc, "z = suma ponderada", { "text-anchor": "middle", class: "c1-small" })
+      );
+    }
+    build();
+
+    const ZR = 6;
     const gx = (z) => P.x0 + ((clamp(z, -ZR, ZR) + ZR) / (2 * ZR)) * (P.x1 - P.x0);
     let lo = ACT.sig.lo, hi = ACT.sig.hi;
     const gy = (v) => P.y1 - ((v - lo) / (hi - lo)) * (P.y1 - P.y0);
-    const gAxes = svg("g", {});
-    const curve = svg("path", { class: "c1-curve", fill: "none" });
-    const guideV = line(0, 0, 0, 0, "c1-guide");
-    const guideH = line(0, 0, 0, 0, "c1-guide");
-    const dot = svg("circle", { r: 7, class: "c1-dot" });
-    const zLbl = txt(0, P.y1 + 16, "", { "text-anchor": "middle", class: "c1-small" });
-    plot.append(gAxes, curve, guideV, guideH, dot, zLbl,
-      txt((P.x0 + P.x1) / 2, P.y1 + 30, "z = suma ponderada", { "text-anchor": "middle", class: "c1-small" }));
 
     function drawAxes() {
       gAxes.replaceChildren();
@@ -134,9 +187,9 @@
       gAxes.append(line(P.x0, gy(0), P.x1, gy(0), "ia-axis"), line(gx(0), P.y0, gx(0), P.y1, "ia-axis"));
       A.ticks.forEach((t) => {
         gAxes.append(line(P.x0, gy(t), P.x1, gy(t), "ia-grid"),
-          txt(P.x0 - 6, gy(t) + 4, String(t).replace(".", ","), { "text-anchor": "end", class: "c1-small" }));
+          txt(P.x0 - 11, gy(t) + 4, String(t).replace(".", ","), { "text-anchor": "end", class: "c1-small" }));
       });
-      [-6, -3, 3, 6].forEach((z) => gAxes.append(txt(gx(z), gy(0) + 14, String(z), { "text-anchor": "middle", class: "c1-small" })));
+      [-6, -3, 3, 6].forEach((z) => gAxes.append(txt(gx(z), gy(0) + Lc.xt, String(z), { "text-anchor": "middle", class: "c1-small" })));
       gAxes.append(txt(P.x0, P.y0 - 10, "f(z) · " + A.name, { class: "c1-small c1-bold" }));
       let d = "";
       for (let i = 0; i <= 120; i++) {
@@ -147,6 +200,7 @@
     }
 
     let lastRead = "";
+    let dotAnim = null; // animación del punto al cambiar de activación (se detiene si llega otro cambio)
     let readSet = null;
     const setZ = stat(root, "z = w₁x₁ + w₂x₂ + b", "—");
     const setA = stat(root, "Salida f(z)", "—", "is-gold");
@@ -183,16 +237,28 @@
       }
       const cx = gx(z), cy = gy(clamp(a, lo, hi)); // ReLU puede salirse del gráfico: lo topamos
       guideV.setAttribute("x1", cx); guideV.setAttribute("x2", cx);
-      guideV.setAttribute("y1", gy(0)); guideV.setAttribute("y2", cy);
+      // con |z| > 6 el punto queda topado en el borde: la guía vertical solo repasaría el borde y taparía «±6»
+      const clamped = Math.abs(z) > ZR;
+      guideV.setAttribute("y1", gy(0)); guideV.setAttribute("y2", clamped ? gy(0) : cy);
       guideH.setAttribute("x1", gx(0)); guideH.setAttribute("x2", cx);
       guideH.setAttribute("y1", cy); guideH.setAttribute("y2", cy);
       zLbl.setAttribute("x", cx);
+      // el rótulo (solo aparece con |z| > 6, en el borde del gráfico) se alinea hacia adentro para no salirse del lienzo
+      zLbl.setAttribute("text-anchor", z > 0 ? "end" : "start");
       zLbl.textContent = Math.abs(z) > ZR ? (z > 0 ? "z → " + fmt1(z) : fmt1(z) + " ← z") : "";
-      if (actChanged) {
-        motion.attr(dot, "cy", cy, { duration: motion.DUR.slow, ease: motion.EASE.back });
-        dot.setAttribute("cx", cx);
+      // Si había una animación del punto en curso (cambio de activación reciente), se detiene: así el punto
+      // siempre termina en la posición vigente aunque se mueva un deslizador durante la animación.
+      if (dotAnim) { dotAnim.stop(); dotAnim = null; }
+      dot.setAttribute("cx", cx);
+      const M = window.Motion;
+      if (actChanged && M && !motion.reduced()) {
+        const from = parseFloat(dot.getAttribute("cy"));
+        const a = M.animate(isNaN(from) ? cy : from, cy, { duration: motion.DUR.slow, ease: motion.EASE.back,
+          onUpdate: (v) => dot.setAttribute("cy", v) });
+        dotAnim = a;
+        a.finished.then(() => { if (dotAnim === a) dotAnim = null; }, () => {});
       } else {
-        dot.setAttribute("cx", cx); dot.setAttribute("cy", cy);
+        dot.setAttribute("cy", cy);
       }
 
       setZ(signed(z));
@@ -207,6 +273,7 @@
     }
     drawAxes();
     render();
+    onLayoutChange(root, plot, (m) => { mob = m; build(); drawAxes(); render(); });
     note(root, "💡 <strong>Qué mirar:</strong> con la <strong>sigmoide</strong> la salida es una probabilidad entre 0 y 1 " +
       "(¡es exactamente una regresión logística!). Con <strong>ReLU</strong> todo lo negativo se apaga en 0 y lo positivo pasa tal cual: " +
       "no sirve como probabilidad, pero es la activación favorita de las capas ocultas. Prueba un peso w₂ negativo: " +
@@ -258,40 +325,52 @@
     const trainBtn = btn(acts, "▶ Entrenar 300 épocas", () => train(), "econ-btn-gold");
     btn(acts, "↺ Reiniciar pesos", () => reset(true), "econ-btn-ghost");
 
-    const plot = svg("svg", { viewBox: "0 0 640 324", class: "ia-svg", role: "img",
+    const plot = svg("svg", { class: "ia-svg", role: "img",
       "aria-label": "Mapa con la frontera de decisión de la red y gráfico de la pérdida por época" });
     root.append(plot);
 
-    // --- mapa (izquierda): dominio [-1.25, 1.25]²
-    const M0 = { x: 26, y: 10, s: 288 }, G = 32, D = 1.25;
+    // Disposiciones: escritorio (mapa a la izquierda, pérdida a la derecha) y celular (mapa arriba, pérdida abajo)
+    const LAY = {
+      desk: { vb: "0 0 640 324", M0: { x: 26, y: 10, s: 288 }, L: { x0: 360, x1: 625, y0: 26, y1: 270 }, xl: 16, lt: 10, lb: 16 },
+      mob: { vb: "0 0 320 494", M0: { x: 24, y: 6, s: 288 }, L: { x0: 40, x1: 304, y0: 352, y1: 470 }, xl: 18, lt: 12, lb: 18 },
+    };
+    let mob = isMob(root), Lc, M0, L;
+
+    // --- mapa: dominio [-1.25, 1.25]²
+    const G = 32, D = 1.25;
     const mx = (x) => M0.x + ((x + D) / (2 * D)) * M0.s;
     const my = (y) => M0.y + ((D - y) / (2 * D)) * M0.s;
-    const gMap = svg("g", {});
-    const cells = [];
-    const cw = M0.s / G;
-    for (let i = 0; i < G; i++) for (let j = 0; j < G; j++) {
-      const r = svg("rect", { x: (M0.x + j * cw).toFixed(2), y: (M0.y + i * cw).toFixed(2), width: (cw + 0.4).toFixed(2), height: (cw + 0.4).toFixed(2), class: "c1-cell" });
-      r._x = -D + (j + 0.5) * (2 * D / G);
-      r._y = D - (i + 0.5) * (2 * D / G);
-      cells.push(r); gMap.append(r);
-    }
-    const gPts = svg("g", {});
     // Rótulos de los ejes (cambian según los datos)
     const AXES = {
       anillo: ["frecuencia de compra →", "gasto por compra →"],
       xor: ["compra: Chile ← → extranjero", "cliente: en Chile ← → de viaje"],
     };
-    const xLbl = txt(M0.x + M0.s / 2, M0.y + M0.s + 16, "", { "text-anchor": "middle", class: "c1-small" });
-    const yc = M0.y + M0.s / 2, yx = M0.x - 10; // a la izquierda, lejos del gráfico de pérdida
-    const yLbl = txt(yx, yc, "", { "text-anchor": "middle", class: "c1-small", transform: `rotate(-90 ${yx} ${yc})` });
-    plot.append(gMap, svg("rect", { x: M0.x, y: M0.y, width: M0.s, height: M0.s, class: "c1-frame" }), gPts, xLbl, yLbl);
-
-    // --- curva de pérdida (derecha)
-    const L = { x0: 360, x1: 625, y0: 26, y1: 270 };
-    const gL = svg("g", {});
-    const lossPath = svg("path", { class: "c1-loss", fill: "none" });
-    const lossDot = svg("circle", { r: 4.5, class: "c1-dot" });
-    plot.append(gL, lossPath, lossDot);
+    let gMap, cells, gPts, xLbl, yLbl, gL, lossPath, lossDot;
+    function build() {
+      Lc = LAY[mob ? "mob" : "desk"]; M0 = Lc.M0; L = Lc.L;
+      plot.setAttribute("viewBox", Lc.vb);
+      plot.classList.toggle("c1-mob", mob);
+      gMap = svg("g", {});
+      cells = [];
+      const cw = M0.s / G;
+      for (let i = 0; i < G; i++) for (let j = 0; j < G; j++) {
+        const r = svg("rect", { x: (M0.x + j * cw).toFixed(2), y: (M0.y + i * cw).toFixed(2), width: (cw + 0.4).toFixed(2), height: (cw + 0.4).toFixed(2), class: "c1-cell" });
+        r._x = -D + (j + 0.5) * (2 * D / G);
+        r._y = D - (i + 0.5) * (2 * D / G);
+        cells.push(r); gMap.append(r);
+      }
+      gPts = svg("g", {});
+      xLbl = txt(M0.x + M0.s / 2, M0.y + M0.s + Lc.xl, "", { "text-anchor": "middle", class: "c1-small" });
+      const yc = M0.y + M0.s / 2, yx = M0.x - 10; // a la izquierda, lejos del gráfico de pérdida
+      yLbl = txt(yx, yc, "", { "text-anchor": "middle", class: "c1-small", transform: `rotate(-90 ${yx} ${yc})` });
+      // --- curva de pérdida
+      gL = svg("g", {});
+      lossPath = svg("path", { class: "c1-loss", fill: "none" });
+      lossDot = svg("circle", { r: 4.5, class: "c1-dot" });
+      plot.replaceChildren(gMap, svg("rect", { x: M0.x, y: M0.y, width: M0.s, height: M0.s, class: "c1-frame" }), gPts, xLbl, yLbl,
+        gL, lossPath, lossDot);
+    }
+    build();
 
     const setEp = stat(root, "Época", "0");
     const setLoss = stat(root, "Pérdida (entropía cruzada)", "—", "is-gold");
@@ -372,9 +451,9 @@
       gL.append(line(L.x0, L.y1, L.x1, L.y1, "ia-axis"), line(L.x0, L.y0, L.x0, L.y1, "ia-axis"));
       [0.2, 0.4, 0.6, 0.8].forEach((v) => gL.append(line(L.x0, ly(v), L.x1, ly(v), "ia-grid"),
         txt(L.x0 - 5, ly(v) + 4, fmt1(v), { "text-anchor": "end", class: "c1-small" })));
-      gL.append(txt(L.x0, L.y0 - 10, "Pérdida en entrenamiento", { class: "c1-small c1-bold" }),
-        txt(L.x1, L.y1 + 16, "épocas → " + maxE, { "text-anchor": "end", class: "c1-small" }),
-        txt(L.x0, L.y1 + 16, "0", { class: "c1-small" }));
+      gL.append(txt(L.x0, L.y0 - Lc.lt, "Pérdida en entrenamiento", { class: "c1-small c1-bold" }),
+        txt(L.x1, L.y1 + Lc.lb, "épocas → " + maxE, { "text-anchor": "end", class: "c1-small" }),
+        txt(L.x0, L.y1 + Lc.lb, "0", { class: "c1-small" }));
       if (!hist.length) { lossPath.setAttribute("d", ""); lossDot.setAttribute("opacity", 0); return; }
       let d = "";
       hist.forEach((v, i) => { d += (i ? "L" : "M") + lx(i + 1).toFixed(1) + "," + ly(v).toFixed(1); });
@@ -432,6 +511,11 @@
     }
 
     reset(false);
+    onLayoutChange(root, plot, (m) => {
+      mob = m; build();
+      xLbl.textContent = AXES[dataKey][0]; yLbl.textContent = AXES[dataKey][1];
+      drawPoints(); drawMap(); drawLoss();
+    });
   });
 
   /* ======================================================================
@@ -454,31 +538,43 @@
     const b10 = btn(acts, "⏩ 10 pasos", () => run(10));
     btn(acts, "↺ Reiniciar", () => reset(), "econ-btn-ghost");
 
-    const plot = svg("svg", { viewBox: "0 0 640 290", class: "ia-svg", role: "img",
+    const plot = svg("svg", { class: "ia-svg c1-clip", role: "img",
       "aria-label": "Curva de pérdida con una bola que representa el valor actual del peso" });
     root.append(plot);
-    const A = { x0: 50, x1: 620, y0: 20, y1: 250 }, WMIN = -3, WMAX = 9, LMAX = 18.5;
+    // Disposiciones: escritorio y celular (lienzo angosto; «mínimo» baja una fila para no tapar los números del eje)
+    const LAY = {
+      desk: { vb: "0 0 640 290", A: { x0: 50, x1: 620, y0: 20, y1: 250 }, wl: 34, ml: 18, tl: [0, -8] },
+      mob: { vb: "0 0 320 258", A: { x0: 22, x1: 306, y0: 26, y1: 214 }, wl: 36, ml: 36, tl: [0, -10] },
+    };
+    let mob = isMob(root), A;
+    const WMIN = -3, WMAX = 9, LMAX = 18.5;
     const px = (w) => A.x0 + ((w - WMIN) / (WMAX - WMIN)) * (A.x1 - A.x0);
     const py = (l) => A.y1 - (Math.min(l, LMAX) / LMAX) * (A.y1 - A.y0);
-    let d = "";
-    for (let i = 0; i <= 160; i++) {
-      const w = WMIN + ((WMAX - WMIN) * i) / 160;
-      d += (i ? "L" : "M") + px(w).toFixed(1) + "," + py(loss(w)).toFixed(1);
-    }
-    plot.append(
-      line(A.x0, A.y1, A.x1, A.y1, "ia-axis"), line(A.x0, A.y0, A.x0, A.y1, "ia-axis"),
-      txt(A.x1, A.y1 + 34, "peso w →", { "text-anchor": "end", class: "c1-small" }),
-      txt(A.x0 + 6, A.y0 + 4, "pérdida", { class: "c1-small c1-bold" }),
-      svg("path", { d, class: "c1-curve", fill: "none" }),
-      line(px(WSTAR), py(loss(WSTAR)), px(WSTAR), A.y1, "c1-guide"),
-      txt(px(WSTAR), A.y1 + 18, "mínimo", { "text-anchor": "middle", class: "c1-small" })
-    );
-    [-2, 0, 2, 4, 6, 8].forEach((w) => plot.append(txt(px(w), A.y1 + 18, String(w), { "text-anchor": "middle", class: "c1-small c1-faint" })));
     const trail = svg("polyline", { class: "c1-trail", fill: "none" });
     const gDots = svg("g", {});
     const tangent = line(0, 0, 0, 0, "c1-tangent");
     const ball = svg("circle", { r: 9, class: "c1-ball" });
-    plot.append(trail, gDots, tangent, ball);
+    function build() {
+      const Lc = LAY[mob ? "mob" : "desk"]; A = Lc.A;
+      plot.setAttribute("viewBox", Lc.vb);
+      plot.classList.toggle("c1-mob", mob);
+      let d = "";
+      for (let i = 0; i <= 160; i++) {
+        const w = WMIN + ((WMAX - WMIN) * i) / 160;
+        d += (i ? "L" : "M") + px(w).toFixed(1) + "," + py(loss(w)).toFixed(1);
+      }
+      plot.replaceChildren(
+        line(A.x0, A.y1, A.x1, A.y1, "ia-axis"), line(A.x0, A.y0, A.x0, A.y1, "ia-axis"),
+        txt(A.x1, A.y1 + Lc.wl, "peso w →", { "text-anchor": "end", class: "c1-small" }),
+        txt(A.x0 + Lc.tl[0], A.y0 + Lc.tl[1], "pérdida", { class: "c1-small c1-bold" }),
+        svg("path", { d, class: "c1-curve", fill: "none" }),
+        line(px(WSTAR), py(loss(WSTAR)), px(WSTAR), A.y1, "c1-guide"),
+        txt(px(WSTAR), A.y1 + Lc.ml, "mínimo", { "text-anchor": "middle", class: "c1-small" })
+      );
+      [-2, 0, 2, 4, 6, 8].forEach((w) => plot.append(txt(px(w), A.y1 + 18, String(w), { "text-anchor": "middle", class: "c1-small c1-faint" })));
+      plot.append(trail, gDots, tangent, ball);
+    }
+    build();
 
     const setStep = stat(root, "Paso", "0");
     const setW = stat(root, "w", "—");
@@ -509,8 +605,9 @@
       let s;
       if (r < 0.25) s = "🐢 Muy lento";
       else if (r <= 1.0) s = "✅ Baja directo";
-      else if (r < 1.95) s = "↔️ Rebota y converge";
-      else if (r <= 2.0) s = "⚠️ Rebota sin bajar";
+      // curvatura de la pérdida = 1 ⇒ converge si |1 − tasa| < 1, es decir, tasa < 2
+      else if (r < 1.999) s = "↔️ Rebota y converge";
+      else if (r <= 2.001) s = "⚠️ Rebota sin bajar";
       else s = "💥 Diverge";
       setD(k ? s : "da un paso…");
       return s;
@@ -546,7 +643,7 @@
         }
       }
       const r = +lr.value;
-      if (Math.abs(w - WSTAR) < 0.02) msg.innerHTML = `🎯 Llegaste al mínimo en ${k} pasos.`;
+      if (Math.abs(w - WSTAR) < 0.02) msg.innerHTML = `🎯 Llegaste al mínimo en ${k} ${k === 1 ? "paso" : "pasos"}.`;
       else if (r < 0.25) msg.innerHTML = "🐢 Avanza en la dirección correcta, pero a paso de tortuga: necesitarías cientos de épocas.";
       else if (r > 1 && r < 1.999) msg.innerHTML = "↔️ La bola salta de un lado al otro del mínimo. Con tasa entre 1 y 2 igual termina convergiendo, pero gasta pasos rebotando.";
       else if (r >= 1.999 && r <= 2.001) msg.innerHTML = "⚠️ Con tasa exactamente 2 la bola rebota para siempre entre los mismos dos puntos: ni baja ni diverge.";
@@ -555,6 +652,12 @@
       busy = false; b1.disabled = false; b10.disabled = false;
     }
     reset();
+    onLayoutChange(root, plot, (m) => {
+      mob = m; build();
+      const [x, y] = placeTangent();
+      ball.setAttribute("cx", clamp(x, A.x0, A.x1)); ball.setAttribute("cy", Math.max(y, A.y0));
+      drawTrail();
+    });
   });
 
   /* ======================================================================
@@ -571,27 +674,44 @@
     toggle(row, "🎲 Dropout 30 %", (v) => { drop = v; render(true); });
     toggle(row, "✋ Early stopping (paciencia 5)", (v) => { early = v; render(true); });
 
-    const plot = svg("svg", { viewBox: "0 0 640 290", class: "ia-svg", role: "img",
+    const plot = svg("svg", { class: "ia-svg", role: "img",
       "aria-label": "Curvas de pérdida de entrenamiento y validación por época" });
     root.append(plot);
-    const A = { x0: 52, x1: 600, y0: 22, y1: 250 }, E = 60, YMAX = 1.6;
+    // Disposiciones: escritorio y celular (lienzo angosto). En ambas la leyenda va bajo el eje: arriba a la
+    // derecha tapaba el rótulo «modelo final · época 60» y podía cruzarse con la curva de validación.
+    const LAY = {
+      desk: { vb: "0 0 640 290", A: { x0: 52, x1: 600, y0: 22, y1: 250 }, et: 16, el: 32, pl: 8,
+        leg: [[52, 278, 80, 282], [190, 278, 218, 282]] },
+      mob: { vb: "0 0 320 258", A: { x0: 34, x1: 306, y0: 26, y1: 196 }, et: 17, el: 34, pl: 10,
+        leg: [[34, 244, 62, 248], [176, 244, 204, 248]] },
+    };
+    let mob = isMob(root), A;
+    const E = 60, YMAX = 1.6;
     const ex = (e) => A.x0 + ((e - 1) / (E - 1)) * (A.x1 - A.x0);
     const ey = (v) => A.y1 - (Math.min(v, YMAX) / YMAX) * (A.y1 - A.y0);
-    plot.append(line(A.x0, A.y1, A.x1, A.y1, "ia-axis"), line(A.x0, A.y0, A.x0, A.y1, "ia-axis"));
-    [0.4, 0.8, 1.2, 1.6].forEach((v) => plot.append(line(A.x0, ey(v), A.x1, ey(v), "ia-grid"),
-      txt(A.x0 - 6, ey(v) + 4, fmt1(v), { "text-anchor": "end", class: "c1-small" })));
-    [1, 10, 20, 30, 40, 50, 60].forEach((e) => plot.append(txt(ex(e), A.y1 + 16, String(e), { "text-anchor": "middle", class: "c1-small" })));
-    plot.append(txt(A.x1, A.y1 + 32, "épocas →", { "text-anchor": "end", class: "c1-small" }),
-      txt(A.x0, A.y0 - 8, "pérdida", { class: "c1-small c1-bold" }));
-    const legend = svg("g", {},
-      line(430, 34, 452, 34, "c1-tr"), txt(458, 38, "entrenamiento", { class: "c1-small" }),
-      line(430, 54, 452, 54, "c1-va"), txt(458, 58, "validación", { class: "c1-small" }));
     const ghostTr = svg("path", { class: "c1-tr is-ghost", fill: "none" });
     const ghostVa = svg("path", { class: "c1-va is-ghost", fill: "none" });
     const pTr = svg("path", { class: "c1-tr", fill: "none", pathLength: 1 });
     const pVa = svg("path", { class: "c1-va", fill: "none", pathLength: 1 });
     const mark = svg("g", {});
-    plot.append(ghostTr, ghostVa, pTr, pVa, mark, legend);
+    let markTok = 0; // identifica el último dibujo: solo ese puede volver a mostrar el marcador
+    function build() {
+      const Lc = LAY[mob ? "mob" : "desk"]; A = Lc.A;
+      plot.setAttribute("viewBox", Lc.vb);
+      plot.classList.toggle("c1-mob", mob);
+      plot.replaceChildren(line(A.x0, A.y1, A.x1, A.y1, "ia-axis"), line(A.x0, A.y0, A.x0, A.y1, "ia-axis"));
+      [0.4, 0.8, 1.2, 1.6].forEach((v) => plot.append(line(A.x0, ey(v), A.x1, ey(v), "ia-grid"),
+        txt(A.x0 - 6, ey(v) + 4, fmt1(v), { "text-anchor": "end", class: "c1-small" })));
+      [1, 10, 20, 30, 40, 50, 60].forEach((e) => plot.append(txt(ex(e), A.y1 + Lc.et, String(e), { "text-anchor": "middle", class: "c1-small" })));
+      plot.append(txt(A.x1, A.y1 + Lc.el, "épocas →", { "text-anchor": "end", class: "c1-small" }),
+        txt(A.x0, A.y0 - Lc.pl, "pérdida", { class: "c1-small c1-bold" }));
+      const [l1, l2] = Lc.leg;
+      const legend = svg("g", {},
+        line(l1[0], l1[1], l1[0] + 22, l1[1], "c1-tr"), txt(l1[2], l1[3], "entrenamiento", { class: "c1-small" }),
+        line(l2[0], l2[1], l2[0] + 22, l2[1], "c1-va"), txt(l2[2], l2[3], "validación", { class: "c1-small" }));
+      plot.append(ghostTr, ghostVa, pTr, pVa, mark, legend);
+    }
+    build();
 
     const setStop = stat(root, "Modelo elegido", "—");
     const setVal = stat(root, "Pérdida en validación", "—", "is-gold");
@@ -630,12 +750,16 @@
 
       mark.replaceChildren();
       const bx = ex(best + 1);
+      // En celular: rótulos algo más cortos y del lado con más espacio, para que no se salgan del lienzo
+      const mid = (A.x0 + A.x1) / 2;
+      const bLeft = mob ? bx > mid : best > 40;
       mark.append(line(bx, A.y0 + 4, bx, A.y1, "c1-stopline"),
         svg("circle", { cx: bx, cy: ey(va[best]), r: 6, class: "c1-stopdot" }),
-        txt(bx + (best > 40 ? -8 : 8), A.y0 + 14, early ? `mejor modelo · época ${best + 1}` : "modelo final · época 60",
-          { "text-anchor": best > 40 ? "end" : "start", class: "c1-small c1-bold" }));
-      if (early && stop < E) mark.append(txt(ex(stop) + (stop > 40 ? -6 : 6), A.y1 - 8, `se detuvo en la época ${stop}`,
-        { "text-anchor": stop > 40 ? "end" : "start", class: "c1-small" }));
+        txt(bx + (bLeft ? -8 : 8), A.y0 + 14, early ? (mob ? `mejor modelo · ép. ${best + 1}` : `mejor modelo · época ${best + 1}`) : "modelo final · época 60",
+          { "text-anchor": bLeft ? "end" : "start", class: "c1-small c1-bold" }));
+      const sLeft = mob ? ex(stop) > mid : stop > 40;
+      if (early && stop < E) mark.append(txt(ex(stop) + (sLeft ? -6 : 6), A.y0 + 32, mob ? `se detuvo: época ${stop}` : `se detuvo en la época ${stop}`,
+        { "text-anchor": sLeft ? "end" : "start", class: "c1-small" }));
 
       setStop(early ? `época ${best + 1} (de ${stop})` : "época 60");
       setVal(fmt2(va[best]));
@@ -644,23 +768,34 @@
       const minVa = Math.min(...va);
       let m;
       if (early) m = "✋ <strong>Early stopping</strong> vigila la validación: si no mejora en 5 épocas seguidas, detiene el entrenamiento y " +
-        "recupera los pesos de la mejor época. Lo punteado es lo que habría pasado si seguías entrenando.";
+        "(con <code>restore_best_weights=True</code>) recupera los pesos de la mejor época. Lo punteado es lo que habría pasado si seguías entrenando.";
       else if (va[E - 1] - minVa > 0.12) m = "⚠️ <strong>Sobreajuste:</strong> la pérdida de entrenamiento sigue bajando, pero la de validación tocó fondo y ahora " +
         "<em>sube</em>. La red está memorizando los reclamos de entrenamiento en vez de aprender patrones generales.";
       else m = "✅ Entrenamiento y validación bajan juntas y la brecha es moderada: la red generaliza razonablemente.";
       if (drop && !early) m += " El <strong>dropout</strong> apaga neuronas al azar en cada paso: entrenar cuesta más (la curva dorada baja menos), pero la pérdida de validación termina más baja que sin dropout: la red generaliza mejor.";
       msg.innerHTML = m;
 
+      // El marcador se oculta mientras se dibujan las curvas y aparece al final. Se limpia la opacidad en
+      // línea antes del fundido (Motion no la deja en 1 al terminar) y, si llegan varios clics seguidos,
+      // solo el último dibujo lo vuelve a mostrar.
+      const tok = ++markTok;
       if (animate && !motion.reduced()) {
+        mark.style.opacity = "0";
         motion.anim(pTr, { strokeDashoffset: [1, 0] }, { duration: motion.DUR.slow, ease: motion.EASE.out });
         motion.anim(pVa, { strokeDashoffset: [1, 0] }, { duration: motion.DUR.slow, ease: motion.EASE.out, delay: 0.05 })
-          .then(() => motion.anim(mark, { opacity: [0, 1] }, { duration: motion.DUR.std, ease: motion.EASE.out }));
-        mark.style.opacity = "0";
+          .then(() => {
+            if (tok !== markTok) return;
+            mark.style.opacity = "";
+            motion.anim(mark, { opacity: [0, 1] }, { duration: motion.DUR.std, ease: motion.EASE.out });
+          }, () => { if (tok === markTok) mark.style.opacity = ""; });
+      } else {
+        mark.style.opacity = "";
       }
     }
     pTr.style.strokeDasharray = "1"; pVa.style.strokeDasharray = "1";
     pTr.style.strokeDashoffset = "0"; pVa.style.strokeDashoffset = "0";
     render(false);
+    onLayoutChange(root, plot, (m) => { mob = m; build(); render(false); });
   });
 
   /* ======================================================================
@@ -687,31 +822,52 @@
     root.append(acts);
     btn(acts, "🎯 Ir al umbral de menor costo", () => goBest(), "econ-btn-gold");
 
-    const plot = svg("svg", { viewBox: "0 0 640 300", class: "ia-svg", role: "img",
+    const plot = svg("svg", { class: "ia-svg", role: "img",
       "aria-label": "Puntajes de fraude de 200 reclamos con el umbral y curva de costo total según el umbral" });
     root.append(plot);
-    const S = { x0: 120, x1: 620 };
+    // Disposiciones: escritorio (rótulos de fila a la izquierda) y celular (rótulos sobre cada franja,
+    // los puntos usan todo el ancho y «Costo total según umbral» va en una sola línea)
+    const LAY = {
+      desk: { vb: "0 0 640 300", S: { x0: 120, x1: 620 }, rows: [26, 80], jit: 38, ax: 132, th: [16, 12], C: { y0: 182, y1: 285 } },
+      mob: { vb: "0 0 320 304", S: { x0: 18, x1: 302 }, rows: [40, 104], jit: 34, ax: 148, th: [18, 13], C: { y0: 220, y1: 296 } },
+    };
+    let mob = isMob(root), S, C;
     const sx = (s) => S.x0 + s * (S.x1 - S.x0);
-    plot.append(txt(10, 44, "Fraude real", { class: "c1-small c1-bold" }), txt(10, 104, "No fraude", { class: "c1-small c1-bold" }),
-      line(S.x0, 132, S.x1, 132, "ia-axis"));
-    [0, 0.25, 0.5, 0.75, 1].forEach((v) => plot.append(txt(sx(v), 146, fmt2(v), { "text-anchor": "middle", class: "c1-small" })));
-    plot.append(txt(S.x1, 160, "puntaje del modelo →", { "text-anchor": "end", class: "c1-small" }));
-    const dots = items.map((it) => {
-      const c = svg("circle", { cx: sx(it.s).toFixed(1), cy: ((it.f ? 26 : 80) + it.j * 38).toFixed(1), r: 3.4, class: it.f ? "c1-pt is-pos" : "c1-pt" });
-      plot.append(c);
-      return c;
-    });
-    const thLine = line(0, 16, 0, 132, "c1-thline");
-    const thLbl = txt(0, 12, "umbral", { "text-anchor": "middle", class: "c1-small c1-bold" });
-    plot.append(thLine, thLbl);
+    let dots, thLine, thLine2, thLbl, gC, cPath, cDot, bestDot;
+    function build() {
+      const Lc = LAY[mob ? "mob" : "desk"]; S = Lc.S; C = Lc.C;
+      plot.setAttribute("viewBox", Lc.vb);
+      plot.classList.toggle("c1-mob", mob);
+      plot.replaceChildren();
+      if (mob) plot.append(txt(S.x0, Lc.rows[0] - 8, "Fraude real", { class: "c1-small c1-bold" }), txt(S.x0, Lc.rows[1] - 8, "No fraude", { class: "c1-small c1-bold" }));
+      else plot.append(txt(10, 44, "Fraude real", { class: "c1-small c1-bold" }), txt(10, 104, "No fraude", { class: "c1-small c1-bold" }));
+      plot.append(line(S.x0, Lc.ax, S.x1, Lc.ax, "ia-axis"));
+      [0, 0.25, 0.5, 0.75, 1].forEach((v) => plot.append(txt(sx(v), Lc.ax + 14 + (mob ? 2 : 0), fmt2(v), { "text-anchor": "middle", class: "c1-small" })));
+      plot.append(txt(S.x1, Lc.ax + 28 + (mob ? 4 : 0), "puntaje del modelo →", { "text-anchor": "end", class: "c1-small" }));
+      dots = items.map((it) => {
+        const c = svg("circle", { cx: sx(it.s).toFixed(1), cy: ((it.f ? Lc.rows[0] : Lc.rows[1]) + it.j * Lc.jit).toFixed(1), r: 3.4, class: it.f ? "c1-pt is-pos" : "c1-pt" });
+        plot.append(c);
+        return c;
+      });
+      // en celular los rótulos de fila están sobre cada franja: la línea del umbral se corta ahí para no taparlos
+      if (mob) {
+        thLine = line(0, Lc.rows[0] - 3, 0, Lc.rows[0] + Lc.jit + 5, "c1-thline");
+        thLine2 = line(0, Lc.rows[1] - 5, 0, Lc.ax, "c1-thline");
+        plot.append(thLine2);
+      } else { thLine = line(0, Lc.th[0], 0, Lc.ax, "c1-thline"); thLine2 = null; }
+      thLbl = txt(0, Lc.th[1], "umbral", { "text-anchor": "middle", class: "c1-small c1-bold" });
+      plot.append(thLine, thLbl);
 
-    // curva de costo
-    const C = { y0: 182, y1: 285 };
-    const gC = svg("g", {});
-    const cPath = svg("path", { class: "c1-curve", fill: "none" });
-    const cDot = svg("circle", { r: 5.5, class: "c1-dot" });
-    const bestDot = svg("circle", { r: 5, class: "c1-bestdot" });
-    plot.append(txt(10, C.y0 + 6, "Costo total", { class: "c1-small c1-bold" }), txt(10, C.y0 + 20, "según umbral", { class: "c1-small" }), gC, cPath, bestDot, cDot);
+      // curva de costo
+      gC = svg("g", {});
+      cPath = svg("path", { class: "c1-curve", fill: "none" });
+      cDot = svg("circle", { r: 5.5, class: "c1-dot" });
+      bestDot = svg("circle", { r: 5, class: "c1-bestdot" });
+      if (mob) plot.append(svg("text", { x: S.x0, y: C.y0 - 12, class: "c1-small" }, svg("tspan", { class: "c1-bold" }, "Costo total"), " según umbral"));
+      else plot.append(txt(10, C.y0 + 6, "Costo total", { class: "c1-small c1-bold" }), txt(10, C.y0 + 20, "según umbral", { class: "c1-small" }));
+      plot.append(gC, cPath, bestDot, cDot);
+    }
+    build();
 
     const heat = h("div", { class: "ia-heat c1-cm", style: { gridTemplateColumns: "auto 1fr 1fr" }, role: "group", "aria-label": "Matriz de confusión" });
     root.append(heat);
@@ -745,7 +901,12 @@
     function render() {
       const t = +th.value;
       const c = counts(t);
-      thLine.setAttribute("x1", sx(t)); thLine.setAttribute("x2", sx(t)); thLbl.setAttribute("x", sx(t));
+      thLine.setAttribute("x1", sx(t)); thLine.setAttribute("x2", sx(t));
+      // el rótulo «umbral» sigue a la línea, pero sin salirse del lienzo en los extremos (32 unidades cubren
+      // media palabra aun con la letra agrandada; en escritorio nunca se activa)
+      const vbw = plot.viewBox.baseVal.width;
+      thLbl.setAttribute("x", clamp(sx(t), 32, vbw - 32));
+      if (thLine2) { thLine2.setAttribute("x1", sx(t)); thLine2.setAttribute("x2", sx(t)); }
       dots.forEach((d, i) => d.classList.toggle("is-flag", items[i].s >= t));
       paint(hTP, c.tp, NF, false); paint(hFN, c.fn, NF, true);
       paint(hFP, c.fp, 200 - NF, true); paint(hTN, c.tn, 200 - NF, false);
@@ -762,7 +923,7 @@
       const bt = bestT();
       bestDot.setAttribute("cx", sx(bt)); bestDot.setAttribute("cy", cy(costAt(bt)));
 
-      setRec(`${c.tp} de ${NF} (${Math.round((c.tp / NF) * 100)} %)`);
+      setRec(`${c.tp} de ${NF} (${Math.round((c.tp / NF) * 100)}\u00a0%)`);
       setFP(String(c.fp));
       setCost("$" + clp.format(costAt(t) * 1000));
     }
@@ -774,6 +935,7 @@
       }).then(() => { th.value = to; out.textContent = fmt2(to); render(); motion.pop(root.querySelectorAll(".econ-stat")[2]); });
     }
     render();
+    onLayoutChange(root, plot, (m) => { mob = m; build(); render(); });
     note(root, "💡 <strong>Qué mirar:</strong> si un fraude no detectado cuesta mucho más que una revisión manual, el umbral óptimo " +
       "<em>baja</em>: conviene revisar más reclamos aunque haya más falsas alarmas. El punto dorado hueco marca el umbral de menor costo. " +
       "Ojo: al bajar el umbral la <em>exactitud</em> puede incluso empeorar (hay más falsas alarmas) mientras el costo total cae: " +

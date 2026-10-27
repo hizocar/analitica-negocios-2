@@ -1,11 +1,13 @@
 /* Estilos propios de la clase 1 · Redes neuronales en la práctica (prefijo .c1-) */
 
-/* ---------- textos dentro de los SVG ---------- */
-.ia-svg .c1-small { font-size: 10.5px; fill: var(--md-default-fg-color--light); }
+/* ---------- textos dentro de los SVG ----------
+   --c1-k (lo fija widgets-clase1.js) agranda la letra solo si el SVG se dibuja tan chico que bajaría
+   de ~11 px reales; con espacio de sobra vale 1. */
+.ia-svg .c1-small { font-size: calc(10.5px * var(--c1-k, 1)); fill: var(--md-default-fg-color--light); }
 .ia-svg .c1-bold { font-weight: 700; fill: var(--md-default-fg-color); }
 .ia-svg .c1-faint { opacity: 0.55; }
-.ia-svg .c1-node-t { font-size: 12px; font-weight: 700; }
-.ia-svg .c1-wlbl { font-size: 11px; font-weight: 700; fill: var(--usm-navy); }
+.ia-svg .c1-node-t { font-size: calc(12px * var(--c1-k, 1)); font-weight: 700; }
+.ia-svg .c1-wlbl { font-size: calc(11px * var(--c1-k, 1)); font-weight: 700; fill: var(--usm-navy); }
 [data-md-color-scheme="slate"] .ia-svg .c1-wlbl { fill: var(--usm-blue); }
 
 /* ---------- c1-neurona ---------- */
@@ -50,6 +52,8 @@
 .ia-svg .c1-tangent { stroke: var(--usm-red); stroke-width: 2.5; stroke-linecap: round; }
 .ia-svg .c1-trail { stroke: var(--usm-gold); stroke-width: 1.5; stroke-dasharray: 4 3; opacity: 0.8; }
 .ia-svg .c1-trail-dot { fill: var(--usm-gold); opacity: 0.6; }
+/* Al divergir, la tangente se dibuja más allá del gráfico: se recorta al lienzo para que no se salga de la pantalla */
+.ia-svg.c1-clip { overflow: hidden; }
 
 /* ---------- c1-curvas ---------- */
 .ia-svg .c1-tr { stroke: var(--usm-gold); stroke-width: 2.5; stroke-linejoin: round; }
@@ -70,12 +74,25 @@
 .md-typeset .c1-bow table:not([class]) { font-size: 0.68rem; }
 .md-typeset .c1-bow td, .md-typeset .c1-bow th { text-align: center; padding: 0.3em 0.55em; }
 
-/* En celular el SVG se encoge a la mitad: agrandamos el texto para que siga legible */
-@media (max-width: 480px) {
-  .ia-svg .c1-small { font-size: 15px; }
-  .ia-svg .c1-node-t { font-size: 15px; }
-  .ia-svg .c1-wlbl { font-size: 14px; }
+/* Widget angosto (ancho útil < 600 px, p. ej. celular): widgets-clase1.js dibuja una disposición
+   angosta (viewBox de 320 de ancho, paneles apilados) y marca el SVG con .c1-mob. Con escala ≈ 1,
+   12,5 unidades de letra son ~11,5–13 px reales. El ancho máximo evita que el dibujo crezca de más
+   cuando el widget mide entre ~440 y 600 px. */
+/* overflow: hidden → nada se dibuja fuera del lienzo angosto (p. ej. la tangente de c1-gradiente al divergir) */
+.ia-svg.c1-mob { max-width: 440px; margin-left: auto; margin-right: auto; overflow: hidden; }
+.ia-svg.c1-mob text,
+.ia-svg.c1-mob .c1-small,
+.ia-svg.c1-mob .c1-wlbl { font-size: calc(12.5px * var(--c1-k, 1)); }
+.ia-svg.c1-mob .c1-node-t { font-size: calc(13px * var(--c1-k, 1)); }
+/* Halo del color de fondo: si una línea pasa bajo un rótulo, el rótulo se sigue leyendo */
+.ia-svg.c1-mob .c1-small,
+.ia-svg.c1-mob .c1-wlbl {
+  paint-order: stroke;
+  stroke: var(--md-default-bg-color);
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
+.ia-svg.c1-mob .c1-actname { stroke: none; } /* va dentro del círculo de la neurona */
 
 @media (prefers-reduced-motion: reduce) {
   .ia-svg .c1-edge, .c1-cm .ia-heat-cell { transition: none; }

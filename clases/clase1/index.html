@@ -1678,7 +1678,7 @@ La no linealidad (ReLU, tanh) es lo que permite "doblar" la frontera.</p>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegression</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neural_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLPClassifier</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># 400 clientes: centro = se quedan (0), anillo = se van (1)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># 400 clientes: anillo = se van (y = 0), centro = se quedan (y = 1)</span>
 <a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_circles</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
 <a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="n">modelos</span> <span class="o">=</span> <span class="p">{</span>
@@ -1902,7 +1902,7 @@ controlar cómo le va. Luego comparamos las dos curvas:</p>
 <p>Las dos herramientas que usarás en Keras:</p>
 <ul>
 <li><strong>Early stopping:</strong> vigila la pérdida de validación; si no mejora en <em>N</em> épocas seguidas (la <strong>paciencia</strong>), detiene
-  el entrenamiento y <strong>recupera los pesos de la mejor época</strong>.</li>
+  el entrenamiento y, con <code>restore_best_weights=True</code>, <strong>recupera los pesos de la mejor época</strong>.</li>
 <li><strong>Dropout:</strong> en cada paso de entrenamiento <strong>apaga al azar</strong> un porcentaje de neuronas (p. ej. 30 %). La red no
   puede depender de una sola neurona "estrella" y se ve obligada a repartir lo aprendido. Es como entrenar a un
   equipo rotando a los jugadores: nadie se vuelve imprescindible.</li>
@@ -1985,8 +1985,8 @@ te llevarás una sorpresa.</p>
 </blockquote>
 <h3 id="51-antes-de-modelar-auditar-y-limpiar">5.1 Antes de modelar: auditar y limpiar</h3>
 <p>Antes de cualquier modelo, <strong>mira los datos</strong>. Los casos FinTrust y MercaSur vienen sucios a propósito, como los
-datos reales: reclamos duplicados, textos vacíos o basura ("reclamo", "ok"), categorías escritas de cinco formas
-distintas ("Fraude", "FRAUDE", "fraude ", …), montos negativos o días de resolución imposibles. Si entrenas con
+datos reales: reclamos duplicados, textos vacíos o basura ("reclamo", "ok"), categorías escritas de varias formas
+distintas ("Fraude", "FRAUDE", "fraude", "Fraude ", …), montos negativos o días de resolución imposibles. Si entrenas con
 "Fraude" y "FRAUDE" como clases distintas, el modelo cree que hay 20 categorías en vez de 6 (lo verás en la auditoría)
 y tus métricas no significan nada.</p>
 <div class="py-run">
@@ -2010,7 +2010,8 @@ y tus métricas no significan nada.</p>
 <a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="n">df</span><span class="p">[</span><span class="s2">"categoria"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
 </code></pre></div>
 <p class="py-run-reto"><strong>🎯 Reto:</strong> haz lo mismo con la columna <code>canal</code> (<code>df["canal"].value_counts()</code>). ¿Cuántos canales distintos hay
-<em>de verdad</em>? Si eliges MercaSur, cambia el archivo por <code>resenas_mercasur_muestra.csv</code> y audita <code>aspecto</code> y <code>rating</code>.</p>
+<em>de verdad</em>? Si eliges MercaSur, cambia el archivo por <code>resenas_mercasur_muestra.csv</code> y adapta la auditoría a sus columnas: <code>aspecto</code> en vez de
+<code>categoria</code>, y <code>rating</code> en vez de montos, días y urgencia (que no existen en MercaSur).</p>
 </div>
 <p>La limpieza mínima para el Sprint 1 cabe en una función reutilizable: quitar duplicados, sacar textos basura y
 <strong>normalizar las categorías</strong> (minúsculas, sin tildes, sin espacios extra, y un diccionario para los sinónimos).</p>
@@ -2154,7 +2155,7 @@ entrada de la regresión logística y de la red neuronal.</p>
 <a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="n">tabla</span><span class="p">[</span><span class="s2">"conteo total"</span><span class="p">]</span> <span class="o">=</span> <span class="n">conteos</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="n">tabla</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"R3"</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
-<p class="py-run-reto"><strong>🎯 Reto:</strong> agrega un cuarto reclamo: <code>"la app me cobró una comisión que no reconozco"</code>. ¿Qué le pasa al peso de
+<p class="py-run-reto"><strong>🎯 Reto:</strong> agrega un cuarto reclamo: <code>"la app me cobró una comisión que no reconozco"</code> (y <code>"R4"</code> en <code>columns</code>). ¿Qué le pasa al peso de
 "app" en R3 ahora que la palabra aparece en dos reclamos?</p>
 </div>
 <h3 id="53-logistica-vs-red-neuronal-sobre-tf-idf">5.3 Logística vs. red neuronal sobre TF-IDF</h3>
@@ -2169,7 +2170,7 @@ dos modelos → comparar con <strong>F1 macro</strong>.</p>
 </div>
 
 <p>¿Por qué <strong>F1 macro</strong> y no exactitud? Porque las categorías no tienen el mismo tamaño. F1 macro calcula el F1 de
-<strong>cada</strong> categoría y los promedia <strong>sin ponderar</strong>: una categoría chica pero crítica (como Fraude) pesa lo mismo que
+<strong>cada</strong> categoría y los promedia <strong>sin ponderar</strong>: una categoría más chica pero crítica (como Fraude) pesa lo mismo que
 la más grande. Un modelo que ignora Fraude no puede esconderse detrás de un buen promedio.</p>
 <div class="py-run">
 <p class="py-run-t">🧪 Practica en Python · Primer duelo: logística vs. MLP</p>
@@ -2372,7 +2373,7 @@ más por semana" es una frase que un comité puede <strong>decidir</strong>. Esa
 <div class="econ-quiz-opts">
 <button class="econ-quiz-opt" data-why="Subir el umbral marca menos reclamos como fraude: menos falsas alarmas, pero se escapan más fraudes, que son los caros.">Lo subo (p. ej. a 0,8), para estar muy seguro antes de marcar.</button>
 <button class="econ-quiz-opt" data-correct>Lo bajo (p. ej. a 0,3), aceptando más falsas alarmas a cambio de detectar más fraudes.</button>
-<button class="econ-quiz-opt" data-why="0,5 solo es óptimo si ambos errores cuestan lo mismo, lo que aquí no se cumple.">Lo dejo en 0,5, que es el umbral estándar.</button>
+<button class="econ-quiz-opt" data-why="En general, 0,5 solo es óptimo si ambos errores cuestan lo mismo, lo que aquí no se cumple.">Lo dejo en 0,5, que es el umbral estándar.</button>
 </div>
 <p class="econ-quiz-fb">✅ Cuando el falso negativo es mucho más caro, conviene sacrificar precisión para ganar <strong>recall</strong> en Fraude. Compruébalo en el simulador con el botón 🎯.</p>
 </div>

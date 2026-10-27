@@ -2777,10 +2777,15 @@ else:
     <span class="n">contexto</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">doc_id</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">texto</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">top</span><span class="o">.</span><span class="n">itertuples</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">PLANTILLA</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">contexto</span><span class="o">=</span><span class="n">contexto</span><span class="p">,</span> <span class="n">pregunta</span><span class="o">=</span><span class="n">pregunta</span><span class="p">)</span>
 
+<span class="n">API_RECHAZADA</span> <span class="o">=</span> <span class="kc">False</span>   <span class="c1"># pasa a True si la API rechaza la clave o el modelo: no tiene sentido seguir llamando</span>
+
 <span class="k">def</span><span class="w"> </span><span class="nf">llamar_gemini</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">esquema</span><span class="p">,</span> <span class="n">intentos</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">espera</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
     <span class="c1"># Llama a Gemini con reintentos solo cuando vale la pena esperar:</span>
     <span class="c1"># 429 = superaste el límite por minuto · 503 = modelo saturado (ver la guía de Gemini).</span>
     <span class="c1"># Ante cualquier otro error (clave inválida, modelo inexistente…) devuelve None y se usa el respaldo.</span>
+    <span class="k">global</span> <span class="n">API_RECHAZADA</span>
+    <span class="k">if</span> <span class="n">API_RECHAZADA</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">intentos</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -2794,7 +2799,12 @@ else:
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ⏳ Error </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2"> de la API; reintento en </span><span class="si">{</span><span class="n">espera</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> s…"</span><span class="p">)</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">espera</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>   <span class="c1"># espera cada vez más</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ⚠️ Error </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2"> de la API: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">. Sigo con el respaldo extractivo."</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">code</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">401</span><span class="p">,</span> <span class="mi">403</span><span class="p">,</span> <span class="mi">404</span><span class="p">):</span>   <span class="c1"># clave inválida o modelo inexistente: no se arregla reintentando</span>
+                    <span class="n">API_RECHAZADA</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ⚠️ La API rechazó la llamada (error </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">).</span><span class="se">\n</span><span class="s2">"</span>
+                          <span class="s2">"      Revisa tu clave en los Secretos y el nombre del modelo. Desde aquí uso el respaldo extractivo."</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ⚠️ Error </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2"> de la API: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">. Sigo con el respaldo extractivo."</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ⚠️ Falló la llamada (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">). Sigo con el respaldo extractivo."</span><span class="p">)</span>
@@ -2826,10 +2836,15 @@ def construir_prompt(pregunta, top):
     contexto = "\n".join(f"[{r.doc_id}] {r.titulo}: {r.texto}" for r in top.itertuples())
     return PLANTILLA.format(contexto=contexto, pregunta=pregunta)
 
+API_RECHAZADA = False   # pasa a True si la API rechaza la clave o el modelo: no tiene sentido seguir llamando
+
 def llamar_gemini(prompt, esquema, intentos=4, espera=10):
     # Llama a Gemini con reintentos solo cuando vale la pena esperar:
     # 429 = superaste el límite por minuto · 503 = modelo saturado (ver la guía de Gemini).
     # Ante cualquier otro error (clave inválida, modelo inexistente…) devuelve None y se usa el respaldo.
+    global API_RECHAZADA
+    if API_RECHAZADA:
+        return None, None
     for i in range(intentos):
         try:
             t0 = time.time()
@@ -2843,7 +2858,12 @@ def llamar_gemini(prompt, esquema, intentos=4, espera=10):
                 print(f"   ⏳ Error {e.code} de la API; reintento en {espera * (i + 1)} s…")
                 time.sleep(espera * (i + 1))   # espera cada vez más
             else:
-                print(f"   ⚠️ Error {e.code} de la API: {e.message}. Sigo con el respaldo extractivo.")
+                if e.code in (400, 401, 403, 404):   # clave inválida o modelo inexistente: no se arregla reintentando
+                    API_RECHAZADA = True
+                    print(f"   ⚠️ La API rechazó la llamada (error {e.code}: {e.message}).\n"
+                          "      Revisa tu clave en los Secretos y el nombre del modelo. Desde aquí uso el respaldo extractivo.")
+                else:
+                    print(f"   ⚠️ Error {e.code} de la API: {e.message}. Sigo con el respaldo extractivo.")
                 return None, None
         except Exception as e:
             print(f"   ⚠️ Falló la llamada ({type(e).__name__}). Sigo con el respaldo extractivo.")
@@ -2912,7 +2932,10 @@ abstención mínima usamos un <strong>umbral</strong> sobre la similitud del mej
         <span class="n">r</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">parsed</span>
         <span class="n">um</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">usage_metadata</span>
         <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">respuesta</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">respuesta</span><span class="p">,</span> <span class="n">citas</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">citas</span><span class="p">,</span> <span class="n">encontrada</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">encontrada</span><span class="p">,</span> <span class="n">fuente</span><span class="o">=</span><span class="s2">"gemini"</span><span class="p">,</span>
-                   <span class="n">tokens_in</span><span class="o">=</span><span class="n">um</span><span class="o">.</span><span class="n">prompt_token_count</span><span class="p">,</span> <span class="n">tokens_out</span><span class="o">=</span><span class="n">um</span><span class="o">.</span><span class="n">candidates_token_count</span><span class="p">,</span> <span class="n">latencia_s</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+                   <span class="n">tokens_in</span><span class="o">=</span><span class="n">um</span><span class="o">.</span><span class="n">prompt_token_count</span><span class="p">,</span>
+                   <span class="c1"># gemini-2.5-flash "piensa" por defecto: los tokens de razonamiento se cobran como salida</span>
+                   <span class="n">tokens_out</span><span class="o">=</span><span class="p">(</span><span class="n">um</span><span class="o">.</span><span class="n">candidates_token_count</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">um</span><span class="o">.</span><span class="n">thoughts_token_count</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">),</span>
+                   <span class="n">latencia_s</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">texto</span><span class="p">,</span> <span class="n">citas</span><span class="p">,</span> <span class="n">encontrada</span> <span class="o">=</span> <span class="n">respuesta_extractiva</span><span class="p">(</span><span class="n">pregunta</span><span class="p">,</span> <span class="n">top</span><span class="p">)</span>
         <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">respuesta</span><span class="o">=</span><span class="n">texto</span><span class="p">,</span> <span class="n">citas</span><span class="o">=</span><span class="n">citas</span><span class="p">,</span> <span class="n">encontrada</span><span class="o">=</span><span class="n">encontrada</span><span class="p">,</span> <span class="n">fuente</span><span class="o">=</span><span class="s2">"extractiva"</span><span class="p">)</span>
@@ -2946,7 +2969,10 @@ def responder(pregunta, k=K, metodo=METODO):
         r = resp.parsed
         um = resp.usage_metadata
         out.update(respuesta=r.respuesta, citas=r.citas, encontrada=r.encontrada, fuente="gemini",
-                   tokens_in=um.prompt_token_count, tokens_out=um.candidates_token_count, latencia_s=round(lat, 2))
+                   tokens_in=um.prompt_token_count,
+                   # gemini-2.5-flash "piensa" por defecto: los tokens de razonamiento se cobran como salida
+                   tokens_out=(um.candidates_token_count or 0) + (um.thoughts_token_count or 0),
+                   latencia_s=round(lat, 2))
     else:
         texto, citas, encontrada = respuesta_extractiva(pregunta, top)
         out.update(respuesta=texto, citas=citas, encontrada=encontrada, fuente="extractiva")
@@ -3059,7 +3085,7 @@ for p in [ev["pregunta"].iloc[0], ev["pregunta"].iloc[1], ev.loc[ev["doc_id"] ==
         <span class="s2">"latencia_s"</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"latencia_s"</span><span class="p">],</span>
     <span class="p">})</span>
     <span class="k">if</span> <span class="n">client</span><span class="p">:</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>   <span class="c1"># respeta el límite por minuto de la capa gratuita</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>   <span class="c1"># ≈ 8 llamadas por minuto: respeta el límite de la capa gratuita</span>
 <span class="n">evaluacion</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">filas</span><span class="p">)</span>
 <span class="n">evaluacion</span><span class="p">[[</span><span class="s2">"pregunta"</span><span class="p">,</span> <span class="s2">"doc_esperado"</span><span class="p">,</span> <span class="s2">"hit@k"</span><span class="p">,</span> <span class="s2">"respuesta"</span><span class="p">,</span> <span class="s2">"cita_ok"</span><span class="p">,</span> <span class="s2">"fidelidad"</span><span class="p">,</span> <span class="s2">"abstiene"</span><span class="p">,</span> <span class="s2">"correcta≈"</span><span class="p">]]</span>
 </pre></div>
@@ -3094,7 +3120,7 @@ for f in ev.itertuples():
         "latencia_s": r["latencia_s"],
     })
     if client:
-        time.sleep(4)   # respeta el límite por minuto de la capa gratuita
+        time.sleep(7)   # ≈ 8 llamadas por minuto: respeta el límite de la capa gratuita
 evaluacion = pd.DataFrame(filas)
 evaluacion[["pregunta", "doc_esperado", "hit@k", "respuesta", "cita_ok", "fidelidad", "abstiene", "correcta≈"]]</div>
 </div>
@@ -3253,7 +3279,7 @@ automática y te conviene revisar a mano los desacuerdos.</p>
                                                <span class="n">obtenida</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">respuesta</span><span class="p">),</span> <span class="n">Veredicto</span><span class="p">)</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">parsed</span> <span class="k">if</span> <span class="n">resp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">veredictos</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"juez"</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">veredicto</span> <span class="k">if</span> <span class="n">v</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"motivo"</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">motivo</span> <span class="k">if</span> <span class="n">v</span> <span class="k">else</span> <span class="kc">None</span><span class="p">})</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
     <span class="n">evaluacion</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">evaluacion</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"juez"</span><span class="p">,</span> <span class="s2">"motivo"</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">),</span>
                             <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">veredictos</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">acuerdo</span> <span class="o">=</span> <span class="p">((</span><span class="n">evaluacion</span><span class="p">[</span><span class="s2">"juez"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"correcta"</span><span class="p">)</span> <span class="o">==</span> <span class="n">evaluacion</span><span class="p">[</span><span class="s2">"correcta≈"</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
@@ -3287,7 +3313,7 @@ if client:
                                                obtenida=f.respuesta), Veredicto)
         v = resp.parsed if resp is not None else None
         veredictos.append({"juez": v.veredicto if v else None, "motivo": v.motivo if v else None})
-        time.sleep(4)
+        time.sleep(7)
     evaluacion = pd.concat([evaluacion.drop(columns=["juez", "motivo"], errors="ignore"),
                             pd.DataFrame(veredictos)], axis=1)
     acuerdo = ((evaluacion["juez"] == "correcta") == evaluacion["correcta≈"]).mean()

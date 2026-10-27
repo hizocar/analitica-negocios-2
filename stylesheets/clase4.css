@@ -100,9 +100,22 @@
 .c4-strip .c4-tick { stroke: var(--md-default-fg-color--light); stroke-width: 1.5; }
 .c4-strip .c4-keyline { stroke: var(--usm-gold); stroke-width: 4; stroke-linecap: round; }
 .c4-strip .c4-keyline.is-rota { stroke: var(--usm-red); stroke-dasharray: 6 4; }
-.c4-strip text.c4-svg-lbl { font-size: 9px; fill: var(--md-default-fg-color--light); }
+.c4-strip text.c4-svg-lbl { font-size: 10px; fill: var(--md-default-fg-color--light); }
 .c4-strip g rect { fill: var(--c4-c); fill-opacity: 0.75; stroke: var(--md-default-bg-color); stroke-width: 1; }
-.c4-strip text.c4-svg-num { font-size: 10px; font-weight: 700; fill: #fff; }
+.c4-strip text.c4-svg-num {
+  font-size: 10px; font-weight: 700; fill: var(--c4-num, #fff);
+  /* halo del color de su chunk: invisible sobre su barra, legible si otras barras se le cruzan */
+  stroke: color-mix(in srgb, var(--c4-c) 75%, var(--md-default-bg-color)); stroke-width: 3px; paint-order: stroke;
+}
+/* Color del número según su barra (contraste ≥ 4,5:1 medido sobre la barra al 75 % en claro y oscuro):
+   oscuro sobre azul, dorado, verde y morado en modo claro; en oscuro, solo sobre el dorado */
+.c4-strip .c4-k0, .c4-strip .c4-k1, .c4-strip .c4-k2, .c4-strip .c4-k4 { --c4-num: #0a0d1c; }
+[data-md-color-scheme="slate"] .c4-strip .c4-k0,
+[data-md-color-scheme="slate"] .c4-strip .c4-k2,
+[data-md-color-scheme="slate"] .c4-strip .c4-k4 { --c4-num: #fff; }
+/* Lienzo angosto (celular): el JS dibuja a escala 1, así que estos px son los que se ven en pantalla */
+.c4-strip.is-angosto text.c4-svg-lbl { font-size: 12px; }
+.c4-strip.is-angosto text.c4-svg-num { font-size: 12px; }
 .c4-chunk-list { max-height: 21rem; overflow-y: auto; padding-right: 0.2rem; }
 .c4-chunk {
   margin: 0.35rem 0;
@@ -141,4 +154,20 @@
 @media (max-width: 600px) {
   .c4-grid { grid-template-columns: 3.8rem repeat(4, minmax(0, 1fr)); font-size: 0.6rem; }
   .c4-vcell { width: 1rem; height: 1.3rem; }
+  /* Barras de similitud: en celular la etiqueta y el valor van arriba y la barra ocupa todo el ancho
+     (en tres columnas la columna de la etiqueta se comía la barra) */
+  .c4-stage .ia-bar-row,
+  .c4-rank .ia-bar-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "lbl val" "bar bar";
+    row-gap: 0.15rem;
+  }
+  .c4-stage .ia-bar-row > span:first-child,
+  .c4-rank .ia-bar-row > span:first-child { grid-area: lbl; }
+  .c4-stage .ia-bar-row > .ia-bar-track,
+  .c4-rank .ia-bar-row > .ia-bar-track { grid-area: bar; }
+  .c4-stage .ia-bar-row > span:last-child,
+  .c4-rank .ia-bar-row > span:last-child { grid-area: val; }
+  .c4-rank { gap: 0.45rem; }
+  .c4-corte { text-wrap: balance; }
 }

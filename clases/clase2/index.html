@@ -1621,8 +1621,8 @@
 caso FinTrust y termina con <strong>✍️ preguntas de selección múltiple</strong> (si te equivocas, la alternativa te explica
 por qué no era).</p>
 <ul>
-<li><strong>Simuladores</strong> (🗺️ 📐 🔎): juega con ellos <em>antes</em> de leer la fórmula. Usan embeddings <strong>reales</strong>,
-  calculados con el mismo modelo que usarás en Colab.</li>
+<li><strong>Simuladores</strong> (🗺️ 📐 🔎): juega con ellos <em>antes</em> de leer la fórmula. El mapa y el buscador usan
+  embeddings <strong>reales</strong>, calculados con el mismo modelo que usarás en Colab.</li>
 <li><strong>🧪 Practica en Python</strong>: presiona <strong>▶ Ejecutar en el navegador</strong>. La primera vez tarda ~15 s en cargar
   Python; después es inmediato. Puedes editar el código y cada bloque trae un <strong>🎯 Reto</strong>.</li>
 <li><strong>🧑‍💻 Notebook de Colab</strong>: al final está el notebook que calcula los embeddings de los ~6.000 textos de tu
@@ -2049,7 +2049,7 @@ Pero sí podemos usar <strong>un reclamo existente como consulta</strong>: "mué
 <a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="n">buscar</span><span class="p">(</span><span class="n">consulta</span><span class="p">)</span>
 </code></pre></div>
 <p class="py-run-reto"><strong>🎯 Reto:</strong> prueba <code>consulta = 58</code> (renegociar por quedar sin trabajo) y luego <code>consulta = 0</code>, un reclamo escrito
-<strong>EN MAYÚSCULAS</strong>. Muestra también la tabla completa de <code>buscar(consulta, metodo="tfidf")</code>. ¿Qué le pasa a los
+<strong>EN MAYÚSCULAS</strong>. Muestra también la tabla completa de <code>buscar(consulta, metodo="tfidf")</code>. ¿Qué les pasa a los
 embeddings con el texto en mayúsculas? (TF-IDF pasa todo a minúsculas antes de contar; el modelo de embeddings no.)</p>
 </div>
 <p>Con un reclamo <strong>del propio caso</strong> como consulta, ambos métodos suelen coincidir: los clientes de FinTrust repiten
@@ -2192,7 +2192,8 @@ brecha se cierra en algún momento?</p>
 </div>
 <h3 id="lo-que-muestran-los-datos-y-lo-que-no">Lo que muestran los datos (y lo que no)</h3>
 <p>Repetimos el experimento con <strong>todos</strong> los textos limpios de cada caso (5 sorteos, test de 30 %), con el mismo
-modelo. F1 macro, <strong>embeddings / TF-IDF</strong> (en el notebook tus números pueden variar ±0,03 según la limpieza y los sorteos):</p>
+modelo. F1 macro, <strong>embeddings / TF-IDF</strong> (en el notebook, con otra limpieza, otro test y 3 sorteos, tus números pueden diferir hasta en ~0,15, sobre todo con
+pocos ejemplos y en las paráfrasis; la tendencia se mantiene):</p>
 <table>
 <thead>
 <tr>
@@ -2208,47 +2209,47 @@ modelo. F1 macro, <strong>embeddings / TF-IDF</strong> (en el notebook tus núme
 <td>25</td>
 <td><strong>0,61</strong> / 0,60</td>
 <td><strong>0,50</strong> / 0,29</td>
-<td>0,41 / <strong>0,46</strong></td>
-<td><strong>0,35</strong> / 0,24</td>
+<td>0,35 / <strong>0,40</strong></td>
+<td><strong>0,33</strong> / 0,23</td>
 </tr>
 <tr>
 <td>50</td>
 <td><strong>0,79</strong> / 0,76</td>
 <td><strong>0,62</strong> / 0,42</td>
-<td>0,54 / <strong>0,62</strong></td>
-<td><strong>0,55</strong> / 0,35</td>
+<td>0,50 / <strong>0,56</strong></td>
+<td><strong>0,41</strong> / 0,28</td>
 </tr>
 <tr>
 <td>200</td>
 <td>0,88 / <strong>0,92</strong></td>
 <td><strong>0,75</strong> / 0,61</td>
-<td>0,73 / <strong>0,79</strong></td>
-<td><strong>0,72</strong> / 0,52</td>
+<td>0,75 / <strong>0,81</strong></td>
+<td><strong>0,64</strong> / 0,55</td>
 </tr>
 <tr>
 <td>1.000</td>
 <td>0,92 / 0,93</td>
 <td><strong>0,73</strong> / 0,57</td>
-<td>0,83 / <strong>0,86</strong></td>
-<td><strong>0,79</strong> / 0,59</td>
+<td>0,84 / <strong>0,86</strong></td>
+<td><strong>0,75</strong> / 0,63</td>
 </tr>
 <tr>
 <td>Todos (≈ 3.900)</td>
 <td>0,93 / 0,93</td>
 <td><strong>0,73</strong> / 0,58</td>
-<td>0,86 / 0,86</td>
-<td><strong>0,80</strong> / 0,65</td>
+<td>0,86 / 0,87</td>
+<td><strong>0,80</strong> / 0,60</td>
 </tr>
 </tbody>
 </table>
 <p>La lectura honesta:</p>
 <ul>
 <li><strong>Con textos del mismo estilo</strong> que el entrenamiento, TF-IDF es un rival durísimo: con 25–50 ejemplos empatan
-  en FinTrust (en MercaSur TF-IDF gana por 5–8 puntos), entre 100 y 1.000 ejemplos TF-IDF gana por un poco y con
-  todos los datos <strong>empatan</strong>. Nuestros datos son muy repetitivos (los clientes usan frases parecidas), y eso
+  en FinTrust (en MercaSur TF-IDF gana por 5–6 puntos), entre 100 y 1.000 ejemplos TF-IDF gana por 1 a 8 puntos y
+  con todos los datos <strong>empatan</strong> (a 1 punto o menos). Nuestros datos son muy repetitivos (los clientes usan frases parecidas), y eso
   favorece a TF-IDF.</li>
-<li><strong>Con redacciones nuevas</strong> (paráfrasis), los embeddings ganan <strong>en todos los tamaños</strong>, casi siempre por 15 a 20
-  puntos (entre 11 y 21). Esa es su verdadera ventaja: <strong>generalizan el significado</strong>, no memorizan palabras.</li>
+<li><strong>Con redacciones nuevas</strong> (paráfrasis), los embeddings ganan <strong>en todos los tamaños</strong>, por 9 a 21 puntos (14 a 21 en
+  FinTrust, 9 a 20 en MercaSur). Esa es su verdadera ventaja: <strong>generalizan el significado</strong>, no memorizan palabras.</li>
 <li>Con <strong>muy pocos</strong> datos etiquetados (25–50), en el test del caso los embeddings empatan o quedan algo atrás, pero
   son mucho más robustos ante textos nuevos. Si etiquetar cuesta caro (un analista leyendo reclamos), eso es plata.</li>
 </ul>
@@ -2272,13 +2273,13 @@ antes de separar; eso filtra información del test y infla el resultado.</p>
 <p class="econ-quiz-fb">✅ Eso es transfer learning: el trabajo pesado (entender el lenguaje) ya está hecho, y tú solo entrenas la última capa con tus pocos datos.</p>
 </div>
 <div class="econ-quiz">
-<p class="econ-quiz-q">MercaSur tiene 4.000 reseñas etiquetadas y en el test del caso TF-IDF y embeddings empatan (F1 0,86). El gerente pregunta cuál usar. ¿Qué dato adicional es el más útil para decidir?</p>
+<p class="econ-quiz-q">MercaSur tiene 4.000 reseñas etiquetadas y en el test del caso TF-IDF y embeddings quedan prácticamente empatados (F1 0,87 vs. 0,86). El gerente pregunta cuál usar. ¿Qué dato adicional es el más útil para decidir?</p>
 <div class="econ-quiz-opts">
 <button class="econ-quiz-opt" data-why="La cantidad de dimensiones no es un criterio de negocio; lo que importa es cómo se comporta cada modelo con los textos que vendrán.">Cuál de los dos modelos tiene más dimensiones.</button>
 <button class="econ-quiz-opt" data-why="La fecha de publicación no dice nada sobre el rendimiento en tus datos.">Cuál de los dos métodos es más reciente.</button>
 <button class="econ-quiz-opt" data-correct>Cómo rinde cada uno con textos escritos distinto (nuevos canales, otras palabras), además del costo y la facilidad de explicarlo.</button>
 </div>
-<p class="econ-quiz-fb">✅ Correcto. Con empate en el test, la robustez ante textos nuevos (paráfrasis: 0,80 vs. 0,65) y el costo/latencia deciden. Esa es la tabla comparativa que construirás en el Sprint 3 y la entrega final.</p>
+<p class="econ-quiz-fb">✅ Correcto. Con empate en el test, la robustez ante textos nuevos (paráfrasis: 0,80 vs. 0,60) y el costo/latencia deciden. Esa es la tabla comparativa que construirás en el Sprint 3 y la entrega final.</p>
 </div>
 </div>
 <h2 id="tema-6">Tema 6 · Descubrir temas sin etiquetas</h2>
@@ -2409,8 +2410,8 @@ textos de tu caso con <code>sentence-transformers</code>, y armar las piezas del
 <p>🧑‍💻 <strong>Notebook de la clase:</strong> instala <code>sentence-transformers</code>, limpia el caso (FinTrust o
 MercaSur), calcula los embeddings de todo el dataset (menos de 1 min con GPU; unos minutos sin GPU), arma un buscador
 semántico reutilizable, compara embeddings vs. TF-IDF (F1 macro, curva con 50/200/1.000 ejemplos y prueba de
-paráfrasis), dibuja el mapa 2D y descubre temas con K-means. Guarda los embeddings con <code>np.save</code> para
-reutilizarlos en la Clase 4 (RAG). Tiempo total: ~45 min.</p>
+paráfrasis), dibuja el mapa 2D y descubre temas con K-means. Guarda los embeddings con <code>np.save</code> para no
+recalcularlos en el Sprint 3 y la entrega final. Tiempo total: ~45 min.</p>
 <p><a class="ia-colab-btn" href="https://colab.research.google.com/github/hizocar/analitica-negocios-2/blob/main/docs/notebooks/clase2_embeddings.ipynb" target="_blank" rel="noopener">▶ Abrir en Colab</a></p>
 </div>
 <div class="admonition info">

@@ -1560,8 +1560,8 @@ pegar <em>todo</em> versus pegar solo 3 fragmentos.</p>
 <a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>      <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"."</span><span class="p">,</span> <span class="s2">","</span><span class="p">))</span>                       <span class="c1"># coma decimal, para no confundirla con el punto de miles</span>
 </code></pre></div>
 <p class="py-run-reto"><strong>🎯 Reto:</strong> cambia <code>preguntas_mes</code> a 200.000 (un banco grande). ¿Desde cuántos documentos el prompt largo cuesta
-más de US$ 1.000 al mes? Ojo: con 5.000 documentos el prompt ni siquiera cabría en la ventana de contexto de la
-mayoría de los modelos.</p>
+más de US$ 1.000 al mes? Ojo: con 5.000 documentos (~950.000 tokens) el prompt ya no cabría en la ventana de
+contexto de la mayoría de los modelos y rozaría el límite de ~1 millón de tokens de Gemini 2.5 Flash.</p>
 </div>
 <p>Con 10 documentos, el prompt largo es una opción legítima (¡y es un buen baseline!). RAG gana cuando los
 documentos <strong>crecen</strong>, <strong>cambian</strong> o necesitas <strong>citar</strong>. En tu proyecto usarás RAG porque es lo que escala, pero
@@ -1796,7 +1796,7 @@ puede "acertar". Esa pregunta se evalúa aparte, mirando si el asistente se abst
 </code></pre></div>
 <p class="py-run-reto"><strong>🎯 Reto:</strong> prueba <code>buscar("me clonaron la tarjeta y aparecen compras que no hice")</code>. No dice "desconocer" ni
 "fraude", pero TF-IDF igual llega a FT-POL-01: ¿qué palabra lo salvó? Ahora prueba solo <code>"me clonaron la tarjeta"</code>.
-Sin palabras en común con la política correcta, TF-IDF queda a ciegas: ese es el caso en que los embeddings
+Su única palabra en común con la política correcta es "tarjeta", que también aparece en otras políticas (y más veces en FT-POL-02), así que TF-IDF queda a ciegas: ese es el caso en que los embeddings
 <em>deberían</em> ayudar (en el simulador verás que el modelo pequeño no siempre lo logra).</p>
 </div>
 <p>Ahora medimos el buscador con las 17 preguntas evaluables y comparamos distintas formas de trocear.</p>
@@ -1912,7 +1912,7 @@ cambiar de modelo.</p>
 <p class="econ-quiz-q">Un cliente escribe "me clonaron la tarjeta". La política dice "desconocer compras" y "fraude". ¿Qué recuperador tiene más chances de encontrarla?</p>
 <div class="econ-quiz-opts">
 <button class="econ-quiz-opt" data-correct>Embeddings, porque comparan significado y no solo palabras exactas.</button>
-<button class="econ-quiz-opt" data-why="TF-IDF necesita palabras en común: 'clonaron' no aparece en la política, y 'tarjeta' aparece en muchas, así que no distingue cuál es la correcta.">TF-IDF, porque pondera las palabras raras.</button>
+<button class="econ-quiz-opt" data-why="TF-IDF necesita palabras en común: 'clonaron' no aparece en la política, y 'tarjeta' aparece en varias, así que no distingue cuál es la correcta.">TF-IDF, porque pondera las palabras raras.</button>
 <button class="econ-quiz-opt" data-why="Sí hay diferencia: es justo el caso de paráfrasis, donde los métodos se separan.">Da lo mismo: ambos comparan textos.</button>
 </div>
 <p class="econ-quiz-fb">✅ Con paráfrasis, en principio, ganan los embeddings; con cifras y siglas exactas ("35 UF", "CAE") suele ganar TF-IDF. Por eso existen los buscadores híbridos, y por eso se mide con hit@k: con un modelo de embeddings pequeño la teoría no siempre se cumple.</p>
@@ -2266,7 +2266,7 @@ LLM (regla 3 del prompt) y no solo a un umbral.</p>
 <p>Lee la tabla con ojo de auditor. El baseline <strong>recupera</strong> bien (hit@3 = 0,94), pero <strong>responde</strong> bien solo unas 4
 de cada 10 preguntas: el cuello de botella está en la generación, no en la búsqueda. Y el umbral hace las dos cosas
 mal a la vez: rechaza una pregunta legítima (la del plazo de reclamos, con similitud 0,092) y deja pasar la trampa
-(0,271), porque "créditos" y "tasa" sí aparecen en las políticas. Esa es la vara que tu asistente con Gemini tiene
+(0,271), porque "FinTrust ofrece" y "créditos" sí aparecen en las políticas. Esa es la vara que tu asistente con Gemini tiene
 que superar en el notebook.</p>
 <div class="admonition tip">
 <p class="admonition-title">💼 En el negocio</p>

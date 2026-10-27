@@ -1123,10 +1123,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#9-lo-que-guardaste-para-la-clase-4" class="md-nav__link">
+  <a href="#9-lo-que-guardaste-para-los-proximos-sprints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        9. Lo que guardaste para la Clase 4
+        9. Lo que guardaste para los próximos sprints
       
     </span>
   </a>
@@ -1894,7 +1894,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <ol>
 <li>Instalar <code>sentence-transformers</code> y cargar + limpiar los datos (<strong>FinTrust</strong> o <strong>MercaSur</strong>).</li>
 <li>Calcular tu <strong>primer embedding</strong> y comparar similitudes con TF-IDF.</li>
-<li>Calcular los embeddings de <strong>todo el dataset</strong> (en lotes, midiendo el tiempo) y <strong>guardarlos</strong> con <code>np.save</code> (los reutilizarás en la Clase 4).</li>
+<li>Calcular los embeddings de <strong>todo el dataset</strong> (en lotes, midiendo el tiempo) y <strong>guardarlos</strong> con <code>np.save</code> (para no recalcularlos en el Sprint 3 y la entrega final).</li>
 <li>Construir un <strong>buscador semántico</strong> con una función reutilizable.</li>
 <li>Comparar un <strong>clasificador sobre embeddings vs. TF-IDF</strong> (F1 macro).</li>
 <li>Dibujar la <strong>curva de aprendizaje con pocos datos</strong> (50 / 200 / 1.000 ejemplos) y hacer la <strong>prueba de paráfrasis</strong>.</li>
@@ -2255,7 +2255,7 @@ for e, f in zip(etiquetas, FRASES):
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="3-embeddings-de-todo-el-dataset">3. Embeddings de todo el dataset<a class="anchor-link" href="#3-embeddings-de-todo-el-dataset">¶</a></h2><p>Calculamos los embeddings de los ~6.000 textos <strong>en lotes</strong> (<code>batch_size=64</code>): el modelo procesa 64 textos a la vez, lo que aprovecha mucho mejor la GPU. Medimos el tiempo, porque en un proyecto real el costo de cómputo importa.</p>
-<p>Después los <strong>guardamos</strong> con <code>np.save</code>: así no tienes que recalcularlos cada vez, y <strong>los reutilizarás en la Clase 4 (RAG)</strong>. Guardamos también los textos limpios y el nombre del modelo (¡los embeddings de modelos distintos no se pueden mezclar!).</p>
+<p>Después los <strong>guardamos</strong> con <code>np.save</code>: así no tienes que recalcularlos cada vez, y <strong>podrás reutilizarlos en el Sprint 3 y en la entrega final</strong>. Guardamos también los textos limpios y el nombre del modelo (¡los embeddings de modelos distintos no se pueden mezclar!).</p>
 </div>
 </div>
 </div>
@@ -2288,7 +2288,7 @@ for e, f in zip(etiquetas, FRASES):
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">"embeddings_</span><span class="si">{</span><span class="n">CASO</span><span class="si">}</span><span class="s2">_modelo.txt"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">MODELO_EMB</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Guardados: embeddings_</span><span class="si">{</span><span class="n">CASO</span><span class="si">}</span><span class="s2">.npy, textos_limpios_</span><span class="si">{</span><span class="n">CASO</span><span class="si">}</span><span class="s2">.csv y embeddings_</span><span class="si">{</span><span class="n">CASO</span><span class="si">}</span><span class="s2">_modelo.txt"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"💡 Descárgalos (panel de archivos a la izquierda) o cópialos a tu Drive: los usarás en la Clase 4."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"💡 Descárgalos (panel de archivos a la izquierda) o cópialos a tu Drive: los usarás en los próximos sprints."</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-5">t0 = time.time()
 E = model.encode(textos, batch_size=64, normalize_embeddings=True, show_progress_bar=True)
@@ -2300,7 +2300,7 @@ df[[COL_TEXTO, COL_CLASE]].to_csv(f"textos_limpios_{CASO}.csv", index=False)
 with open(f"embeddings_{CASO}_modelo.txt", "w") as f:
     f.write(MODELO_EMB)
 print(f"Guardados: embeddings_{CASO}.npy, textos_limpios_{CASO}.csv y embeddings_{CASO}_modelo.txt")
-print("💡 Descárgalos (panel de archivos a la izquierda) o cópialos a tu Drive: los usarás en la Clase 4.")</div>
+print("💡 Descárgalos (panel de archivos a la izquierda) o cópialos a tu Drive: los usarás en los próximos sprints.")</div>
 </div>
 </div>
 </div>
@@ -3138,7 +3138,7 @@ pd.crosstab(df["tema"], df[COL_CLASE])</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="9-lo-que-guardaste-para-la-clase-4">9. Lo que guardaste para la Clase 4<a class="anchor-link" href="#9-lo-que-guardaste-para-la-clase-4">¶</a></h2><p>En la carpeta del notebook quedaron:</p>
+<h2 id="9-lo-que-guardaste-para-los-proximos-sprints">9. Lo que guardaste para los próximos sprints<a class="anchor-link" href="#9-lo-que-guardaste-para-los-proximos-sprints">¶</a></h2><p>En la carpeta del notebook quedaron:</p>
 <table>
 <thead>
 <tr>
@@ -3151,7 +3151,7 @@ pd.crosstab(df["tema"], df[COL_CLASE])</div>
 <tr>
 <td><code>embeddings_{CASO}.npy</code></td>
 <td>Matriz de embeddings (una fila por texto, 384 columnas, normalizados)</td>
-<td>Reutilizarlos sin recalcular (Clase 4 · RAG y Sprint 3)</td>
+<td>Reutilizarlos sin recalcular (Sprint 3 y entrega final)</td>
 </tr>
 <tr>
 <td><code>textos_limpios_{CASO}.csv</code></td>
