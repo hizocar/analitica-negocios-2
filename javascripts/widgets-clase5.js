@@ -78,12 +78,13 @@
       masivo: [3, 5, 5, 1, 4, 2, 1],
     };
 
+    let batching = false; // un perfil fija 7 deslizadores: se reordena una sola vez al final
     buttons(root, [
       { label: "⚖️ Equilibrado", value: "equilibrado" },
       { label: "🏦 Banco regulado", value: "banco" },
       { label: "🚀 Startup sin etiquetas", value: "startup" },
       { label: "📦 Volumen masivo", value: "masivo" },
-    ], (v) => PRESETS[v].forEach((w, i) => setSlider(sliders[i], w)), "equilibrado");
+    ], (v) => { batching = true; PRESETS[v].forEach((w, i) => setSlider(sliders[i], w)); batching = false; render(); }, "equilibrado");
 
     const ctr = controls(root);
     const sliders = CRIT.map((c) => slider(ctr, c.label, { min: 0, max: 5, step: 1, value: c.w, fmt: (v) => String(v) }, render));
@@ -107,6 +108,7 @@
     let lastOrder = "";
     let lastWinner = "";
     function render() {
+      if (batching) return;
       const w = sliders.map((s) => +s.value);
       const sw = w.reduce((a, b) => a + b, 0);
       rows.forEach((r) => {
@@ -264,8 +266,8 @@
         motion.pulse(netStrong);
       } else setNet(fmtCLP(r.neto));
       setPay(r.neto > 0 ? fmtNum(r.inv / r.neto, 1) + " meses" : "No se paga");
-      const roi12 = (12 * r.neto - r.inv) / Math.max(1, r.inv) * 100;
-      setRoi((roi12 < 0 ? "−" : "") + fmtNum(Math.abs(roi12), 0) + " %");
+      const roi12 = (12 * r.neto - r.inv) / r.inv * 100;
+      setRoi(r.inv <= 0 ? "Sin inversión" : (roi12 < 0 ? "−" : "") + fmtNum(Math.abs(roi12), 0) + " %");
       setEq(!isFinite(r.eq) ? "Sin costo de error" : r.eq <= 0 ? "Ni con 0 % errores" : r.eq >= 1 ? "> 100 %" : fmtNum(r.eq * 100, 1) + " %");
       netStrong.closest(".econ-stat").classList.toggle("is-red", r.neto < 0);
       last = r;
@@ -281,8 +283,8 @@
     draw(r0, false);
     stats(r0, false);
     note(root, "💡 Qué mirar: sube el <strong>costo por error</strong> hasta ~$40.000 (lo que puede costar un fraude mal derivado) y mira " +
-      "cómo la barra de errores se come el ahorro. Luego baja el <strong>% automatizable</strong>: si dejas los casos caros a una persona, " +
-      "el neto mejora aunque automatices menos.");
+      "cómo la barra de errores se come el ahorro. Luego simula dejar los casos caros a una persona: baja un poco el <strong>% automatizable</strong> " +
+      "y devuelve el costo por error a un valor bajo. El neto mejora aunque automatices menos.");
   });
 
   /* ======================================================================
@@ -441,7 +443,7 @@
         why: "Es la razón de riesgo/implementación: completa los tres argumentos MECE." },
       { t: "Accuracy 0,90 en 600 reclamos de test (IC 95 %: 0,88–0,92).", lv: 2,
         why: "Es un dato que respalda el argumento «funciona»: evidencia." },
-      { t: "Escenarios de ROI: neto positivo en el base y el optimista; el pesimista requiere sacar Fraude.", lv: 2,
+      { t: "Escenarios de ROI: neto positivo en el base y el optimista; en el pesimista, los errores se comen el ahorro.", lv: 2,
         why: "Respalda el argumento de valor con números: evidencia." },
       { t: "Recall de Fraude 0,95: de cada 20 fraudes, 19 llegan directo a Seguridad.", lv: 2,
         why: "Respalda el argumento de seguridad con una métrica traducida: evidencia." },

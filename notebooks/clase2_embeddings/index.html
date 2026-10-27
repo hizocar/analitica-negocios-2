@@ -2242,7 +2242,8 @@ for e, f in zip(etiquetas, FRASES):
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><strong>¿Qué mirar?</strong> Con embeddings, A, B y C (mismo significado, otras palabras) tienen cosenos altos entre sí. Con TF-IDF son ~0, y la frase D (que comparte palabras con A pero significa otra cosa) es la que más se "parece" a A. Ojo: los embeddings tampoco son perfectos; fíjate cuánto se parece D a A según el modelo.</p>
+<p><strong>¿Qué mirar?</strong> Con TF-IDF, las frases que dicen lo mismo con otras palabras (A, B y C) dan similitud 0 o casi 0 (a lo más comparten palabras vacías como «el»), y D, que comparte palabras con A pero significa otra cosa, es la que más se "parece" a A.</p>
+<p>Con embeddings, A, B y C ya <strong>no</strong> dan 0: el modelo encuentra parecido aunque no compartan ninguna palabra. Pero mira con honestidad la fila de A: con frases tan cortas el modelo también se deja llevar por las palabras compartidas, y D puede salir tan parecida o más que una paráfrasis (en FinTrust, A–D da más que A–B). Un par de ejemplos no basta para juzgar un método: por eso en las secciones 5 y 6 lo evaluamos con miles de textos.</p>
 </div>
 </div>
 </div>
@@ -2827,8 +2828,8 @@ plt.suptitle(f"Curva de aprendizaje · {CASO}"); plt.tight_layout(); plt.show()<
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p><strong>Cómo leerlo (y escribirlo en tu informe):</strong></p>
 <ul>
-<li>En el <strong>test del caso</strong>, TF-IDF es un rival durísimo: los textos de nuestros casos repiten mucho las mismas frases. Con muy pocos datos suelen empatar; con miles, empatan.</li>
-<li>En las <strong>paráfrasis</strong>, los embeddings ganan por 15–20 puntos en todos los tamaños: <strong>generalizan el significado</strong> en vez de memorizar palabras.</li>
+<li>En el <strong>test del caso</strong>, TF-IDF es un rival durísimo: los textos de nuestros casos repiten mucho las mismas frases. Con pocos datos empatan o TF-IDF gana por poco; con miles, empatan.</li>
+<li>En las <strong>paráfrasis</strong>, los embeddings ganan en todos los tamaños (por unos 10 a 25 puntos): <strong>generalizan el significado</strong> en vez de memorizar palabras.</li>
 <li>La recomendación de negocio depende de <strong>cuántas etiquetas tienes</strong> y de <strong>qué tan estable es el lenguaje</strong> de tus clientes. Los embeddings no ganan "por magia".</li>
 </ul>
 <h2 id="7-mapa-2d-de-los-significados">7. Mapa 2D de los significados<a class="anchor-link" href="#7-mapa-2d-de-los-significados">¶</a></h2><p>Los embeddings tienen 384 dimensiones; para mirarlos los proyectamos a 2 con <strong>PCA</strong> (la técnica de reducción de dimensiones: busca las 2 direcciones con más variación). Es una "sombra" del espacio real: úsala para explorar, no para decidir.</p>
@@ -3168,8 +3169,8 @@ pd.crosstab(df["tema"], df[COL_CLASE])</div>
 <h2 id="ejercicios-para-tu-proyecto-sprint-2-domingo-15-de-noviembre-2359">✍️ Ejercicios para tu proyecto (Sprint 2 · domingo 15 de noviembre, 23:59)<a class="anchor-link" href="#ejercicios-para-tu-proyecto-sprint-2-domingo-15-de-noviembre-2359">¶</a></h2><ol>
 <li><strong>Embeddings de tu caso:</strong> reporta el modelo, el número de textos y el tiempo de cálculo (sección 3). Guarda el <code>.npy</code>.</li>
 <li><strong>Clasificador sobre embeddings vs. baselines:</strong> agrega a la tabla de la sección 5 tu <strong>MLP del Sprint 1</strong> (puedes entrenar la misma MLP de Keras usando <code>E</code> como entrada en vez de TF-IDF). Reporta F1 macro y matriz de confusión en el <strong>mismo test</strong>.</li>
-<li><strong>Curva con pocos datos:</strong> presenta la curva 50 / 200 / 1.000 de la sección 6. ¿A partir de cuántos ejemplos TF-IDF alcanza a los embeddings en tu caso? ¿Qué pasa con las paráfrasis? Escribe <strong>6 paráfrasis propias</strong> (1 por clase) y agrégalas a la prueba.</li>
-<li><strong>Buscador semántico:</strong> reemplaza <code>CONSULTAS</code> por <strong>5 consultas de negocio tuyas</strong> (piensa en quién las haría: el área de riesgo, operaciones, marketing…). Para cada una, cuenta cuántos de los 5 resultados son relevantes, y compara con <code>buscar_tfidf</code> en al menos dos.</li>
+<li><strong>Curva con pocos datos:</strong> presenta la curva 50 / 200 / 1.000 de la sección 6. ¿Desde cuántos ejemplos TF-IDF iguala o supera a los embeddings en el test de tu caso? ¿Se cierra la brecha en las paráfrasis? ¿Qué pasa con las paráfrasis? Escribe <strong>6 paráfrasis propias</strong> (1 por clase) y agrégalas a la prueba.</li>
+<li><strong>Buscador semántico:</strong> reemplaza <code>CONSULTAS</code> por <strong>5 consultas de negocio tuyas</strong> (piensa en quién las haría: el área de riesgo, operaciones, marketing…). Para cada una, cuenta cuántos de los 5 resultados son relevantes, y compara con <code>buscar_tfidf</code> en al menos una (idealmente en todas: ¿encontró lo que TF-IDF no?).</li>
 <li><strong>Mapa de temas:</strong> justifica tu <code>K</code> (silueta + interpretación), completa <code>NOMBRES</code> con nombres de negocio y muestra 2–3 ejemplos por cluster. ¿Encontraste algún tema que <strong>no</strong> coincide con las categorías oficiales?</li>
 <li><strong>Desafío (opcional):</strong> normaliza los textos escritos completamente en mayúsculas (<code>texto.lower()</code> si <code>texto.isupper()</code>), recalcula los embeddings y compara el F1 y los clusters. ¿Mejora?</li>
 <li><strong>Conclusión de negocio (1 párrafo):</strong> ¿recomendarías embeddings o TF-IDF para tu caso? Usa tus números y considera costo, robustez ante textos nuevos y facilidad de explicación.</li>

@@ -1495,8 +1495,8 @@
   una red neuronal en <strong>Keras</strong>. Es la base de tu <strong>Sprint 1</strong>.</li>
 </ul>
 <p><strong>Para la tutoría del jueves 29 (kickoff):</strong> llega con tu equipo armado (2–3 personas) o con la intención de
-armarlo ahí, y con una idea de qué caso prefieren: <strong>FinTrust</strong> (reclamos de un banco) o <strong>MercaSur</strong> (reseñas
-de un retail). Si alcanzas a leer el Tema 5 antes, mejor: es lo primero que harás con los datos.</p>
+armarlo ahí, y con una idea de qué caso prefieren: <strong>FinTrust</strong> (reclamos de un banco), <strong>MercaSur</strong> (reseñas
+de un retail) o un <strong>caso propio</strong>. Si alcanzas a leer el Tema 5 antes, mejor: es lo primero que harás con los datos.</p>
 </div>
 <h2 id="objetivos">🎯 Objetivos</h2>
 <p>Al terminar esta cápsula podrás:</p>
@@ -1649,10 +1649,13 @@ marcar un cobro duplicado como urgente?</p>
 <p>Una neurona sola traza una <strong>frontera recta</strong>: a un lado "sí", al otro "no". El problema es que muchos patrones
 de negocio <strong>no se separan con una recta</strong>:</p>
 <ul>
-<li>Clientes que se van de MercaSur: los que compran <strong>muy poco</strong> (no enganchan) <em>y</em> los que compran <strong>muchísimo</strong>
-  (revendedores que encontraron un mejor precio). Los del medio se quedan. Eso es un <strong>anillo</strong>, no una recta.</li>
-<li>Reclamos urgentes en FinTrust: "monto alto <strong>y</strong> cliente nuevo" o "monto bajo <strong>y</strong> muchas palabras de alarma".
-  Es un "o exclusivo" (<strong>XOR</strong>): ninguna recta lo separa.</li>
+<li>Clientes que se van de MercaSur: si los ubicas según <strong>cada cuánto compran</strong> y <strong>cuánto gastan</strong>, los que se van
+  están en los <strong>extremos</strong> (los que casi no compran y no enganchan, y los revendedores que compran muchísimo y se
+  cambian apenas encuentran mejor precio). Los cercanos al promedio se quedan. Eso es un <strong>anillo</strong> alrededor del
+  centro, no una recta.</li>
+<li>Compras sospechosas en FinTrust: una compra <strong>en el extranjero</strong> con el cliente <strong>en Chile</strong>, o una compra <strong>en
+  Chile</strong> con el cliente <strong>de viaje</strong>. Lo sospechoso es que <em>no coincidan</em>: es un "o exclusivo" (<strong>XOR</strong>) y ninguna
+  recta lo separa.</li>
 </ul>
 <p>La solución es poner <strong>capas ocultas</strong> entre la entrada y la salida. Cada neurona oculta traza <strong>su propia recta</strong>;
 la neurona de salida <strong>combina</strong> esas rectas y puede formar curvas, bandas o regiones cerradas. Eso es una
@@ -1662,7 +1665,7 @@ la neurona de salida <strong>combina</strong> esas rectas y puede formar curvas,
 
 <div class="admonition info">
 <p class="admonition-title">La activación es lo que hace la magia</p>
-<p>Si las capas ocultas <strong>no</strong> tuvieran activación (o fuera lineal), apilar capas no serviría de nada: una
+<p>Si las capas ocultas <strong>no</strong> tuvieran activación (o esta fuera lineal), apilar capas no serviría de nada: una
 combinación lineal de combinaciones lineales sigue siendo lineal, y la red entera volvería a ser una recta.
 La no linealidad (ReLU, tanh) es lo que permite "doblar" la frontera.</p>
 </div>
@@ -1700,8 +1703,8 @@ La no linealidad (ReLU, tanh) es lo que permite "doblar" la frontera.</p>
 <a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nombre</span><span class="si">:</span><span class="s2">35s</span><span class="si">}</span><span class="s2"> exactitud = </span><span class="si">{</span><span class="n">exactitud</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </code></pre></div>
-<p class="py-run-reto"><strong>🎯 Reto:</strong> cambia <code>hidden_layer_sizes=(8,)</code> por <code>(1,)</code> y luego por <code>(2,)</code>. ¿Con cuántas neuronas ocultas la red
-logra "encerrar" el centro? ¿Por qué con una sola neurona oculta se parece tanto a la logística?</p>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> cambia <code>hidden_layer_sizes=(8,)</code> por <code>(1,)</code>, luego por <code>(2,)</code> y por <code>(3,)</code>. ¿Con cuántas neuronas ocultas
+la red logra "encerrar" el centro? ¿Por qué con una sola neurona oculta se parece tanto a la logística?</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">⚠️ Error común</p>
@@ -1842,7 +1845,7 @@ scikit-learn lo hacen por ti. Lo que <strong>sí</strong> decides tú es la tasa
 <a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </code></pre></div>
 <p class="py-run-reto"><strong>🎯 Reto:</strong> prueba con <code>lr = 0.5</code> y <code>lr = 8</code>. Busca la tasa más grande que todavía baja de forma suave. ¿Qué pasa
-con la curva de <code>30</code>, y por qué se parece a la bola del simulador cuando la tasa es mayor que 2?</p>
+con la curva de <code>30</code>, y por qué se parece a la bola del simulador cuando la tasa es demasiado grande?</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">⚠️ Error común</p>
@@ -1858,9 +1861,9 @@ defecto (0,001) suele ser un buen punto de partida.</p>
 <div class="econ-quiz-opts">
 <button class="econ-quiz-opt" data-why="−log(0,40) ≈ 0,92, mientras que −log(0,02) ≈ 3,9: A se equivoca menos.">El modelo A, porque 0,40 está más lejos de 1 que de 0.</button>
 <button class="econ-quiz-opt" data-correct>El modelo B: casi descartó la respuesta correcta, y eso se castiga fuerte.</button>
-<button class="econ-quiz-opt" data-why="La entropía cruzada solo mira la probabilidad de la clase correcta, y ahí los modelos son muy distintos.">Igual, porque ninguno de los dos acertó (ambos &lt; 0,5).</button>
+<button class="econ-quiz-opt" data-why="La entropía cruzada solo mira la probabilidad de la clase correcta, y ahí los modelos son muy distintos. Además, con 6 clases 0,40 puede ser la probabilidad más alta: el modelo A podría incluso haber acertado.">Igual, porque ninguno de los dos acertó (ambos &lt; 0,5).</button>
 </div>
-<p class="econ-quiz-fb">✅ −log(0,02) ≈ 3,9 frente a −log(0,40) ≈ 0,92. La pérdida castiga mucho más la seguridad equivocada que la duda, aunque en exactitud los dos “fallan” igual.</p>
+<p class="econ-quiz-fb">✅ −log(0,02) ≈ 3,9 frente a −log(0,40) ≈ 0,92. La pérdida castiga mucho más la seguridad equivocada que la duda. Ojo: con 6 clases, 0,40 puede ser la probabilidad más alta, así que el modelo A quizás hasta acertó la categoría.</p>
 </div>
 <div class="econ-quiz">
 <p class="econ-quiz-q">Durante el entrenamiento, la pérdida salta así: 0,69 → 0,52 → 2,10 → 0,61 → 3,40… ¿Qué cambias primero?</p>
@@ -1935,12 +1938,13 @@ controlar cómo le va. Luego comparamos las dos curvas:</p>
 <a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mejor época según validación: </span><span class="si">{</span><span class="n">mejor</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">  (pérdida val = </span><span class="si">{</span><span class="n">perdida_val</span><span class="p">[</span><span class="n">mejor</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 <a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Época 250: pérdida train = </span><span class="si">{</span><span class="n">perdida_tr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, pérdida val = </span><span class="si">{</span><span class="n">perdida_val</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a>
-<a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
-<a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">perdida_tr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"entrenamiento"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#e5b300"</span><span class="p">)</span>
-<a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">perdida_val</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"validación"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#005f96"</span><span class="p">)</span>
-<a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">mejor</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#b30828"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"aquí convenía parar"</span><span class="p">)</span>
-<a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"época"</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"entropía cruzada"</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<a id="__codelineno-3-32" name="__codelineno-3-32" href="#__codelineno-3-32"></a><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="n">epocas</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">251</span><span class="p">)</span>
+<a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
+<a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epocas</span><span class="p">,</span> <span class="n">perdida_tr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"entrenamiento"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#e5b300"</span><span class="p">)</span>
+<a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epocas</span><span class="p">,</span> <span class="n">perdida_val</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"validación"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#005f96"</span><span class="p">)</span>
+<a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a><span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">mejor</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#b30828"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"aquí convenía parar"</span><span class="p">)</span>
+<a id="__codelineno-3-32" name="__codelineno-3-32" href="#__codelineno-3-32"></a><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"época"</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"entropía cruzada"</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<a id="__codelineno-3-33" name="__codelineno-3-33" href="#__codelineno-3-33"></a><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </code></pre></div>
 <p class="py-run-reto"><strong>🎯 Reto:</strong> scikit-learn no trae dropout, pero sí otra forma de frenar la memorización: la penalización <code>alpha</code>
 (como el Ridge del curso I). Prueba <code>alpha=0.05</code> y luego <code>hidden_layer_sizes=(8,)</code>. ¿Qué pasa con la brecha entre
@@ -1983,7 +1987,8 @@ te llevarás una sorpresa.</p>
 <p>Antes de cualquier modelo, <strong>mira los datos</strong>. Los casos FinTrust y MercaSur vienen sucios a propósito, como los
 datos reales: reclamos duplicados, textos vacíos o basura ("reclamo", "ok"), categorías escritas de cinco formas
 distintas ("Fraude", "FRAUDE", "fraude ", …), montos negativos o días de resolución imposibles. Si entrenas con
-"Fraude" y "FRAUDE" como clases distintas, el modelo aprende 12 categorías en vez de 6 y tus métricas no significan nada.</p>
+"Fraude" y "FRAUDE" como clases distintas, el modelo cree que hay 20 categorías en vez de 6 (lo verás en la auditoría)
+y tus métricas no significan nada.</p>
 <div class="py-run">
 <p class="py-run-t">🧪 Practica en Python · Auditoría de calidad de FinTrust</p>
 <p>Cuántos problemas hay, y de qué tipo. La herramienta estrella es <code>value_counts()</code>.</p>
@@ -2046,7 +2051,7 @@ distintas ("Fraude", "FRAUDE", "fraude ", …), montos negativos o días de reso
 <h3 id="52-bolsa-de-palabras-y-tf-idf">5.2 Bolsa de palabras y TF-IDF</h3>
 <p>La idea más simple para convertir texto en números es la <strong>bolsa de palabras</strong>: hacemos una columna por cada palabra
 del vocabulario y contamos cuántas veces aparece en cada reclamo. Se pierde el orden ("me cobraron y no pagué" y "no
-me cobraron y pagué" quedan casi iguales), pero funciona sorprendentemente bien para clasificar temas.</p>
+me cobraron y pagué" quedan idénticos), pero funciona sorprendentemente bien para clasificar temas.</p>
 <div class="c1-bow">
 <p><em>Algunas columnas del vocabulario (en la práctica hay miles):</em></p>
 <table>
@@ -2120,6 +2125,9 @@ me cobraron y pagué" quedan casi iguales), pero funciona sorprendentemente bien
   en pocos reclamos y pesa mucho; "la" aparece en casi todos y pesa poco.</li>
 </ul>
 <div class="arithmatex">\[ \text{tf-idf}(\text{palabra}, \text{reclamo}) = \text{tf} \times \log\frac{N}{\text{n.º de reclamos con esa palabra}} \]</div>
+<p>donde <span class="arithmatex">\( N \)</span> es el total de reclamos. (scikit-learn usa una versión suavizada de esta fórmula y además normaliza
+cada fila para que reclamos largos y cortos sean comparables; por eso sus números no calzan exactos con la cuenta a
+mano, pero la idea es la misma.)</p>
 <p>El resultado: cada reclamo se convierte en un vector (una fila) con miles de columnas, casi todas en cero, donde
 las palabras <strong>frecuentes en ese reclamo pero raras en general</strong> tienen los valores más altos. Esa matriz es la
 entrada de la regresión logística y de la red neuronal.</p>
@@ -2331,18 +2339,25 @@ como fraude todo reclamo con probabilidad sobre 0,3 (no 0,5), aceptando más fal
 <a id="__codelineno-8-36" name="__codelineno-8-36" href="#__codelineno-8-36"></a>                  <span class="s2">"costo total ($)"</span><span class="p">:</span> <span class="n">fn</span> <span class="o">*</span> <span class="n">COSTO_FN</span> <span class="o">+</span> <span class="n">fp</span> <span class="o">*</span> <span class="n">COSTO_FP</span><span class="p">})</span>
 <a id="__codelineno-8-37" name="__codelineno-8-37" href="#__codelineno-8-37"></a><span class="n">tabla</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">filas</span><span class="p">)</span>
 <a id="__codelineno-8-38" name="__codelineno-8-38" href="#__codelineno-8-38"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Umbral de menor costo:"</span><span class="p">,</span> <span class="n">tabla</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">tabla</span><span class="p">[</span><span class="s2">"costo total ($)"</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">(),</span> <span class="s2">"umbral"</span><span class="p">])</span>
-<a id="__codelineno-8-39" name="__codelineno-8-39" href="#__codelineno-8-39"></a>
-<a id="__codelineno-8-40" name="__codelineno-8-40" href="#__codelineno-8-40"></a><span class="c1"># Los "fraudes" que el modelo no ve ni con umbral 0,1: ¿son fraude de verdad?</span>
-<a id="__codelineno-8-41" name="__codelineno-8-41" href="#__codelineno-8-41"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Reclamos etiquetados como Fraude con probabilidad &lt; 0,1:"</span><span class="p">)</span>
-<a id="__codelineno-8-42" name="__codelineno-8-42" href="#__codelineno-8-42"></a><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">X_te</span><span class="p">[</span><span class="n">es_fraude</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">p_fraude</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">)]:</span>
-<a id="__codelineno-8-43" name="__codelineno-8-43" href="#__codelineno-8-43"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"  ·"</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-<a id="__codelineno-8-44" name="__codelineno-8-44" href="#__codelineno-8-44"></a><span class="n">tabla</span>
+<a id="__codelineno-8-39" name="__codelineno-8-39" href="#__codelineno-8-39"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Reclamos con probabilidad de fraude 'dudosa' (entre 0,2 y 0,6):"</span><span class="p">,</span>
+<a id="__codelineno-8-40" name="__codelineno-8-40" href="#__codelineno-8-40"></a>      <span class="nb">int</span><span class="p">(((</span><span class="n">p_fraude</span> <span class="o">&gt;</span> <span class="mf">0.2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">p_fraude</span> <span class="o">&lt;</span> <span class="mf">0.6</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span> <span class="s2">"de"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_fraude</span><span class="p">))</span>
+<a id="__codelineno-8-41" name="__codelineno-8-41" href="#__codelineno-8-41"></a>
+<a id="__codelineno-8-42" name="__codelineno-8-42" href="#__codelineno-8-42"></a><span class="c1"># Los "fraudes" que el modelo no ve ni con umbral 0,1: ¿son fraude de verdad?</span>
+<a id="__codelineno-8-43" name="__codelineno-8-43" href="#__codelineno-8-43"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Reclamos etiquetados como Fraude con probabilidad &lt; 0,1:"</span><span class="p">)</span>
+<a id="__codelineno-8-44" name="__codelineno-8-44" href="#__codelineno-8-44"></a><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">X_te</span><span class="p">[</span><span class="n">es_fraude</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">p_fraude</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">)]:</span>
+<a id="__codelineno-8-45" name="__codelineno-8-45" href="#__codelineno-8-45"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"  ·"</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<a id="__codelineno-8-46" name="__codelineno-8-46" href="#__codelineno-8-46"></a><span class="n">tabla</span>
 </code></pre></div>
-<p>Mira los "fraudes" que el modelo no detecta ni con umbral 0,1: ¿de verdad son fraudes? Son <strong>ruido de etiqueta</strong>
-(reclamos mal etiquetados por una persona). Ningún umbral ni ninguna red los arregla: el techo de tu F1 lo pone
-la calidad de las etiquetas.</p>
-<p class="py-run-reto"><strong>🎯 Reto:</strong> ¿qué pasa con el umbral óptimo si la falsa alarma cuesta $150.000 (por ejemplo, porque bloquea la
-tarjeta del cliente)? Cambia <code>COSTO_FP</code> y explícalo en una frase como se lo dirías a la gerenta de riesgo.</p>
+<p>¿Te sorprende que el umbral de menor costo quede en 0,5 y no más abajo? En esta muestra el modelo separa el fraude
+tan bien que casi ningún reclamo cae en la zona dudosa: los fraudes reales tienen probabilidad alta, así que bajar el
+umbral solo suma falsas alarmas. En el simulador, en cambio, los puntajes de fraudes y no fraudes se traslapan, y ahí
+mover el umbral sí paga.</p>
+<p>¿Y los "fraudes" que el modelo no detecta ni con umbral 0,1? Léelos: ¿de verdad son fraudes? Son <strong>ruido de
+etiqueta</strong> (reclamos mal etiquetados por una persona). Ningún umbral ni ninguna red los arregla: el techo de tu F1 lo
+pone la calidad de las etiquetas.</p>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> cambia <code>COSTO_FP</code> a <code>150_000</code> (por ejemplo, porque la falsa alarma bloquea la tarjeta del cliente).
+¿Se mueve el umbral óptimo? Haz lo mismo en el simulador (falsa alarma = $150 mil) y explica en una frase, como se lo
+dirías a la gerenta de riesgo, por qué en un caso se mueve y en el otro no.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">💼 En el negocio</p>
@@ -2391,19 +2406,24 @@ elige tu caso: <code>CASO = "fintrust"</code> o <code>CASO = "mercasur"</code>. 
 <p>Antes, el <strong>domingo 1 de noviembre</strong> se inscribe el equipo y el caso por <a href="../../proyecto/buzon/">buzón</a> (sin nota). Para el Sprint 1, tu
 notebook debe incluir:</p>
 <ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Pregunta de negocio</strong> en una o dos frases: qué decisión apoya el clasificador y quién lo usaría
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Pregunta de negocio</strong> en 2–3 líneas: qué decisión apoya el clasificador y quién lo usaría
       (p. ej. "derivar automáticamente cada reclamo al equipo correcto en menos de un minuto").</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Auditoría de calidad</strong> con números: duplicados, nulos, textos vacíos o basura, categorías mal escritas y
-      valores imposibles (montos negativos, días o ratings fuera de rango). Una tabla "problema → cuántos → qué hicimos".</li>
+      valores imposibles (montos negativos, días o ratings fuera de rango). Una tabla resumen "problema → decisión →
+      filas afectadas".</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Función de limpieza</strong> reutilizable y el <code>value_counts()</code> de las clases <strong>antes y después</strong>.</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>EDA de texto:</strong> distribución de clases, largo de los textos y palabras más frecuentes por clase, con una
       conclusión breve de cada gráfico.</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Baseline:</strong> TF-IDF + regresión logística, con el vectorizador ajustado solo en entrenamiento.</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Red neuronal MLP en Keras</strong> sobre TF-IDF, con dropout, early stopping y sus <strong>curvas de entrenamiento</strong>
       (pérdida en entrenamiento y validación).</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Comparación en test:</strong> F1 macro de ambos modelos, <code>classification_report</code> y matriz de confusión del mejor.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Comparación en test:</strong> F1 macro, <code>classification_report</code> y matriz de confusión de <strong>ambos</strong> modelos.</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Lectura de negocio</strong> (3–5 líneas): qué error es el más caro en tu caso y qué modelo recomiendas por ahora.</li>
 </ul>
+<p><strong>Cómo se entrega:</strong> descarga el notebook (<em>Archivo → Descargar → Descargar .ipynb</em>), nómbralo
+<code>S1_FinTrust_Apellido1_Apellido2_Apellido3.ipynb</code> (o <code>S1_MercaSur_…</code>) y súbelo al
+<a href="../../proyecto/buzon/">buzón del Sprint 1</a>. Basta con que un integrante lo entregue. El buzón acepta dos días más
+con −1,0 punto por día de atraso. Detalles y rúbrica en <a href="../../proyecto/sprints/">Sprints y buzón</a>.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Para la tutoría del jueves 5 de noviembre</p>

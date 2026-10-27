@@ -105,12 +105,25 @@
       const setSame = stat(root, "Vecinos de la misma categoría", "—", "is-gold");
       const setTop = stat(root, "Coseno con el vecino n.º 1", "—");
 
+      // Animaciones de atributos SVG que se pueden detener: si se elige otro punto antes de que terminen,
+      // no deben seguir escribiendo el radio de la selección anterior.
+      let running = [];
+      function animAttr(el, name, to, opts) {
+        const M = window.Motion;
+        if (!M || motion.reduced()) { el.setAttribute(name, to); return; }
+        const from = parseFloat(el.getAttribute(name)) || 0;
+        running.push(M.animate(from, to, Object.assign({ duration: motion.DUR.std, ease: motion.EASE.out,
+          onUpdate: (v) => el.setAttribute(name, v) }, opts)));
+      }
+      function stopAnims() { running.forEach((a) => a && a.stop && a.stop()); running = []; }
+
       function focusCat(c) {
-        clear(true);
+        clear();
         dots.forEach((el, i) => el.classList.toggle("is-dim", c != null && P[i].c !== c));
       }
 
       function clear(keepInfo) {
+        stopAnims();
         gLines.replaceChildren();
         gLbl.replaceChildren();
         dots.forEach((el) => { el.classList.remove("is-dim", "is-sel", "is-nn"); el.setAttribute("r", 6); });
@@ -134,14 +147,14 @@
         const lines = p.nn.map((j, k) => {
           const ln = svg("line", { x1: X(p.x), y1: Y(p.y), x2: X(p.x), y2: Y(p.y), class: "c2-ray" });
           gLines.append(ln);
-          motion.attr(ln, "x2", X(P[j].x), { delay: k * 0.06, duration: motion.DUR.std });
-          motion.attr(ln, "y2", Y(P[j].y), { delay: k * 0.06, duration: motion.DUR.std });
+          animAttr(ln, "x2", X(P[j].x), { delay: k * 0.06 });
+          animAttr(ln, "y2", Y(P[j].y), { delay: k * 0.06 });
           const lbl = svg("text", { x: X(P[j].x) + 9, y: Y(P[j].y) + 4, class: "c2-rank" }, String(k + 1));
           gLbl.append(lbl);
           return ln;
         });
-        motion.attr(dots[i], "r", 10, { duration: motion.DUR.std, ease: motion.EASE.back });
-        p.nn.forEach((j, k) => motion.attr(dots[j], "r", 8, { delay: 0.05 + k * 0.05, duration: motion.DUR.std, ease: motion.EASE.back }));
+        animAttr(dots[i], "r", 10, { ease: motion.EASE.back });
+        p.nn.forEach((j, k) => animAttr(dots[j], "r", 8, { delay: 0.05 + k * 0.05, ease: motion.EASE.back }));
         void lines;
 
         // Detalle con barras
@@ -267,9 +280,15 @@
           if (which === "A") { st.aA = ang; st.lA = len; } else { st.aB = ang; st.lB = len; }
           render(true);
         };
-        const up = () => { handle.removeEventListener("pointermove", move); handle.removeEventListener("pointerup", up); motion.pulse(verdict); };
+        const up = () => {
+          handle.removeEventListener("pointermove", move);
+          handle.removeEventListener("pointerup", up);
+          handle.removeEventListener("pointercancel", up);
+          motion.pulse(verdict);
+        };
         handle.addEventListener("pointermove", move);
         handle.addEventListener("pointerup", up);
+        handle.addEventListener("pointercancel", up);
       });
     }
     drag(hA, "A"); drag(hB, "B");
@@ -313,9 +332,10 @@
       setEu(fmt2(eu));
       formula.textContent = `cos θ = (A·B) / (‖A‖·‖B‖) = ${fmt2(dot)} / (${fmt1(st.lA)} × ${fmt1(st.lB)}) = ${fmt2(cos)}`;
       let txt;
-      if (cos >= 0.9) txt = "🟢 Casi la misma dirección: en embeddings, esto sería una paráfrasis (“me clonaron la tarjeta” ≈ “aparecen compras que no hice”).";
-      else if (cos >= 0.5) txt = "🟡 Dirección parecida: textos del mismo tema, pero no lo mismo (“me cobraron dos veces” vs. “me cobran una comisión”).";
-      else if (cos > -0.2) txt = "⚪ Casi perpendiculares: sin relación (“la app se cae” vs. “quiero un certificado de deuda”).";
+      if (cos >= 0.9) txt = "🟢 Casi la misma dirección: en embeddings, esto sería una paráfrasis (“me cobraron dos veces la misma compra” ≈ “me descontaron dos veces el mismo pago”: coseno real 0,90).";
+      else if (cos >= 0.5) txt = "🟡 Dirección parecida: textos del mismo tema, pero no lo mismo (“me cobraron dos veces” vs. “me cobran una comisión”: coseno real 0,60).";
+      else if (cos >= 0.2) txt = "🟠 Relación débil: comparten algo, pero hablan de cosas distintas.";
+      else if (cos > -0.2) txt = "⚪ Casi perpendiculares: sin relación (“la app se cae” vs. “quiero un certificado de deuda”: coseno real −0,05).";
       else txt = "🔴 Direcciones opuestas. En embeddings de frases es raro ver cosenos negativos: casi todo cae entre 0 y 1.";
       if (Math.abs(st.lA - st.lB) >= 1.5 && cos >= 0.95) {
         txt += " Fíjate: el coseno es ≈ 1 aunque la distancia euclidiana es grande. Por eso usamos coseno: importa hacia dónde apunta el vector, no su largo.";

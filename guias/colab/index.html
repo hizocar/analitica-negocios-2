@@ -1279,6 +1279,8 @@ a ejecutar.</p>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> No hay claves de API escritas en el código (usa Secretos, ver <a href="../gemini/">guía de Gemini</a>).</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La primera celda tiene los integrantes, el caso y el enlace de Colab.</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La última celda declara el uso de IA.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Descargaste el notebook (<em>Archivo → Descargar → Descargar .ipynb</em>) y lo subiste al
+      <a href="../../proyecto/buzon/">buzón de la entrega</a>.</li>
 </ul>
 <h2 id="6-problemas-frecuentes">6. Problemas frecuentes</h2>
 <table>
@@ -1306,8 +1308,16 @@ a ejecutar.</p>
 <td>Superaste el límite por minuto de la capa gratuita: espera un minuto, usa <code>time.sleep</code> entre llamadas y procesa muestras más chicas.</td>
 </tr>
 <tr>
+<td><code>503 UNAVAILABLE</code> en Gemini</td>
+<td>El modelo está saturado en ese momento: espera unos segundos y reintenta (ver <a href="../gemini/#4-limites-de-la-capa-gratuita">guía de Gemini</a>).</td>
+</tr>
+<tr>
 <td>El notebook entregado no muestra resultados</td>
 <td>Ejecuta todo antes de descargar el <code>.ipynb</code>: las salidas se guardan dentro del archivo.</td>
+</tr>
+<tr>
+<td>El buzón rechaza el notebook por una clave de API</td>
+<td>La clave quedó escrita en una celda o en una salida. Bórrala, <strong>revócala</strong> en AI Studio, crea una nueva en los Secretos y vuelve a descargar el notebook.</td>
 </tr>
 </tbody>
 </table>

@@ -2559,7 +2559,10 @@ else:
 <h3 id="51-una-funcion-robusta-para-llamar-a-la-api">5.1 Una función robusta para llamar a la API<a class="anchor-link" href="#51-una-funcion-robusta-para-llamar-a-la-api">¶</a></h3><p>La capa gratuita tiene <strong>límites por minuto y por día</strong> (pocas solicitudes por minuto). Si los superas, la API
 responde con error <strong>429</strong>. Nuestra función:</p>
 <ul>
-<li>espera <code>PAUSA</code> segundos entre llamadas y <strong>reintenta</strong> con espera creciente si hay 429 o un error temporal (5xx);</li>
+<li>espera <code>PAUSA</code> segundos entre llamadas y <strong>reintenta</strong> con espera creciente si hay 429 (límite por minuto) o un
+error temporal del servidor (5xx, por ejemplo 503 «modelo saturado»);</li>
+<li>si se agotó la <strong>cuota diaria</strong>, deja de llamar a la API (reintentar no sirve: hay que esperar al día siguiente)
+y el resto del notebook sigue con lo que alcanzaste a obtener;</li>
 <li>usa <code>temperature=0</code> (queremos consistencia) y <strong>desactiva el «razonamiento»</strong> (<em>thinking</em>) del modelo, que para
 clasificar solo suma latencia y tokens cobrados;</li>
 <li>pide <strong>salida estructurada</strong> con un esquema de Pydantic;</li>
@@ -2592,10 +2595,12 @@ clasificar solo suma latencia y tokens cobrados;</li>
 <span class="n">PAUSA</span> <span class="o">=</span> <span class="mi">7</span>            <span class="c1"># segundos entre llamadas (≈ 8 por minuto: bajo el límite gratuito típico)</span>
 <span class="n">MAX_REINTENTOS</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">registro</span> <span class="o">=</span> <span class="p">[]</span>        <span class="c1"># una fila por llamada: tokens, latencia, tarea</span>
+<span class="n">cuota_diaria_agotada</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">llamar_gemini</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">esquema</span><span class="p">,</span> <span class="n">tarea</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">thinking</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Devuelve (objeto_parseado_o_None, texto_crudo). Registra tokens y latencia en `registro`."""</span>
-    <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">global</span> <span class="n">cuota_diaria_agotada</span>
+    <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">cuota_diaria_agotada</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">thinking_config</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">ThinkingConfig</span><span class="p">(</span><span class="n">thinking_budget</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="k">if</span> <span class="n">thinking</span> <span class="k">else</span> <span class="p">{}</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">GenerateContentConfig</span><span class="p">(</span><span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">response_mime_type</span><span class="o">=</span><span class="s2">"application/json"</span><span class="p">,</span>
@@ -2614,6 +2619,11 @@ clasificar solo suma latencia y tokens cobrados;</li>
         <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">"thinking"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="n">thinking</span><span class="p">:</span>      <span class="c1"># modelo sin opción de desactivar thinking</span>
                 <span class="k">return</span> <span class="n">llamar_gemini</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">esquema</span><span class="p">,</span> <span class="n">tarea</span><span class="p">,</span> <span class="n">thinking</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="mi">429</span> <span class="ow">and</span> <span class="s2">"PerDay"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>           <span class="c1"># cuota DIARIA: reintentar no sirve</span>
+                <span class="n">cuota_diaria_agotada</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"   🛑 Se agotó la cuota diaria de la capa gratuita. Sigue mañana (o baja N_LLM / N_EXT);</span><span class="se">\n</span><span class="s2">"</span>
+                      <span class="s2">"      las celdas siguientes usan lo que alcanzaste a obtener."</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="mi">429</span> <span class="ow">or</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">code</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">500</span><span class="p">:</span>
                 <span class="n">espera</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">intento</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ⏳ Error </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">: espero </span><span class="si">{</span><span class="n">espera</span><span class="si">}</span><span class="s2"> s y reintento (</span><span class="si">{</span><span class="n">intento</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">MAX_REINTENTOS</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
@@ -2621,6 +2631,10 @@ clasificar solo suma latencia y tokens cobrados;</li>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ❌ Error </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>                                  <span class="c1"># red caída, timeout, etc.</span>
+            <span class="n">espera</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">intento</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ⏳ </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: espero </span><span class="si">{</span><span class="n">espera</span><span class="si">}</span><span class="s2"> s y reintento (</span><span class="si">{</span><span class="n">intento</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">MAX_REINTENTOS</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">espera</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"   ❌ Se agotaron los reintentos (¿llegaste al límite diario?)."</span><span class="p">)</span>
     <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
@@ -2632,10 +2646,12 @@ clasificar solo suma latencia y tokens cobrados;</li>
 PAUSA = 7            # segundos entre llamadas (≈ 8 por minuto: bajo el límite gratuito típico)
 MAX_REINTENTOS = 5
 registro = []        # una fila por llamada: tokens, latencia, tarea
+cuota_diaria_agotada = False
 
 def llamar_gemini(prompt, esquema, tarea="", thinking=True):
     """Devuelve (objeto_parseado_o_None, texto_crudo). Registra tokens y latencia en `registro`."""
-    if client is None:
+    global cuota_diaria_agotada
+    if client is None or cuota_diaria_agotada:
         return None, None
     extra = dict(thinking_config=types.ThinkingConfig(thinking_budget=0)) if thinking else {}
     config = types.GenerateContentConfig(temperature=0, response_mime_type="application/json",
@@ -2654,6 +2670,11 @@ def llamar_gemini(prompt, esquema, tarea="", thinking=True):
         except errors.APIError as e:
             if "thinking" in str(e).lower() and thinking:      # modelo sin opción de desactivar thinking
                 return llamar_gemini(prompt, esquema, tarea, thinking=False)
+            if e.code == 429 and "PerDay" in str(e):           # cuota DIARIA: reintentar no sirve
+                cuota_diaria_agotada = True
+                print("   🛑 Se agotó la cuota diaria de la capa gratuita. Sigue mañana (o baja N_LLM / N_EXT);\n"
+                      "      las celdas siguientes usan lo que alcanzaste a obtener.")
+                return None, None
             if e.code == 429 or (e.code or 0) &gt;= 500:
                 espera = min(60, 10 * 2 ** intento)
                 print(f"   ⏳ Error {e.code}: espero {espera} s y reintento ({intento + 1}/{MAX_REINTENTOS})")
@@ -2661,6 +2682,10 @@ def llamar_gemini(prompt, esquema, tarea="", thinking=True):
             else:
                 print(f"   ❌ Error {e.code}: {e.message}")
                 return None, None
+        except Exception as e:                                  # red caída, timeout, etc.
+            espera = min(60, 10 * 2 ** intento)
+            print(f"   ⏳ {type(e).__name__}: espero {espera} s y reintento ({intento + 1}/{MAX_REINTENTOS})")
+            time.sleep(espera)
     print("   ❌ Se agotaron los reintentos (¿llegaste al límite diario?).")
     return None, None
 
@@ -2678,7 +2703,8 @@ if client is None:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="6-anonimizar-antes-de-enviar">6. Anonimizar antes de enviar<a class="anchor-link" href="#6-anonimizar-antes-de-enviar">¶</a></h2><p>Mismas reglas que en la cápsula: RUT, teléfonos, correos y nombres firmados con «Atte.». Enmascaramos <strong>todos</strong> los
+<h2 id="6-anonimizar-antes-de-enviar">6. Anonimizar antes de enviar<a class="anchor-link" href="#6-anonimizar-antes-de-enviar">¶</a></h2><p>Las reglas de la cápsula: RUT, teléfonos, correos y nombres firmados con «Atte.». El patrón del teléfono ya viene
+corregido para aceptar un dígito de menos (el caso que se escapaba en el reto de la cápsula). Enmascaramos <strong>todos</strong> los
 textos que van a salir hacia la API (los de test y los ejemplos few-shot) y contamos cuántos tenían datos personales.</p>
 </div>
 </div>
@@ -2804,7 +2830,7 @@ inválidos).</p>
 <span class="n">INSTRUCCIONES_ZS</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"""Eres un analista de </span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">'unidad_pl'</span><span class="p">]</span><span class="si">}</span><span class="s2"> de </span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">'empresa'</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span>
 <span class="s2">Clasifica cada </span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">'unidad'</span><span class="p">]</span><span class="si">}</span><span class="s2"> en UNA de estas categorías: </span><span class="si">{</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CLASES</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span>
 <span class="s2">Si un texto menciona varios temas, elige el problema principal.</span>
-<span class="s2">Devuelve una lista JSON con un objeto </span><span class="se">{{</span><span class="s2">"id", "categoria"</span><span class="se">}}</span><span class="s2"> por cada texto, en el mismo orden."""</span>
+<span class="s2">Devuelve una lista JSON con un objeto </span><span class="se">{{</span><span class="s2">"id": ..., "categoria": ...</span><span class="se">}}</span><span class="s2"> por cada texto, en el mismo orden."""</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">prompt_lote</span><span class="p">(</span><span class="n">lote</span><span class="p">,</span> <span class="n">instrucciones</span><span class="p">,</span> <span class="n">ejemplos</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
     <span class="n">casos</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">id_</span><span class="p">,</span> <span class="s2">"texto"</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">texto_anon</span><span class="p">}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">lote</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()],</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -2829,7 +2855,7 @@ eval_llm = test.sample(N_LLM, random_state=7).copy()
 INSTRUCCIONES_ZS = f"""Eres un analista de {cfg['unidad_pl']} de {cfg['empresa']}.
 Clasifica cada {cfg['unidad']} en UNA de estas categorías: {", ".join(CLASES)}.
 Si un texto menciona varios temas, elige el problema principal.
-Devuelve una lista JSON con un objeto {{"id", "categoria"}} por cada texto, en el mismo orden."""
+Devuelve una lista JSON con un objeto {{"id": ..., "categoria": ...}} por cada texto, en el mismo orden."""
 
 def prompt_lote(lote, instrucciones, ejemplos=""):
     casos = json.dumps([{"id": r.id_, "texto": r.texto_anon} for r in lote.itertuples()], ensure_ascii=False, indent=0)
@@ -2888,6 +2914,7 @@ print(prompt_lote(eval_llm.head(2), INSTRUCCIONES_ZS))</div>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">eval_llm</span><span class="p">[</span><span class="s2">"pred_zs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">clasificar</span><span class="p">(</span><span class="n">eval_llm</span><span class="p">,</span> <span class="n">INSTRUCCIONES_ZS</span><span class="p">,</span> <span class="n">tarea</span><span class="o">=</span><span class="s2">"zero-shot"</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
     <span class="n">resultados</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluar</span><span class="p">(</span><span class="n">eval_llm</span><span class="p">[</span><span class="s2">"y"</span><span class="p">],</span> <span class="n">eval_llm</span><span class="p">[</span><span class="s2">"pred_zs"</span><span class="p">],</span> <span class="s2">"Gemini zero-shot"</span><span class="p">))</span>
+    <span class="n">eval_llm</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">"predicciones_gemini_</span><span class="si">{</span><span class="n">CASO</span><span class="si">}</span><span class="s2">.csv"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>   <span class="c1"># guárdalo: si se reinicia la sesión, no repites llamadas</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">resultados</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-11">def clasificar(df_eval, instrucciones, ejemplos="", tarea="zero-shot"):
@@ -2917,6 +2944,7 @@ if client is None:
 else:
     eval_llm["pred_zs"] = clasificar(eval_llm, INSTRUCCIONES_ZS, tarea="zero-shot").values
     resultados.append(evaluar(eval_llm["y"], eval_llm["pred_zs"], "Gemini zero-shot"))
+    eval_llm.to_csv(f"predicciones_gemini_{CASO}.csv", index=False)   # guárdalo: si se reinicia la sesión, no repites llamadas
     print(pd.DataFrame(resultados).round(3).to_string(index=False))</div>
 </div>
 </div>
@@ -2976,6 +3004,7 @@ confundió.</p>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">eval_llm</span><span class="p">[</span><span class="s2">"pred_fs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">clasificar</span><span class="p">(</span><span class="n">eval_llm</span><span class="p">,</span> <span class="n">INSTRUCCIONES_ZS</span><span class="p">,</span> <span class="n">EJEMPLOS</span><span class="p">,</span> <span class="n">tarea</span><span class="o">=</span><span class="s2">"few-shot"</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
     <span class="n">resultados</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluar</span><span class="p">(</span><span class="n">eval_llm</span><span class="p">[</span><span class="s2">"y"</span><span class="p">],</span> <span class="n">eval_llm</span><span class="p">[</span><span class="s2">"pred_fs"</span><span class="p">],</span> <span class="s2">"Gemini few-shot"</span><span class="p">))</span>
+    <span class="n">eval_llm</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">"predicciones_gemini_</span><span class="si">{</span><span class="n">CASO</span><span class="si">}</span><span class="s2">.csv"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">resultados</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-12">from sklearn.feature_extraction.text import TfidfVectorizer
@@ -2998,6 +3027,7 @@ if client is None:
 else:
     eval_llm["pred_fs"] = clasificar(eval_llm, INSTRUCCIONES_ZS, EJEMPLOS, tarea="few-shot").values
     resultados.append(evaluar(eval_llm["y"], eval_llm["pred_fs"], "Gemini few-shot"))
+    eval_llm.to_csv(f"predicciones_gemini_{CASO}.csv", index=False)
     print(pd.DataFrame(resultados).round(3).to_string(index=False))</div>
 </div>
 </div>
@@ -3110,6 +3140,9 @@ costoso de construir con modelos clásicos (necesitarías un modelo y datos etiq
         <span class="k">if</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">fichas</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"texto"</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">texto_anon</span><span class="p">,</span> <span class="s2">"y_real"</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">f</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()})</span>
     <span class="n">fichas</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">fichas</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">fichas</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"⚠️  Ninguna ficha volvió bien (¿límite de la API?). Revisa los mensajes de arriba y reintenta más tarde."</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># ¿El monto extraído aparece de verdad en el texto? (control contra alucinaciones)</span>
     <span class="n">solo_digitos</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\D"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
     <span class="n">fichas</span><span class="p">[</span><span class="s2">"monto_en_texto"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="ow">or</span> <span class="n">solo_digitos</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="ow">in</span> <span class="n">solo_digitos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
@@ -3141,6 +3174,9 @@ else:
         if f:
             fichas.append({"texto": r.texto_anon, "y_real": r.y, **f.model_dump()})
     fichas = pd.DataFrame(fichas)
+if client is not None and fichas.empty:
+    print("⚠️  Ninguna ficha volvió bien (¿límite de la API?). Revisa los mensajes de arriba y reintenta más tarde.")
+elif client is not None:
     # ¿El monto extraído aparece de verdad en el texto? (control contra alucinaciones)
     solo_digitos = lambda s: re.sub(r"\D", "", str(s))
     fichas["monto_en_texto"] = [pd.isna(m) or solo_digitos(int(m)) in solo_digitos(t)

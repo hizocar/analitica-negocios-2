@@ -181,7 +181,7 @@
         drawAxes();
         motion.anim(curve, { opacity: [0, 1] }, { duration: motion.DUR.std, ease: motion.EASE.out });
       }
-      const cx = gx(z), cy = gy(a);
+      const cx = gx(z), cy = gy(clamp(a, lo, hi)); // ReLU puede salirse del gráfico: lo topamos
       guideV.setAttribute("x1", cx); guideV.setAttribute("x2", cx);
       guideV.setAttribute("y1", gy(0)); guideV.setAttribute("y2", cy);
       guideH.setAttribute("x1", gx(0)); guideH.setAttribute("x2", cx);
@@ -218,8 +218,9 @@
      ====================================================================== */
   register("c1-frontera", (root) => {
     panel(root, "🕸️ Una red que aprende a separar clientes",
-      "Cada punto es un cliente: <strong style='color:var(--usm-gold)'>dorado</strong> = se fue, " +
-      "<strong style='color:var(--usm-blue)'>azul</strong> = se quedó. Elige cuántas <strong>neuronas ocultas</strong> tiene la red, " +
+      "En el <strong>anillo</strong> cada punto es un cliente: <strong style='color:var(--usm-gold-text)'>dorado</strong> = se fue, " +
+      "<strong style='color:var(--usm-blue)'>azul</strong> = se quedó. En el <strong>XOR</strong>, dorado = compra sospechosa. " +
+      "Elige cuántas <strong>neuronas ocultas</strong> tiene la red, " +
       "presiona <strong>Entrenar</strong> y mira cómo la frontera (el fondo) y la pérdida cambian época a época.");
 
     const DATA = {
@@ -257,12 +258,12 @@
     const trainBtn = btn(acts, "▶ Entrenar 300 épocas", () => train(), "econ-btn-gold");
     btn(acts, "↺ Reiniciar pesos", () => reset(true), "econ-btn-ghost");
 
-    const plot = svg("svg", { viewBox: "0 0 640 310", class: "ia-svg", role: "img",
+    const plot = svg("svg", { viewBox: "0 0 640 324", class: "ia-svg", role: "img",
       "aria-label": "Mapa con la frontera de decisión de la red y gráfico de la pérdida por época" });
     root.append(plot);
 
     // --- mapa (izquierda): dominio [-1.25, 1.25]²
-    const M0 = { x: 10, y: 10, s: 288 }, G = 32, D = 1.25;
+    const M0 = { x: 26, y: 10, s: 288 }, G = 32, D = 1.25;
     const mx = (x) => M0.x + ((x + D) / (2 * D)) * M0.s;
     const my = (y) => M0.y + ((D - y) / (2 * D)) * M0.s;
     const gMap = svg("g", {});
@@ -275,8 +276,15 @@
       cells.push(r); gMap.append(r);
     }
     const gPts = svg("g", {});
-    plot.append(gMap, svg("rect", { x: M0.x, y: M0.y, width: M0.s, height: M0.s, class: "c1-frame" }), gPts,
-      txt(M0.x + M0.s / 2, M0.y + M0.s + 14, "uso de la app →", { "text-anchor": "middle", class: "c1-small" }));
+    // Rótulos de los ejes (cambian según los datos)
+    const AXES = {
+      anillo: ["frecuencia de compra →", "gasto por compra →"],
+      xor: ["compra: Chile ← → extranjero", "cliente: en Chile ← → de viaje"],
+    };
+    const xLbl = txt(M0.x + M0.s / 2, M0.y + M0.s + 16, "", { "text-anchor": "middle", class: "c1-small" });
+    const yc = M0.y + M0.s / 2, yx = M0.x - 10; // a la izquierda, lejos del gráfico de pérdida
+    const yLbl = txt(yx, yc, "", { "text-anchor": "middle", class: "c1-small", transform: `rotate(-90 ${yx} ${yc})` });
+    plot.append(gMap, svg("rect", { x: M0.x, y: M0.y, width: M0.s, height: M0.s, class: "c1-frame" }), gPts, xLbl, yLbl);
 
     // --- curva de pérdida (derecha)
     const L = { x0: 360, x1: 625, y0: 26, y1: 270 };
@@ -396,6 +404,7 @@
       runToken++;
       trainBtn.disabled = false;
       init();
+      xLbl.textContent = AXES[dataKey][0]; yLbl.textContent = AXES[dataKey][1];
       drawPoints(); drawMap(); drawLoss();
       updateMsg(updateStats());
       if (animate) motion.anim(gMap, { opacity: [0.35, 1] }, { duration: motion.DUR.std, ease: motion.EASE.out });
@@ -539,7 +548,9 @@
       const r = +lr.value;
       if (Math.abs(w - WSTAR) < 0.02) msg.innerHTML = `🎯 Llegaste al mínimo en ${k} pasos.`;
       else if (r < 0.25) msg.innerHTML = "🐢 Avanza en la dirección correcta, pero a paso de tortuga: necesitarías cientos de épocas.";
-      else if (r > 1 && r <= 2) msg.innerHTML = "↔️ La bola salta de un lado al otro del mínimo. Con tasa entre 1 y 2 igual termina convergiendo, pero gasta pasos rebotando.";
+      else if (r > 1 && r < 1.999) msg.innerHTML = "↔️ La bola salta de un lado al otro del mínimo. Con tasa entre 1 y 2 igual termina convergiendo, pero gasta pasos rebotando.";
+      else if (r >= 1.999 && r <= 2.001) msg.innerHTML = "⚠️ Con tasa exactamente 2 la bola rebota para siempre entre los mismos dos puntos: ni baja ni diverge.";
+      else if (r <= 1) msg.innerHTML = "✅ Cada paso baja la pérdida y la bola se acerca al mínimo sin pasarse. Sigue dando pasos.";
       else if (r > 2) msg.innerHTML = "📈 Cada salto es más grande que el anterior: la pérdida está subiendo. Esto es <strong>divergencia</strong>.";
       busy = false; b1.disabled = false; b10.disabled = false;
     }
@@ -623,7 +634,8 @@
         svg("circle", { cx: bx, cy: ey(va[best]), r: 6, class: "c1-stopdot" }),
         txt(bx + (best > 40 ? -8 : 8), A.y0 + 14, early ? `mejor modelo · época ${best + 1}` : "modelo final · época 60",
           { "text-anchor": best > 40 ? "end" : "start", class: "c1-small c1-bold" }));
-      if (early && stop < E) mark.append(txt(ex(stop) + 6, A.y1 - 8, `se detuvo en la época ${stop}`, { class: "c1-small" }));
+      if (early && stop < E) mark.append(txt(ex(stop) + (stop > 40 ? -6 : 6), A.y1 - 8, `se detuvo en la época ${stop}`,
+        { "text-anchor": stop > 40 ? "end" : "start", class: "c1-small" }));
 
       setStop(early ? `época ${best + 1} (de ${stop})` : "época 60");
       setVal(fmt2(va[best]));
@@ -636,7 +648,7 @@
       else if (va[E - 1] - minVa > 0.12) m = "⚠️ <strong>Sobreajuste:</strong> la pérdida de entrenamiento sigue bajando, pero la de validación tocó fondo y ahora " +
         "<em>sube</em>. La red está memorizando los reclamos de entrenamiento en vez de aprender patrones generales.";
       else m = "✅ Entrenamiento y validación bajan juntas y la brecha es moderada: la red generaliza razonablemente.";
-      if (drop && !early) m += " El <strong>dropout</strong> apaga neuronas al azar en cada paso: entrenar cuesta más (la curva dorada baja menos), pero la validación se mantiene.";
+      if (drop && !early) m += " El <strong>dropout</strong> apaga neuronas al azar en cada paso: entrenar cuesta más (la curva dorada baja menos), pero la pérdida de validación termina más baja que sin dropout: la red generaliza mejor.";
       msg.innerHTML = m;
 
       if (animate && !motion.reduced()) {
@@ -670,7 +682,7 @@
     const ctr = controls(root);
     const th = slider(ctr, "Umbral para marcar fraude", { min: 0.05, max: 0.95, step: 0.01, value: 0.5, fmt: fmt2 }, () => render());
     const cFN = slider(ctr, "Costo de un fraude NO detectado (miles $)", { min: 50, max: 1000, step: 10, value: 400, fmt: (v) => "$" + v + " mil" }, () => render());
-    const cFP = slider(ctr, "Costo de una falsa alarma (miles $)", { min: 5, max: 100, step: 5, value: 20, fmt: (v) => "$" + v + " mil" }, () => render());
+    const cFP = slider(ctr, "Costo de una falsa alarma (miles $)", { min: 5, max: 200, step: 5, value: 20, fmt: (v) => "$" + v + " mil" }, () => render());
     const acts = h("div", { class: "econ-buttons" });
     root.append(acts);
     btn(acts, "🎯 Ir al umbral de menor costo", () => goBest(), "econ-btn-gold");
@@ -701,9 +713,9 @@
     const bestDot = svg("circle", { r: 5, class: "c1-bestdot" });
     plot.append(txt(10, C.y0 + 6, "Costo total", { class: "c1-small c1-bold" }), txt(10, C.y0 + 20, "según umbral", { class: "c1-small" }), gC, cPath, bestDot, cDot);
 
-    const heat = h("div", { class: "ia-heat c1-cm", style: { gridTemplateColumns: "auto 1fr 1fr" }, role: "table", "aria-label": "Matriz de confusión" });
+    const heat = h("div", { class: "ia-heat c1-cm", style: { gridTemplateColumns: "auto 1fr 1fr" }, role: "group", "aria-label": "Matriz de confusión" });
     root.append(heat);
-    const cell = (cls, t) => h("div", { class: cls, role: "cell" }, t);
+    const cell = (cls, t) => h("div", { class: cls }, t);
     const hTP = cell("ia-heat-cell"), hFN = cell("ia-heat-cell"), hFP = cell("ia-heat-cell"), hTN = cell("ia-heat-cell");
     heat.append(cell("ia-heat-lbl", ""), cell("ia-heat-lbl", "Modelo dice: fraude"), cell("ia-heat-lbl", "Modelo dice: no fraude"),
       cell("ia-heat-lbl", "Real: fraude"), hTP, hFN, cell("ia-heat-lbl", "Real: no fraude"), hFP, hTN);
@@ -764,6 +776,7 @@
     render();
     note(root, "💡 <strong>Qué mirar:</strong> si un fraude no detectado cuesta mucho más que una revisión manual, el umbral óptimo " +
       "<em>baja</em>: conviene revisar más reclamos aunque haya más falsas alarmas. El punto dorado hueco marca el umbral de menor costo. " +
-      "La exactitud no cambia casi nada en ese rango… el costo sí.");
+      "Ojo: al bajar el umbral la <em>exactitud</em> puede incluso empeorar (hay más falsas alarmas) mientras el costo total cae: " +
+      "maximizar exactitud no es lo mismo que minimizar el costo del negocio.");
   });
 })();

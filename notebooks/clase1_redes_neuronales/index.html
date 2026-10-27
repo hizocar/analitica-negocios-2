@@ -3101,14 +3101,15 @@ pd.DataFrame({"texto": X_test_txt[mask], "real": y_test[mask], "predicho": np.as
 <p>🔎 Lee los textos de arriba. Muchos "errores" son en realidad <strong>etiquetas mal puestas</strong> (los datos traen ~6 % de ruido de etiqueta, como pasa en la vida real). Ningún modelo arregla eso: el techo del F1 lo pone la calidad de las etiquetas. Es un hallazgo que vale la pena reportar.</p>
 <h2 id="11-ejercicios-para-tu-proyecto-sprint-1">11. Ejercicios para tu proyecto (Sprint 1)<a class="anchor-link" href="#11-ejercicios-para-tu-proyecto-sprint-1">¶</a></h2><p>Usa este notebook como base. Para el buzón del <strong>domingo 8 de noviembre, 23:59</strong>:</p>
 <ol>
-<li><strong>Pregunta de negocio.</strong> Escribe en una celda de texto, en 1–2 frases, qué decisión apoyará tu clasificador y quién lo usará.</li>
-<li><strong>Auditoría completa.</strong> Amplía <code>auditar</code> con al menos <strong>dos</strong> chequeos más (p. ej. variantes de <code>canal</code>, fechas fuera de rango, textos con datos personales como correos o RUT). Presenta la tabla problema → cuántos → qué hicimos.</li>
+<li><strong>Pregunta de negocio.</strong> Escribe en una celda de texto, en 2–3 líneas, qué decisión apoyará tu clasificador y quién lo usará.</li>
+<li><strong>Auditoría completa.</strong> Amplía <code>auditar</code> con al menos <strong>dos</strong> chequeos más (p. ej. variantes de <code>canal</code>, fechas fuera de rango, textos con datos personales como correos o RUT). Presenta una tabla resumen problema → decisión → filas afectadas.</li>
 <li><strong>EDA con conclusiones.</strong> Bajo cada gráfico del punto 4, escribe una conclusión de una línea. ¿Hay clases desbalanceadas? ¿Textos muy cortos? ¿Palabras que se repiten entre clases?</li>
-<li><strong>Experimenta con la red.</strong> Prueba al menos <strong>dos</strong> variantes (p. ej. 64 vs. 256 neuronas, dropout 0,2 vs. 0,5, o una segunda capa oculta) y registra en una tabla el F1 macro <strong>de validación</strong> de cada una. Elige con validación, no con test.</li>
+<li><strong>Experimenta con la red.</strong> Prueba al menos <strong>dos</strong> variantes (p. ej. 64 vs. 256 neuronas, dropout 0,2 vs. 0,5, o una segunda capa oculta) y registra en una tabla el F1 macro <strong>de validación</strong> de cada una (separa tú un grupo de validación desde <code>X_train</code> con <code>train_test_split</code>, o compara al menos la <code>val_loss</code> de <code>historia</code>). Elige con validación, no con test.</li>
 <li><strong>Curvas.</strong> Incluye las curvas de entrenamiento de tu red final y explica si hay sobreajuste y en qué época se detuvo.</li>
-<li><strong>Comparación en test.</strong> Tabla con F1 macro de la logística y de tu mejor red, <code>classification_report</code> y matriz de confusión del mejor modelo.</li>
+<li><strong>Comparación en test.</strong> Tabla con F1 macro de la logística y de tu mejor red, <code>classification_report</code> y matriz de confusión de <strong>ambos</strong> modelos.</li>
 <li><strong>Lectura de negocio (3–5 líneas).</strong> ¿Cuál es el error más caro en tu caso? ¿Qué modelo recomiendas por ahora y por qué (calidad, simplicidad, explicabilidad)?</li>
 </ol>
+<p><strong>Cómo entregar:</strong> en la <strong>primera celda</strong> escribe los nombres del equipo, el caso y el enlace de Colab (con permiso de lectura). Luego <em>Entorno de ejecución → Reiniciar y ejecutar todo</em>, descarga el notebook (<em>Archivo → Descargar → Descargar .ipynb</em>), nómbralo <code>S1_FinTrust_Apellido1_Apellido2_Apellido3.ipynb</code> (o <code>S1_MercaSur_…</code>) y súbelo al <a href="https://hizocar.github.io/analitica-negocios-2/proyecto/buzon/">buzón del Sprint 1</a>. El buzón acepta dos días más con −1,0 punto por día de atraso.</p>
 <blockquote>
 <p>💡 <strong>Para la tutoría del jueves 5 de noviembre:</strong> trae este notebook corriendo con tu caso y una pregunta concreta para tu equipo docente.</p>
 </blockquote>

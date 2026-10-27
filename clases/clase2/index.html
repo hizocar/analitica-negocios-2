@@ -1625,11 +1625,11 @@ por qué no era).</p>
   calculados con el mismo modelo que usarás en Colab.</li>
 <li><strong>🧪 Practica en Python</strong>: presiona <strong>▶ Ejecutar en el navegador</strong>. La primera vez tarda ~15 s en cargar
   Python; después es inmediato. Puedes editar el código y cada bloque trae un <strong>🎯 Reto</strong>.</li>
-<li><strong>🧑‍💻 Notebook de Colab</strong>: al final está el notebook que calcula los embeddings de los 6.000 textos de tu
+<li><strong>🧑‍💻 Notebook de Colab</strong>: al final está el notebook que calcula los embeddings de los ~6.000 textos de tu
   caso. Es la base de tu <strong>Sprint 2</strong>.</li>
 </ul>
-<p><strong>Para la tutoría del jueves trae:</strong> tus embeddings ya calculados (archivo <code>.npy</code>), las 5 consultas de negocio
-que vas a probar en tu buscador y una duda concreta sobre tus resultados.</p>
+<p><strong>Para la tutoría del jueves 12 de noviembre (avance del Sprint 2) trae:</strong> tus embeddings ya calculados (archivo
+<code>.npy</code>), las 5 consultas de negocio que vas a probar en tu buscador y una duda concreta sobre tus resultados.</p>
 </div>
 <h2 id="objetivos">🎯 Objetivos</h2>
 <p>Al terminar esta cápsula podrás:</p>
@@ -1684,14 +1684,15 @@ de clientes de FinTrust:</p>
 <td>Fraude</td>
 </tr>
 <tr>
-<td>C · «Quiero cambiar la fecha de pago de mi tarjeta»</td>
+<td>D · «Quiero cambiar la fecha de pago de mi tarjeta»</td>
 <td>quiero, cambiar, la, fecha, pago, … tarjeta</td>
 <td>Trámite</td>
 </tr>
 </tbody>
 </table>
-<p>Para un humano, A y B son el mismo caso (fraude) y C es otra cosa (un trámite). Para TF-IDF es al revés:
-A y B <strong>no comparten ninguna palabra</strong> → similitud 0. A y C comparten «la» y «tarjeta» → se "parecen".</p>
+<p>Para un humano, A y B son el mismo caso (fraude) y D es otra cosa (un trámite). Para TF-IDF es al revés:
+A y B <strong>no comparten ninguna palabra</strong> → similitud 0. A y D comparten «la» y «tarjeta» → se "parecen". (En el
+código de abajo agregamos un tercer fraude, C, escrito con otras palabras).</p>
 <div class="py-run">
 <p class="py-run-t">🧪 Practica en Python · TF-IDF no ve sinónimos</p>
 <p>Calculamos la similitud entre cuatro reclamos usando TF-IDF (la misma idea de la Clase 1). La tabla es una matriz:
@@ -1717,8 +1718,8 @@ cada celda dice cuánto se parecen dos frases (1 = idénticas, 0 = nada en comú
 parece más según TF-IDF? ¿Y por qué B y C sí tienen algo de similitud? (pista: mira qué palabras comparten).</p>
 </div>
 <p>Lo que acabas de ver no es un defecto de tu código: es el <strong>techo de cualquier método basado en contar palabras</strong>.
-B y C se parecen solo por «que» y «no», palabras que no dicen nada del problema. Y A y D se parecen por «tarjeta»,
-aunque uno es un fraude y el otro un trámite.</p>
+B y C se parecen solo por «que» y «no», palabras que no dicen nada del problema. Y A y D se parecen por «la» y
+«tarjeta», aunque uno es un fraude y el otro un trámite.</p>
 <div class="admonition tip">
 <p class="admonition-title">💼 En el negocio</p>
 <p>Tus clientes no escriben como tus datos de entrenamiento. Llegan reclamos nuevos por WhatsApp o redes sociales
@@ -1779,9 +1780,9 @@ tiene sus coordenadas.</p>
 <td>Casi ninguno</td>
 </tr>
 <tr>
-<td>«tarjeta» vs. «plástico»</td>
+<td>«crédito» vs. «préstamo»</td>
 <td>Columnas distintas, sin relación</td>
-<td>Vectores cercanos</td>
+<td>Vectores cercanos (coseno 0,76 en nuestro modelo)</td>
 </tr>
 <tr>
 <td>¿Quién define los números?</td>
@@ -1831,8 +1832,9 @@ relaciones (género, capital de, plural…). No siempre funciona perfecto, pero 
 tiene sentido.</p>
 <h3 id="como-aprende-la-red-esos-numeros-intuicion">¿Cómo aprende la red esos números? (intuición)</h3>
 <p>La idea central viene de la lingüística: <strong>"dime con quién andas y te diré quién eres"</strong>. Palabras que aparecen en
-contextos parecidos significan cosas parecidas: «tarjeta» y «plástico» aparecen junto a «clonaron», «bloquear»,
-«cupo»… así que terminan con vectores cercanos.</p>
+contextos parecidos significan cosas parecidas: «crédito» y «préstamo» aparecen junto a «cuotas», «tasa»,
+«pagar»… así que terminan con vectores cercanos. La otra cara: el modelo solo conoce bien lo que vio a menudo. Un
+chilenismo como «plástico» (por tarjeta) le resulta casi desconocido: su coseno con «tarjeta» es apenas 0,31.</p>
 <ol>
 <li><strong>Embeddings de palabras (word2vec):</strong> una red pequeña lee millones de oraciones y aprende a <strong>predecir las
    palabras vecinas</strong> de cada palabra. Para lograrlo, se ve obligada a darle vectores parecidos a palabras que se usan igual.</li>
@@ -1894,7 +1896,7 @@ dos modelos es como comparar coordenadas de dos GPS con orígenes diferentes.</p
 <button class="econ-quiz-opt" data-correct>El embedding es denso y lo aprende una red, de modo que textos con significado parecido quedan cerca aunque usen palabras distintas.</button>
 <button class="econ-quiz-opt" data-why="Ambos se pueden usar como variables en una regresión logística. La diferencia está en qué capturan, no en si sirven para clasificar.">El embedding solo sirve para buscar; TF-IDF sirve para clasificar.</button>
 </div>
-<p class="econ-quiz-fb">✅ Correcto. TF-IDF es disperso (casi todo ceros) y definido por una regla; el embedding es denso y aprendido. Por eso «tarjeta» y «plástico» quedan cerca en el embedding.</p>
+<p class="econ-quiz-fb">✅ Correcto. TF-IDF es disperso (casi todo ceros) y definido por una regla; el embedding es denso y aprendido. Por eso «crédito» y «préstamo» quedan cerca en el embedding.</p>
 </div>
 <div class="econ-quiz">
 <p class="econ-quiz-q">En el mapa 🗺️, un reclamo aparece lejos en el dibujo, pero el simulador dice que es el vecino n.º 2. ¿Cómo se explica?</p>
@@ -1969,7 +1971,7 @@ capturan significado, los reclamos de una misma categoría deberían parecerse m
 <a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">"coseno promedio"</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"¿Se parecen más los reclamos de la misma categoría?"</span><span class="p">)</span>
 <a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="n">M</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </code></pre></div>
-<p class="py-run-reto"><strong>🎯 Reto:</strong> cambia <code>j</code> por un reclamo de otra categoría (por ejemplo <code>j = 2</code>, de la app). ¿Cuánto baja el coseno?
+<p class="py-run-reto"><strong>🎯 Reto:</strong> cambia <code>j</code> por un reclamo de otra categoría (por ejemplo <code>j = 8</code>, de la app). ¿Cuánto baja el coseno?
 En la matriz, ¿qué par de categorías distintas se parece más? ¿Tiene sentido para el negocio?</p>
 </div>
 <div class="econ-practica">
@@ -2008,7 +2010,8 @@ En la matriz, ¿qué par de categorías distintas se parece más? ¿Tiene sentid
 <p>Mira tres cosas en el buscador:</p>
 <ul>
 <li><strong>Cuando la consulta usa otras palabras</strong> («phishing», «servicio telefónico», «pagar mi deuda antes de tiempo»),
-  los embeddings encuentran los reclamos correctos y TF-IDF se agarra de palabras vacías como «de», «con» o «el».</li>
+  los embeddings encuentran los reclamos correctos y TF-IDF se agarra de palabras sueltas: vacías como «de», «con» o
+  «el», o ambiguas como «deuda» (y trae reclamos que piden un «certificado de deuda»).</li>
 <li><strong>Cuando la palabra clave aparece tal cual</strong> («estafa telefónica» → «creo que fue una <strong>estafa</strong>»), <strong>TF-IDF gana</strong>.
   Los embeddings no son infalibles: aquí confundieron "telefónica" con problemas del call center y de la app.</li>
 <li>Algunos resultados correctos traen una <strong>etiqueta rara</strong> (un reclamo de la app etiquetado "Crédito y tasas"): es
@@ -2093,7 +2096,7 @@ embedding. La diferencia de fondo:</p>
 <ul>
 <li><strong>TF-IDF + logística</strong> aprende <strong>todo desde tus datos</strong>: si una palabra no apareció en tus ejemplos etiquetados, no existe.</li>
 <li><strong>Embeddings + logística</strong> parte con el <strong>conocimiento del modelo pre-entrenado</strong> (que leyó millones de frases):
-  «plástico» ya está cerca de «tarjeta» aunque tus 50 ejemplos nunca digan «plástico».</li>
+  «préstamo» ya está cerca de «crédito» aunque tus 50 ejemplos nunca digan «préstamo».</li>
 </ul>
 <p>Por eso esperamos que los embeddings ayuden <strong>cuando hay pocos datos etiquetados</strong> y <strong>cuando los clientes escriben
 distinto</strong> a como venían escribiendo. Pongámoslo a prueba con dos conjuntos de evaluación:</p>
@@ -2183,8 +2186,9 @@ entrenamiento: con 25 reclamos, su vocabulario es diminuto.</p>
 <a id="__codelineno-5-35" name="__codelineno-5-35" href="#__codelineno-5-35"></a><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"F1 macro"</span><span class="p">);</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <a id="__codelineno-5-36" name="__codelineno-5-36" href="#__codelineno-5-36"></a><span class="n">R</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </code></pre></div>
-<p class="py-run-reto"><strong>🎯 Reto:</strong> agrega <code>12</code> a la lista de tamaños (2 ejemplos por categoría). ¿Quién gana con tan poquitos datos?
-¿Cuántos reclamos etiquetados necesitaría FinTrust para que TF-IDF alcance a los embeddings en el test del caso?</p>
+<p class="py-run-reto"><strong>🎯 Reto:</strong> agrega <code>12</code> a la lista de tamaños (unos 2 ejemplos por categoría). ¿Quién gana con tan poquitos datos?
+¿Desde cuántos ejemplos TF-IDF iguala o supera a los embeddings en el test del caso? ¿Y en las paráfrasis la
+brecha se cierra en algún momento?</p>
 </div>
 <h3 id="lo-que-muestran-los-datos-y-lo-que-no">Lo que muestran los datos (y lo que no)</h3>
 <p>Repetimos el experimento con <strong>todos</strong> los textos limpios de cada caso (5 sorteos, test de 30 %), con el mismo
@@ -2240,12 +2244,13 @@ modelo. F1 macro, <strong>embeddings / TF-IDF</strong> (en el notebook tus núme
 <p>La lectura honesta:</p>
 <ul>
 <li><strong>Con textos del mismo estilo</strong> que el entrenamiento, TF-IDF es un rival durísimo: con 25–50 ejemplos empatan
-  (FinTrust) y desde ~100 ejemplos TF-IDF gana por un poco; con miles, <strong>empatan</strong>. Nuestros datos son muy
-  repetitivos (los clientes usan frases parecidas), y eso favorece a TF-IDF.</li>
-<li><strong>Con redacciones nuevas</strong> (paráfrasis), los embeddings ganan <strong>por 15 a 20 puntos en todos los tamaños</strong>. Esa
-  es su verdadera ventaja: <strong>generalizan el significado</strong>, no memorizan palabras.</li>
-<li>Con <strong>muy pocos</strong> datos etiquetados (25–50) los embeddings son al menos competitivos y mucho más robustos. Si
-  etiquetar cuesta caro (un analista leyendo reclamos), eso es plata.</li>
+  en FinTrust (en MercaSur TF-IDF gana por 5–8 puntos), entre 100 y 1.000 ejemplos TF-IDF gana por un poco y con
+  todos los datos <strong>empatan</strong>. Nuestros datos son muy repetitivos (los clientes usan frases parecidas), y eso
+  favorece a TF-IDF.</li>
+<li><strong>Con redacciones nuevas</strong> (paráfrasis), los embeddings ganan <strong>en todos los tamaños</strong>, casi siempre por 15 a 20
+  puntos (entre 11 y 21). Esa es su verdadera ventaja: <strong>generalizan el significado</strong>, no memorizan palabras.</li>
+<li>Con <strong>muy pocos</strong> datos etiquetados (25–50), en el test del caso los embeddings empatan o quedan algo atrás, pero
+  son mucho más robustos ante textos nuevos. Si etiquetar cuesta caro (un analista leyendo reclamos), eso es plata.</li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">⚠️ Error común: «los embeddings siempre ganan»</p>
@@ -2287,8 +2292,9 @@ en el espacio de embeddings los textos parecidos quedan cerca, podemos buscar <s
 <ol>
 <li>Elige cuántos grupos quieres: <strong>k</strong>.</li>
 <li>Pon k "centros" al azar en el espacio.</li>
-<li>Asigna cada reclamo al centro más cercano.</li>
-<li>Mueve cada centro al <strong>promedio</strong> de sus reclamos y repite 3–4 hasta que nada cambie.</li>
+<li>Asigna cada reclamo al centro más cercano (K-means usa distancia euclidiana; como nuestros vectores tienen
+   largo 1, eso equivale casi a agrupar por coseno, como viste en el Tema 3).</li>
+<li>Mueve cada centro al <strong>promedio</strong> de sus reclamos y repite los pasos 3 y 4 hasta que nada cambie.</li>
 </ol>
 <p><strong>¿Cómo elegir k?</strong> Una ayuda es el <strong>coeficiente de silueta</strong> (<em>silhouette</em>): para cada punto compara qué tan
 cerca está de su propio grupo vs. del grupo vecino. Va de −1 a 1; más alto = grupos más compactos y separados. En
@@ -2324,7 +2330,7 @@ cambia entre k = 4 y k = 8, ¿qué criterio de negocio usarías para elegir?</p>
 las <strong>palabras más frecuentes</strong> de cada grupo (sacando palabras vacías como «de», «la», «hola») y lee 3–4 ejemplos.</p>
 <div class="py-run">
 <p class="py-run-t">🧪 Practica en Python · K-means + nombres de cada tema</p>
-<p>Agrupamos en k = 6 y comparamos los grupos con las categorías <strong>solo al final</strong>, para ver si los temas que
+<p>Agrupamos en <code>K = 6</code> y comparamos los grupos con las categorías <strong>solo al final</strong>, para ver si los temas que
 "descubrió" el algoritmo se parecen a los que definió el banco.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -2333,29 +2339,30 @@ las <strong>palabras más frecuentes</strong> de cada grupo (sacando palabras va
 <a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
 <a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA</span> <span class="o">+</span> <span class="s2">"clase2_embeddings_muestra.csv"</span><span class="p">)</span>
 <a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">E</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="sa">r</span><span class="s2">"^e\d+$"</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">cluster</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c1"># Palabras vacías y frases de cortesía que no dicen nada del tema</span>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="n">VACIAS</span> <span class="o">=</span> <span class="s2">"""a al algo como cómo con de del el en es esta este fue ha hace hay he hola la las le lo los me mi mis</span>
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="s2">muy más no nos o para pero por que qué se si sin su sus un una y ya yo buenas buenos días tardes estimados señores</span>
-<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="s2">fintrust saludos atento quedo espero pronta respuesta necesito ayuda urgente escribo segunda vez dejar reclamo</span>
-<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="s2">formal muchas gracias antemano ojalá ayuden esto vergüenza voy ir sernac solucionan cambio banco"""</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="n">cv</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">stop_words</span><span class="o">=</span><span class="n">VACIAS</span><span class="p">,</span> <span class="n">token_pattern</span><span class="o">=</span><span class="sa">r</span><span class="s2">"(?u)\b[a-záéíóúñ]{3,}\b"</span><span class="p">)</span>
-<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="n">X</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">texto</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="n">vocab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">())</span>
-<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>
-<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
-<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>    <span class="n">en_c</span> <span class="o">=</span> <span class="n">cluster</span> <span class="o">==</span> <span class="n">c</span>
-<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>    <span class="n">top</span> <span class="o">=</span> <span class="n">vocab</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">en_c</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">5</span><span class="p">]]</span>
-<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Grupo </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">en_c</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2"> reclamos): </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">top</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"   ej.:"</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">texto</span><span class="p">[</span><span class="n">en_c</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">90</span><span class="p">])</span>
-<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>
-<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="c1"># Solo ahora miramos las etiquetas: ¿qué categorías cayeron en cada grupo?</span>
-<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">categoria</span><span class="p">,</span> <span class="n">rownames</span><span class="o">=</span><span class="p">[</span><span class="s2">"grupo"</span><span class="p">])</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">K</span> <span class="o">=</span> <span class="mi">6</span>                                           <span class="c1"># número de grupos</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="n">cluster</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="c1"># Palabras vacías y frases de cortesía que no dicen nada del tema</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="n">VACIAS</span> <span class="o">=</span> <span class="s2">"""a al algo como cómo con de del el en es esta este fue ha hace hay he hola la las le lo los me mi mis</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="s2">muy más no nos o para pero por que qué se si sin su sus un una y ya yo buenas buenos días tardes estimados señores</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="s2">fintrust saludos atento quedo espero pronta respuesta necesito ayuda urgente escribo segunda vez dejar reclamo</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="s2">formal muchas gracias antemano ojalá ayuden esto vergüenza voy ir sernac solucionan cambio banco"""</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="n">cv</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">stop_words</span><span class="o">=</span><span class="n">VACIAS</span><span class="p">,</span> <span class="n">token_pattern</span><span class="o">=</span><span class="sa">r</span><span class="s2">"(?u)\b[a-záéíóúñ]{3,}\b"</span><span class="p">)</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="n">X</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">texto</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="n">vocab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">())</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>    <span class="n">en_c</span> <span class="o">=</span> <span class="n">cluster</span> <span class="o">==</span> <span class="n">c</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>    <span class="n">top</span> <span class="o">=</span> <span class="n">vocab</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">en_c</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">5</span><span class="p">]]</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Grupo </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">en_c</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2"> reclamos): </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">top</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"   ej.:"</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">texto</span><span class="p">[</span><span class="n">en_c</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">90</span><span class="p">])</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="c1"># Solo ahora miramos las etiquetas: ¿qué categorías cayeron en cada grupo?</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">categoria</span><span class="p">,</span> <span class="n">rownames</span><span class="o">=</span><span class="p">[</span><span class="s2">"grupo"</span><span class="p">])</span>
 </code></pre></div>
 <p class="py-run-reto"><strong>🎯 Reto:</strong> ponle un nombre de negocio a cada grupo (p. ej. "Problemas con la app al transferir"). ¿Hay algún
-grupo que mezcle dos categorías del banco? Prueba con k = 8: ¿aparecen subtemas útiles (como "transacciones en el
-extranjero")?</p>
+grupo que mezcle dos categorías del banco? Prueba con <code>K = 8</code>: ¿aparecen subtemas útiles? (Por ejemplo, ¿se separa
+la atención en "nadie me contacta" y "me derivan de un área a otra"?)</p>
 </div>
 <p>¿Notaste un grupo pequeño y raro, con palabras que no tienen que ver entre sí? Mira sus ejemplos: casi todos están
 escritos <strong>EN MAYÚSCULAS</strong>. El modelo no solo captura el tema; también captura el <strong>estilo</strong> del texto.</p>
@@ -2412,13 +2419,14 @@ reutilizarlos en la Clase 4 (RAG). Tiempo total: ~45 min.</p>
 pero los embeddings se calculan ~5 veces más rápido. Este notebook <strong>no usa</strong> la API de Gemini.</p>
 </div>
 <h2 id="conexion-con-tu-proyecto-sprint-2">🔗 Conexión con tu proyecto (Sprint 2)</h2>
-<p>El <strong>Sprint 2</strong> se entrega por <a href="../../proyecto/buzon/">buzón</a> hasta el <strong>domingo 15 de noviembre a las 23:59</strong>. Usa el notebook como punto
+<p>El <strong>Sprint 2</strong> (10 %) se entrega como notebook <code>.ipynb</code> por <a href="../../proyecto/buzon/">buzón</a> hasta el <strong>domingo 15 de
+noviembre a las 23:59</strong> (el buzón acepta hasta dos días de atraso, con −1,0 punto por día). Usa el notebook como punto
 de partida y adapta todo a <strong>tu pregunta de negocio</strong> del Sprint 1. Checklist de lo que debe incluir:</p>
 <ul class="task-list">
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Embeddings</strong> de todos los textos limpios de tu caso con <code>sentence-transformers</code> (indica el modelo y el tiempo de cálculo) y guardados con <code>np.save</code>.</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Clasificador sobre embeddings</strong> (regresión logística) comparado con tus baselines del Sprint 1 (TF-IDF + logística y MLP) en el <strong>mismo test</strong>, con F1 macro y matriz de confusión.</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Curva con pocos datos</strong>: F1 macro de embeddings vs. TF-IDF entrenando con <strong>50, 200 y 1.000</strong> ejemplos (idealmente promediando varios sorteos).</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Buscador semántico</strong> con <strong>5 consultas de negocio</strong> propias: muestra el top-5 de cada una, comenta cuántos resultados son relevantes y compara con TF-IDF en al menos una.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Curva con pocos datos</strong>: F1 macro de embeddings vs. TF-IDF entrenando con <strong>50, 200 y 1.000</strong> ejemplos (idealmente promediando varios sorteos), evaluada en tu test <strong>y</strong> en textos redactados con otras palabras (<strong>paráfrasis</strong>), con lo que eso significa para una empresa con pocas etiquetas o clientes que escriben distinto.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Buscador semántico</strong>: una función <code>buscar(consulta, k)</code> y <strong>5 consultas de negocio</strong> propias; muestra el top-5 de cada una, comenta cuántos resultados son relevantes y compara con TF-IDF en al menos una (¿encontró lo que TF-IDF no?).</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Mapa de temas</strong>: K-means sobre embeddings, justificación de k (silueta + interpretación), <strong>nombre de cada cluster</strong> con sus palabras frecuentes y 2–3 ejemplos.</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Un párrafo de <strong>conclusión de negocio</strong>: ¿cuándo recomendarías embeddings y cuándo TF-IDF para tu caso? Usa tus números.</li>
 </ul>

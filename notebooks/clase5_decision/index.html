@@ -2048,11 +2048,13 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="s2">"fintrust"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"archivo"</span><span class="p">:</span> <span class="s2">"reclamos_fintrust.csv"</span><span class="p">,</span> <span class="s2">"etiqueta"</span><span class="p">:</span> <span class="s2">"categoria"</span><span class="p">,</span>
                  <span class="s2">"clases"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Fraude"</span><span class="p">,</span> <span class="s2">"Cobro indebido"</span><span class="p">,</span> <span class="s2">"App y canales digitales"</span><span class="p">,</span> <span class="s2">"Crédito y tasas"</span><span class="p">,</span>
                             <span class="s2">"Atención al cliente"</span><span class="p">,</span> <span class="s2">"Información y trámites"</span><span class="p">],</span>
-                 <span class="s2">"unidad"</span><span class="p">:</span> <span class="s2">"reclamos"</span><span class="p">,</span> <span class="s2">"clase_critica"</span><span class="p">:</span> <span class="s2">"Fraude"</span><span class="p">},</span>
+                 <span class="s2">"unidad"</span><span class="p">:</span> <span class="s2">"reclamos"</span><span class="p">,</span> <span class="s2">"clase_critica"</span><span class="p">:</span> <span class="s2">"Fraude"</span><span class="p">,</span>
+                 <span class="s2">"acierto"</span><span class="p">:</span> <span class="s2">"se derivan sin ayuda al área correcta"</span><span class="p">},</span>
     <span class="s2">"mercasur"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"archivo"</span><span class="p">:</span> <span class="s2">"resenas_mercasur.csv"</span><span class="p">,</span> <span class="s2">"etiqueta"</span><span class="p">:</span> <span class="s2">"aspecto"</span><span class="p">,</span>
                  <span class="s2">"clases"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Despacho"</span><span class="p">,</span> <span class="s2">"Calidad del producto"</span><span class="p">,</span> <span class="s2">"Precio"</span><span class="p">,</span> <span class="s2">"Atención"</span><span class="p">,</span>
                             <span class="s2">"Devoluciones y garantía"</span><span class="p">,</span> <span class="s2">"Pago"</span><span class="p">],</span>
-                 <span class="s2">"unidad"</span><span class="p">:</span> <span class="s2">"reseñas"</span><span class="p">,</span> <span class="s2">"clase_critica"</span><span class="p">:</span> <span class="s2">"Devoluciones y garantía"</span><span class="p">},</span>
+                 <span class="s2">"unidad"</span><span class="p">:</span> <span class="s2">"reseñas"</span><span class="p">,</span> <span class="s2">"clase_critica"</span><span class="p">:</span> <span class="s2">"Devoluciones y garantía"</span><span class="p">,</span>
+                 <span class="s2">"acierto"</span><span class="p">:</span> <span class="s2">"quedan solas en el aspecto correcto"</span><span class="p">},</span>
 <span class="p">}[</span><span class="n">CASO</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Caso:"</span><span class="p">,</span> <span class="n">CASO</span><span class="p">,</span> <span class="s2">"| etiqueta:"</span><span class="p">,</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s2">"etiqueta"</span><span class="p">])</span>
 </pre></div>
@@ -2075,11 +2077,13 @@ CONFIG = {
     "fintrust": {"archivo": "reclamos_fintrust.csv", "etiqueta": "categoria",
                  "clases": ["Fraude", "Cobro indebido", "App y canales digitales", "Crédito y tasas",
                             "Atención al cliente", "Información y trámites"],
-                 "unidad": "reclamos", "clase_critica": "Fraude"},
+                 "unidad": "reclamos", "clase_critica": "Fraude",
+                 "acierto": "se derivan sin ayuda al área correcta"},
     "mercasur": {"archivo": "resenas_mercasur.csv", "etiqueta": "aspecto",
                  "clases": ["Despacho", "Calidad del producto", "Precio", "Atención",
                             "Devoluciones y garantía", "Pago"],
-                 "unidad": "reseñas", "clase_critica": "Devoluciones y garantía"},
+                 "unidad": "reseñas", "clase_critica": "Devoluciones y garantía",
+                 "acierto": "quedan solas en el aspecto correcto"},
 }[CASO]
 print("Caso:", CASO, "| etiqueta:", CONFIG["etiqueta"])</div>
 </div>
@@ -2768,8 +2772,9 @@ print(f"Guardado: roi_escenarios_{CASO}.png (descárgalo desde el panel de archi
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">critica</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s2">"clase_critica"</span><span class="p">]</span>
 <span class="n">reporte</span> <span class="o">=</span> <span class="n">classification_report</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred_B</span><span class="p">,</span> <span class="n">output_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">acc_B</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred_B</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"• De cada 10 </span><span class="si">{</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">'unidad'</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">acc_B</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s2"> se derivan sin ayuda al área correcta "</span>
-      <span class="sa">f</span><span class="s2">"(medido en </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> casos que el modelo no vio)."</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">"."</span><span class="p">))</span>
+<span class="n">n_test</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">"</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">"."</span><span class="p">)</span>   <span class="c1"># separador de miles a la chilena</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"• De cada 10 </span><span class="si">{</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">'unidad'</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">acc_B</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">'acierto'</span><span class="p">]</span><span class="si">}</span><span class="s2"> "</span>
+      <span class="sa">f</span><span class="s2">"(medido en </span><span class="si">{</span><span class="n">n_test</span><span class="si">}</span><span class="s2"> casos que el modelo no vio)."</span><span class="p">)</span>
 <span class="n">r</span><span class="p">,</span> <span class="n">p_</span> <span class="o">=</span> <span class="n">reporte</span><span class="p">[</span><span class="n">critica</span><span class="p">][</span><span class="s2">"recall"</span><span class="p">],</span> <span class="n">reporte</span><span class="p">[</span><span class="n">critica</span><span class="p">][</span><span class="s2">"precision"</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"• </span><span class="si">{</span><span class="n">critica</span><span class="si">}</span><span class="s2">: de cada 20 casos reales, </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">20</span><span class="p">)</span><span class="si">}</span><span class="s2"> se detectan; "</span>
       <span class="sa">f</span><span class="s2">"cuando el sistema dice «</span><span class="si">{</span><span class="n">critica</span><span class="si">}</span><span class="s2">», acierta </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">p_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="si">}</span><span class="s2"> de cada 10 veces."</span><span class="p">)</span>
@@ -2777,8 +2782,9 @@ print(f"Guardado: roi_escenarios_{CASO}.png (descárgalo desde el panel de archi
 <div class="clipboard-copy-txt" id="cell-11">critica = CONFIG["clase_critica"]
 reporte = classification_report(y, pred_B, output_dict=True, zero_division=0)
 acc_B = accuracy_score(y, pred_B)
-print(f"• De cada 10 {CONFIG['unidad']}, {round(acc_B * 10)} se derivan sin ayuda al área correcta "
-      f"(medido en {len(y):,} casos que el modelo no vio).".replace(",", "."))
+n_test = f"{len(y):,}".replace(",", ".")   # separador de miles a la chilena
+print(f"• De cada 10 {CONFIG['unidad']}, {round(acc_B * 10)} {CONFIG['acierto']} "
+      f"(medido en {n_test} casos que el modelo no vio).")
 r, p_ = reporte[critica]["recall"], reporte[critica]["precision"]
 print(f"• {critica}: de cada 20 casos reales, {round(r * 20)} se detectan; "
       f"cuando el sistema dice «{critica}», acierta {round(p_ * 10)} de cada 10 veces.")</div>
@@ -2880,7 +2886,8 @@ for t in pruebas:
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="62-desempeno-por-segmento-funciona-igual-para-todos">6.2 Desempeño por segmento (¿funciona igual para todos?)<a class="anchor-link" href="#62-desempeno-por-segmento-funciona-igual-para-todos">¶</a></h3><p>Un tipo de sesgo fácil de medir: ¿el modelo funciona peor para algún <strong>canal</strong> o tipo de texto? Con intervalos,
-porque los segmentos chicos engañan.</p>
+porque los segmentos chicos engañan. Si un segmento chico acierta el 100 %, su intervalo bootstrap queda en
+<code>[1, 1]</code>: con cero errores el bootstrap no puede mostrar incertidumbre, y eso no prueba que el modelo sea perfecto ahí.</p>
 </div>
 </div>
 </div>
@@ -2904,7 +2911,17 @@ porque los segmentos chicos engañan.</p>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">col_canal</span> <span class="o">=</span> <span class="s2">"canal"</span> <span class="k">if</span> <span class="n">CASO</span> <span class="o">==</span> <span class="s2">"fintrust"</span> <span class="k">else</span> <span class="s2">"canal_compra"</span>
-<span class="n">seg</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">acierto</span><span class="o">=</span><span class="p">(</span><span class="n">pred_B</span> <span class="o">==</span> <span class="n">y</span><span class="p">),</span> <span class="n">canal_n</span><span class="o">=</span><span class="n">test</span><span class="p">[</span><span class="n">col_canal</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_clave</span><span class="p">),</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">grupo_canal</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Agrupa las variantes de escritura del canal («APP», «Aplicación», «App móvil»…)."""</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">_clave</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">patron</span><span class="p">,</span> <span class="n">grupo</span> <span class="ow">in</span> <span class="p">[(</span><span class="sa">r</span><span class="s2">"app|aplicacion"</span><span class="p">,</span> <span class="s2">"App"</span><span class="p">),</span> <span class="p">(</span><span class="sa">r</span><span class="s2">"web"</span><span class="p">,</span> <span class="s2">"Web"</span><span class="p">),</span> <span class="p">(</span><span class="sa">r</span><span class="s2">"call|telefono"</span><span class="p">,</span> <span class="s2">"Teléfono"</span><span class="p">),</span>
+                          <span class="p">(</span><span class="sa">r</span><span class="s2">"sucursal"</span><span class="p">,</span> <span class="s2">"Sucursal"</span><span class="p">),</span> <span class="p">(</span><span class="sa">r</span><span class="s2">"tienda"</span><span class="p">,</span> <span class="s2">"Tienda"</span><span class="p">),</span>
+                          <span class="p">(</span><span class="sa">r</span><span class="s2">"twitter|instagram|redes"</span><span class="p">,</span> <span class="s2">"Redes sociales"</span><span class="p">)]:</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">patron</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">grupo</span>
+    <span class="k">return</span> <span class="s2">"Otro"</span>
+
+<span class="n">seg</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">acierto</span><span class="o">=</span><span class="p">(</span><span class="n">pred_B</span> <span class="o">==</span> <span class="n">y</span><span class="p">),</span> <span class="n">canal_n</span><span class="o">=</span><span class="n">test</span><span class="p">[</span><span class="n">col_canal</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">grupo_canal</span><span class="p">),</span>
                   <span class="n">escritura</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s2">"texto"</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">isupper</span><span class="p">(),</span> <span class="s2">"MAYÚSCULAS"</span><span class="p">,</span> <span class="s2">"normal"</span><span class="p">))</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">resumen</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)):</span>
@@ -2917,7 +2934,17 @@ porque los segmentos chicos engañan.</p>
            <span class="s2">"escritura"</span><span class="p">:</span> <span class="n">seg</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"escritura"</span><span class="p">)[[</span><span class="s2">"acierto"</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">resumen</span><span class="p">)})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-13">col_canal = "canal" if CASO == "fintrust" else "canal_compra"
-seg = test.assign(acierto=(pred_B == y), canal_n=test[col_canal].map(_clave),
+def grupo_canal(s):
+    """Agrupa las variantes de escritura del canal («APP», «Aplicación», «App móvil»…)."""
+    s = _clave(s)
+    for patron, grupo in [(r"app|aplicacion", "App"), (r"web", "Web"), (r"call|telefono", "Teléfono"),
+                          (r"sucursal", "Sucursal"), (r"tienda", "Tienda"),
+                          (r"twitter|instagram|redes", "Redes sociales")]:
+        if re.search(patron, s):
+            return grupo
+    return "Otro"
+
+seg = test.assign(acierto=(pred_B == y), canal_n=test[col_canal].map(grupo_canal),
                   escritura=np.where(test["texto"].str.isupper(), "MAYÚSCULAS", "normal"))
 
 def resumen(g, B=1000, rng=np.random.default_rng(0)):

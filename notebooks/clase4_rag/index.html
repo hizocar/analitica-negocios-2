@@ -2690,7 +2690,7 @@ el notebook sigue con un <strong>respaldo extractivo</strong> (sin LLM).</p>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">google</span><span class="w"> </span><span class="kn">import</span> <span class="n">genai</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">google.genai</span><span class="w"> </span><span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">google.genai</span><span class="w"> </span><span class="kn">import</span> <span class="n">errors</span><span class="p">,</span> <span class="n">types</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -2711,7 +2711,7 @@ el notebook sigue con un <strong>respaldo extractivo</strong> (sin LLM).</p>
           <span class="s2">"   ejecutar esta celda. Guía: https://hizocar.github.io/analitica-negocios-2/guias/gemini/"</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-12">from google import genai
-from google.genai import types
+from google.genai import errors, types
 from pydantic import BaseModel
 
 try:
@@ -2777,8 +2777,10 @@ else:
     <span class="n">contexto</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">doc_id</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">texto</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">top</span><span class="o">.</span><span class="n">itertuples</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">PLANTILLA</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">contexto</span><span class="o">=</span><span class="n">contexto</span><span class="p">,</span> <span class="n">pregunta</span><span class="o">=</span><span class="n">pregunta</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">llamar_gemini</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">esquema</span><span class="p">,</span> <span class="n">intentos</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-    <span class="c1"># Llama a Gemini con reintentos (la capa gratuita tiene límites por minuto). Devuelve None si falla.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">llamar_gemini</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">esquema</span><span class="p">,</span> <span class="n">intentos</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">espera</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="c1"># Llama a Gemini con reintentos solo cuando vale la pena esperar:</span>
+    <span class="c1"># 429 = superaste el límite por minuto · 503 = modelo saturado (ver la guía de Gemini).</span>
+    <span class="c1"># Ante cualquier otro error (clave inválida, modelo inexistente…) devuelve None y se usa el respaldo.</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">intentos</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -2787,10 +2789,16 @@ else:
                 <span class="n">config</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">GenerateContentConfig</span><span class="p">(</span><span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">response_mime_type</span><span class="o">=</span><span class="s2">"application/json"</span><span class="p">,</span>
                                                    <span class="n">response_schema</span><span class="o">=</span><span class="n">esquema</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+        <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">code</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">429</span><span class="p">,</span> <span class="mi">503</span><span class="p">)</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">intentos</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ⏳ Error </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2"> de la API; reintento en </span><span class="si">{</span><span class="n">espera</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> s…"</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">espera</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>   <span class="c1"># espera cada vez más</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ⚠️ Error </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2"> de la API: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">. Sigo con el respaldo extractivo."</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">espera</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ⚠️ Error de la API (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">); reintento en </span><span class="si">{</span><span class="n">espera</span><span class="si">}</span><span class="s2"> s…"</span><span class="p">)</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">espera</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ⚠️ Falló la llamada (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">). Sigo con el respaldo extractivo."</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
     <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">construir_prompt</span><span class="p">(</span><span class="n">pregunta</span><span class="p">,</span> <span class="n">recuperar</span><span class="p">(</span><span class="n">pregunta</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">METODO</span><span class="p">)))</span>
@@ -2818,8 +2826,10 @@ def construir_prompt(pregunta, top):
     contexto = "\n".join(f"[{r.doc_id}] {r.titulo}: {r.texto}" for r in top.itertuples())
     return PLANTILLA.format(contexto=contexto, pregunta=pregunta)
 
-def llamar_gemini(prompt, esquema, intentos=3):
-    # Llama a Gemini con reintentos (la capa gratuita tiene límites por minuto). Devuelve None si falla.
+def llamar_gemini(prompt, esquema, intentos=4, espera=10):
+    # Llama a Gemini con reintentos solo cuando vale la pena esperar:
+    # 429 = superaste el límite por minuto · 503 = modelo saturado (ver la guía de Gemini).
+    # Ante cualquier otro error (clave inválida, modelo inexistente…) devuelve None y se usa el respaldo.
     for i in range(intentos):
         try:
             t0 = time.time()
@@ -2828,10 +2838,16 @@ def llamar_gemini(prompt, esquema, intentos=3):
                 config=types.GenerateContentConfig(temperature=0, response_mime_type="application/json",
                                                    response_schema=esquema))
             return resp, time.time() - t0
+        except errors.APIError as e:
+            if e.code in (429, 503) and i &lt; intentos - 1:
+                print(f"   ⏳ Error {e.code} de la API; reintento en {espera * (i + 1)} s…")
+                time.sleep(espera * (i + 1))   # espera cada vez más
+            else:
+                print(f"   ⚠️ Error {e.code} de la API: {e.message}. Sigo con el respaldo extractivo.")
+                return None, None
         except Exception as e:
-            espera = 10 * (i + 1)
-            print(f"   ⚠️ Error de la API ({type(e).__name__}); reintento en {espera} s…")
-            time.sleep(espera)
+            print(f"   ⚠️ Falló la llamada ({type(e).__name__}). Sigo con el respaldo extractivo.")
+            return None, None
     return None, None
 
 print(construir_prompt(pregunta, recuperar(pregunta, K, METODO)))</div>

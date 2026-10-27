@@ -1155,6 +1155,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#12-uso-de-ia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Uso de IA
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1921,8 +1932,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <td>Nombre 1 · Nombre 2 · Nombre 3</td>
 </tr>
 <tr>
+<td><strong>Enlace de Colab</strong></td>
+<td><em>(pega el enlace compartido con permiso de lectura)</em></td>
+</tr>
+<tr>
 <td><strong>Fecha de entrega</strong></td>
-<td>Domingo 29 de noviembre de 2026, 23:59 (buzón)</td>
+<td>Domingo 29 de noviembre de 2026, 23:59 (buzón «Final · Notebook»; las láminas en PDF van al buzón «Final · Láminas»)</td>
 </tr>
 <tr>
 <td><strong>Presentación</strong></td>
@@ -1935,7 +1950,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 instrucciones (en cursiva, bórralas al final) y celdas de código mínimas. Las celdas marcadas con <code># TODO</code> las
 completas con el trabajo de tus sprints. Antes de entregar: <em>Entorno de ejecución → Reiniciar y ejecutar todo</em>,
 y verifica que <strong>corre de principio a fin sin errores</strong>. La rúbrica está en la página
-<em>Proyecto → Enunciado y rúbrica</em> del sitio del curso.</p>
+<em>Proyecto → Enunciado y rúbrica</em> del sitio del curso. Nombra el archivo <code>FINAL_FinTrust_Apellido1_Apellido2_Apellido3.ipynb</code>
+(o <code>MercaSur</code>) y recuerda que el buzón <strong>rechaza</strong> notebooks con claves de API.</p>
+<p><strong>Secciones ↔ enunciado:</strong> 1 → punto 1 (pregunta de negocio) · 2–3 → punto 2 (datos y limpieza) ·
+4–6 → punto 3 (modelos de clasificación) · 7 → punto 4 (asistente RAG) · 8 → punto 5 (comparación final) ·
+9 → punto 6 (recomendación y valor) · 10 → punto 7 (riesgos y limitaciones) · 12 → punto 8 (uso de IA).</p>
 </blockquote>
 <p><strong>Resumen ejecutivo (5 líneas máximo):</strong> <em>Escríbelo al final. Recomendación con una cifra, los tres argumentos
 (funciona · vale la pena · es seguro) y la decisión que pides.</em></p>
@@ -2319,33 +2338,39 @@ test. Comenta qué categorías se confunden y por qué.</em></p>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">resultados</span> <span class="o">=</span> <span class="p">[]</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">registrar</span><span class="p">(</span><span class="n">enfoque</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">costo_usd_1000</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">latencia_s</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">nota</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">registrar</span><span class="p">(</span><span class="n">enfoque</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">costo_usd_1000</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">latencia_s</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">datos_etiquetados</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+              <span class="n">riesgos</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">nota</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Guarda las métricas de un enfoque para la tabla comparativa final."""</span>
     <span class="n">resultados</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"enfoque"</span><span class="p">:</span> <span class="n">enfoque</span><span class="p">,</span> <span class="s2">"n_test"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">),</span>
                        <span class="s2">"accuracy"</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">),</span>
                        <span class="s2">"f1_macro"</span><span class="p">:</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">"macro"</span><span class="p">),</span>
-                       <span class="s2">"costo_usd_1000"</span><span class="p">:</span> <span class="n">costo_usd_1000</span><span class="p">,</span> <span class="s2">"latencia_s"</span><span class="p">:</span> <span class="n">latencia_s</span><span class="p">,</span> <span class="s2">"nota"</span><span class="p">:</span> <span class="n">nota</span><span class="p">})</span>
+                       <span class="s2">"costo_usd_1000"</span><span class="p">:</span> <span class="n">costo_usd_1000</span><span class="p">,</span> <span class="s2">"latencia_s"</span><span class="p">:</span> <span class="n">latencia_s</span><span class="p">,</span>
+                       <span class="s2">"datos_etiquetados"</span><span class="p">:</span> <span class="n">datos_etiquetados</span><span class="p">,</span> <span class="s2">"riesgos"</span><span class="p">:</span> <span class="n">riesgos</span><span class="p">,</span> <span class="s2">"nota"</span><span class="p">:</span> <span class="n">nota</span><span class="p">})</span>
 
 <span class="c1"># TODO: TF-IDF + logística</span>
 <span class="c1"># from sklearn.feature_extraction.text import TfidfVectorizer</span>
 <span class="c1"># from sklearn.linear_model import LogisticRegression</span>
 <span class="c1"># ...</span>
-<span class="c1"># registrar("TF-IDF + logística", test["etiqueta"], pred_tfidf, latencia_s=...)</span>
+<span class="c1"># registrar("TF-IDF + logística", test["etiqueta"], pred_tfidf, latencia_s=...,</span>
+<span class="c1">#           datos_etiquetados="miles", riesgos="no entiende sinónimos; datos quedan en casa")</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-7">resultados = []
 
-def registrar(enfoque, y_true, y_pred, costo_usd_1000=0.0, latencia_s=np.nan, nota=""):
+def registrar(enfoque, y_true, y_pred, costo_usd_1000=0.0, latencia_s=np.nan, datos_etiquetados="",
+              riesgos="", nota=""):
     """Guarda las métricas de un enfoque para la tabla comparativa final."""
     resultados.append({"enfoque": enfoque, "n_test": len(y_true),
                        "accuracy": accuracy_score(y_true, y_pred),
                        "f1_macro": f1_score(y_true, y_pred, average="macro"),
-                       "costo_usd_1000": costo_usd_1000, "latencia_s": latencia_s, "nota": nota})
+                       "costo_usd_1000": costo_usd_1000, "latencia_s": latencia_s,
+                       "datos_etiquetados": datos_etiquetados, "riesgos": riesgos, "nota": nota})
 
 # TODO: TF-IDF + logística
 # from sklearn.feature_extraction.text import TfidfVectorizer
 # from sklearn.linear_model import LogisticRegression
 # ...
-# registrar("TF-IDF + logística", test["etiqueta"], pred_tfidf, latencia_s=...)</div>
+# registrar("TF-IDF + logística", test["etiqueta"], pred_tfidf, latencia_s=...,
+#           datos_etiquetados="miles", riesgos="no entiende sinónimos; datos quedan en casa")</div>
 </div>
 </div>
 </div>
@@ -2579,10 +2604,14 @@ else:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="7-asistente-rag">7. Asistente RAG<a class="anchor-link" href="#7-asistente-rag">¶</a></h2><p><em>Asistente que responde preguntas sobre las políticas del caso: fragmentación, embeddings, recuperación de los
-k fragmentos más parecidos y generación con el LLM <strong>citando la fuente</strong>. Evalúalo con las preguntas de evaluación
-(incluida la pregunta trampa con <code>doc_id = NINGUNO</code>, donde debe decir que no sabe). Reporta % de respuestas correctas
-y % de recuperación correcta del documento.</em></p>
+<h2 id="7-asistente-rag">7. Asistente RAG<a class="anchor-link" href="#7-asistente-rag">¶</a></h2><p><em>Asistente que responde preguntas sobre las políticas del caso: fragmentación (<strong>justifica</strong> el tamaño de los
+fragmentos), embeddings (o TF-IDF), recuperación de los k fragmentos más parecidos y generación con el LLM <strong>citando
+el documento</strong>. Evalúalo con las preguntas de evaluación:</em></p>
+<ul>
+<li><em>recuperación: <strong>hit@k</strong> (% de preguntas en que el <code>doc_id</code> esperado aparece entre los k fragmentos recuperados);</em></li>
+<li><em>respuestas: % correctas, evaluadas a mano o con un LLM como juez, <strong>explicando el criterio</strong>;</em></li>
+<li><em>la <strong>pregunta trampa</strong> (<code>doc_id = NINGUNO</code>): debe decir que no sabe. Reporta qué respondió.</em></li>
+</ul>
 </div>
 </div>
 </div>
@@ -2641,10 +2670,14 @@ preguntas.head(3)</div>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># TODO: fragmentar políticas, indexar con embeddings, recuperar top-k y generar con el LLM</span>
-<span class="c1"># TODO: evaluar sobre `preguntas` y guardar una tabla con pregunta, respuesta, doc recuperado y si es correcta</span>
+<span class="c1"># TODO: evaluar sobre `preguntas` y guardar una tabla con pregunta, respuesta, docs recuperados y si es correcta</span>
+<span class="c1"># hit@k: (tabla_rag["doc_id"] != "NINGUNO") → ¿el doc_id esperado está entre los k recuperados?</span>
+<span class="c1"># Guarda las respuestas del LLM en un CSV (como en la sección 6) para que el notebook corra sin cuota.</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-13"># TODO: fragmentar políticas, indexar con embeddings, recuperar top-k y generar con el LLM
-# TODO: evaluar sobre `preguntas` y guardar una tabla con pregunta, respuesta, doc recuperado y si es correcta</div>
+# TODO: evaluar sobre `preguntas` y guardar una tabla con pregunta, respuesta, docs recuperados y si es correcta
+# hit@k: (tabla_rag["doc_id"] != "NINGUNO") → ¿el doc_id esperado está entre los k recuperados?
+# Guarda las respuestas del LLM en un CSV (como en la sección 6) para que el notebook corra sin cuota.</div>
 </div>
 </div>
 </div>
@@ -2657,9 +2690,10 @@ preguntas.head(3)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="8-comparacion-final">8. Comparación final<a class="anchor-link" href="#8-comparacion-final">¶</a></h2><p><em>Tabla con todos los enfoques evaluados <strong>sobre el mismo test</strong> (o el mismo <code>test_100</code>). Agrega intervalos bootstrap
-o McNemar para las diferencias que uses para decidir (ver el notebook de la Clase 5) y una matriz de decisión con
-pesos explícitos.</em></p>
+<h2 id="8-comparacion-final">8. Comparación final<a class="anchor-link" href="#8-comparacion-final">¶</a></h2><p><em>Tabla con todos los enfoques evaluados <strong>sobre el mismo test</strong> (o el mismo <code>test_100</code>) con las columnas que pide el
+enunciado: <strong>calidad (F1 macro), costo por 1.000 casos, latencia, datos etiquetados necesarios y riesgos</strong>.
+Recomendado: intervalos bootstrap o McNemar para las diferencias que uses para decidir (ver el notebook de la Clase 5)
+y una matriz de decisión con pesos explícitos.</em></p>
 </div>
 </div>
 </div>
@@ -2734,8 +2768,9 @@ else:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="9-recomendacion-y-valor-de-negocio">9. Recomendación y valor de negocio<a class="anchor-link" href="#9-recomendacion-y-valor-de-negocio">¶</a></h2><p><em>Tu recomendación en una frase con una cifra. Luego el ROI en tres escenarios (pesimista, base, optimista) con
-supuestos visibles y justificados, payback y error máximo tolerable. Incluye el gráfico que irá en tu lámina.</em></p>
+<h2 id="9-recomendacion-y-valor-de-negocio">9. Recomendación y valor de negocio<a class="anchor-link" href="#9-recomendacion-y-valor-de-negocio">¶</a></h2><p><em>Tu recomendación en una frase con una cifra: qué enfoque usarían en producción y por qué. Luego la estimación de
+valor (ROI o ahorro) con supuestos visibles y justificados; recomendado: tres escenarios (pesimista, base, optimista),
+payback y error máximo tolerable. Incluye el gráfico que irá en tu lámina.</em></p>
 </div>
 </div>
 </div>
@@ -2775,9 +2810,13 @@ supuestos visibles y justificados, payback y error máximo tolerable. Incluye el
 <span class="n">e</span><span class="p">[</span><span class="s2">"casos_auto"</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">volumen_mes</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">pct_automatizable</span>
 <span class="n">e</span><span class="p">[</span><span class="s2">"ahorro"</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">casos_auto</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">min_por_caso</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">costo_hora</span>
 <span class="n">e</span><span class="p">[</span><span class="s2">"costo_errores"</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">casos_auto</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">tasa_error</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">costo_error</span>
-<span class="n">e</span><span class="p">[</span><span class="s2">"neto_mes"</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">ahorro</span> <span class="o">-</span> <span class="n">e</span><span class="o">.</span><span class="n">costo_errores</span> <span class="o">-</span> <span class="n">e</span><span class="o">.</span><span class="n">volumen_mes</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">api_por_1000</span> <span class="o">-</span> <span class="n">e</span><span class="o">.</span><span class="n">mantencion_mes</span>
+<span class="n">e</span><span class="p">[</span><span class="s2">"costo_api"</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">volumen_mes</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">api_por_1000</span>
+<span class="n">e</span><span class="p">[</span><span class="s2">"neto_mes"</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">ahorro</span> <span class="o">-</span> <span class="n">e</span><span class="o">.</span><span class="n">costo_errores</span> <span class="o">-</span> <span class="n">e</span><span class="o">.</span><span class="n">costo_api</span> <span class="o">-</span> <span class="n">e</span><span class="o">.</span><span class="n">mantencion_mes</span>
 <span class="n">e</span><span class="p">[</span><span class="s2">"payback_meses"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">neto_mes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">INVERSION</span> <span class="o">/</span> <span class="n">e</span><span class="o">.</span><span class="n">neto_mes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-<span class="n">e</span><span class="p">[[</span><span class="s2">"ahorro"</span><span class="p">,</span> <span class="s2">"costo_errores"</span><span class="p">,</span> <span class="s2">"neto_mes"</span><span class="p">,</span> <span class="s2">"payback_meses"</span><span class="p">]]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">e</span><span class="p">[</span><span class="s2">"roi_12m_%"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">neto_mes</span> <span class="o">-</span> <span class="n">INVERSION</span><span class="p">)</span> <span class="o">/</span> <span class="n">INVERSION</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="c1"># punto de equilibrio: tasa de error que deja el beneficio neto en cero</span>
+<span class="n">e</span><span class="p">[</span><span class="s2">"error_max_tolerable"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">ahorro</span> <span class="o">-</span> <span class="n">e</span><span class="o">.</span><span class="n">costo_api</span> <span class="o">-</span> <span class="n">e</span><span class="o">.</span><span class="n">mantencion_mes</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">casos_auto</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">costo_error</span><span class="p">)</span>
+<span class="n">e</span><span class="p">[[</span><span class="s2">"ahorro"</span><span class="p">,</span> <span class="s2">"costo_errores"</span><span class="p">,</span> <span class="s2">"costo_api"</span><span class="p">,</span> <span class="s2">"neto_mes"</span><span class="p">,</span> <span class="s2">"payback_meses"</span><span class="p">,</span> <span class="s2">"roi_12m_%"</span><span class="p">,</span> <span class="s2">"error_max_tolerable"</span><span class="p">]]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-16"># Supuestos (TODO: ajústalos a tu caso y justifica cada uno en el texto)
 esc = pd.DataFrame({
@@ -2796,9 +2835,13 @@ e = esc.copy()
 e["casos_auto"] = e.volumen_mes * e.pct_automatizable
 e["ahorro"] = e.casos_auto * e.min_por_caso / 60 * e.costo_hora
 e["costo_errores"] = e.casos_auto * e.tasa_error * e.costo_error
-e["neto_mes"] = e.ahorro - e.costo_errores - e.volumen_mes / 1000 * e.api_por_1000 - e.mantencion_mes
+e["costo_api"] = e.volumen_mes / 1000 * e.api_por_1000
+e["neto_mes"] = e.ahorro - e.costo_errores - e.costo_api - e.mantencion_mes
 e["payback_meses"] = np.where(e.neto_mes &gt; 0, INVERSION / e.neto_mes, np.inf)
-e[["ahorro", "costo_errores", "neto_mes", "payback_meses"]].round(1)</div>
+e["roi_12m_%"] = (12 * e.neto_mes - INVERSION) / INVERSION * 100
+# punto de equilibrio: tasa de error que deja el beneficio neto en cero
+e["error_max_tolerable"] = (e.ahorro - e.costo_api - e.mantencion_mes) / (e.casos_auto * e.costo_error)
+e[["ahorro", "costo_errores", "costo_api", "neto_mes", "payback_meses", "roi_12m_%", "error_max_tolerable"]].round(2)</div>
 </div>
 </div>
 </div>
@@ -2812,7 +2855,7 @@ e[["ahorro", "costo_errores", "neto_mes", "payback_meses"]].round(1)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="10-riesgos-y-limitaciones">10. Riesgos y limitaciones<a class="anchor-link" href="#10-riesgos-y-limitaciones">¶</a></h2><p><em>Para cada riesgo: cómo se ve en tu caso, qué hiciste o qué propones. Considera: datos personales y anonimización
-(Ley 21.719, vigente desde el 1 de diciembre de 2026), prompt injection, alucinaciones del RAG, desempeño por
+(Ley 21.719, que entra en vigencia el 1 de diciembre de 2026), prompt injection, alucinaciones del RAG, desempeño por
 segmento, humano en el ciclo, monitoreo y deriva. Incluye también las <strong>limitaciones</strong> de tu análisis (datos
 sintéticos, tamaño del test del LLM, ruido de etiquetas…).</em></p>
 </div>
@@ -2838,7 +2881,7 @@ sintéticos, tamaño del test del LLM, ruido de etiquetas…).</em></p>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">checklist</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
-    <span class="p">[</span><span class="s2">"Datos personales"</span><span class="p">,</span> <span class="s2">"TODO"</span><span class="p">,</span> <span class="s2">"❌"</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">"Datos personales y Ley 21.719"</span><span class="p">,</span> <span class="s2">"TODO"</span><span class="p">,</span> <span class="s2">"❌"</span><span class="p">],</span>
     <span class="p">[</span><span class="s2">"Prompt injection"</span><span class="p">,</span> <span class="s2">"TODO"</span><span class="p">,</span> <span class="s2">"❌"</span><span class="p">],</span>
     <span class="p">[</span><span class="s2">"Alucinaciones (RAG)"</span><span class="p">,</span> <span class="s2">"TODO"</span><span class="p">,</span> <span class="s2">"❌"</span><span class="p">],</span>
     <span class="p">[</span><span class="s2">"Desempeño por segmento"</span><span class="p">,</span> <span class="s2">"TODO"</span><span class="p">,</span> <span class="s2">"❌"</span><span class="p">],</span>
@@ -2848,7 +2891,7 @@ sintéticos, tamaño del test del LLM, ruido de etiquetas…).</em></p>
 <span class="n">checklist</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-17">checklist = pd.DataFrame([
-    ["Datos personales", "TODO", "❌"],
+    ["Datos personales y Ley 21.719", "TODO", "❌"],
     ["Prompt injection", "TODO", "❌"],
     ["Alucinaciones (RAG)", "TODO", "❌"],
     ["Desempeño por segmento", "TODO", "❌"],
@@ -2875,9 +2918,40 @@ checklist</div>
 <li><em>Próximos pasos: qué medirías o mejorarías con más tiempo o datos.</em></li>
 </ul>
 <hr/>
-<p><strong>Checklist antes de subir al buzón:</strong> ☐ corre de principio a fin · ☐ sin claves en el código · ☐ todas las secciones
-con texto · ☐ tabla comparativa sobre el mismo test · ☐ RAG evaluado con la pregunta trampa · ☐ ROI con escenarios ·
-☐ riesgos con mitigación · ☐ láminas en PDF adjuntas.</p>
+<p><strong>Checklist antes de subir al buzón:</strong> ☐ corre de principio a fin (<em>Reiniciar y ejecutar todo</em>) · ☐ lee los datos
+desde una URL · ☐ sin claves en el código ni en las salidas · ☐ todas las secciones con texto que explica y concluye ·
+☐ los tres enfoques sobre el mismo test · ☐ RAG con hit@k, citas y pregunta trampa · ☐ tabla comparativa completa ·
+☐ valor con supuestos · ☐ riesgos con mitigación · ☐ celda «Uso de IA» · ☐ láminas en PDF subidas a <strong>su propio
+buzón</strong> («Final · Láminas»).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=211999a4">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="12-uso-de-ia">12. Uso de IA<a class="anchor-link" href="#12-uso-de-ia">¶</a></h2><p><em>Declara qué herramientas de IA generativa usaron (ChatGPT, Gemini, Claude, Copilot…) y <strong>para qué</strong> (por ejemplo,
+«depurar el código del RAG», «redactar el resumen ejecutivo»). Si no usaron ninguna, escríbelo. Recuerda que cada
+integrante debe poder explicar cualquier parte del código.</em></p>
+<table>
+<thead>
+<tr>
+<th>Herramienta</th>
+<th>Para qué la usamos</th>
+<th>Sección</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>…</em></td>
+<td><em>…</em></td>
+<td><em>…</em></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>

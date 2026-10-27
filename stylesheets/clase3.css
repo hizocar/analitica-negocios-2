@@ -43,9 +43,9 @@
 .c3-hist { min-height: 1.6rem; }
 
 /* ---------- c3-atencion ---------- */
-/* En celular el diagrama mantiene un ancho mínimo legible y se desplaza horizontalmente */
-.c3-att-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.c3-att-wrap .c3-att { min-width: 520px; }
+/* El SVG escala al ancho disponible; en celular (≤ 600 px) el JS cambia a una disposición vertical
+   (palabras en columna, arcos a la derecha) para que el texto siga legible sin desplazarse. */
+.c3-att.is-vertical { max-width: 420px; margin-left: auto; margin-right: auto; }
 .c3-att .c3-att-word { cursor: pointer; outline: none; }
 .c3-att .c3-att-word rect {
   fill: var(--md-default-bg-color);
@@ -53,7 +53,7 @@
   stroke-width: 1.2;
   transition: fill 0.16s ease-out, stroke 0.16s ease-out;
 }
-.c3-att .c3-att-word text { font-size: 13px; font-weight: 600; pointer-events: none; }
+.c3-att .c3-att-word text { font-size: 13px; font-weight: 600; pointer-events: none; fill: var(--md-default-fg-color); }
 .c3-att .c3-att-word:hover rect,
 .c3-att .c3-att-word:focus-visible rect { stroke: var(--usm-blue); stroke-width: 2; }
 .c3-att .c3-att-word.is-on rect {
@@ -64,6 +64,7 @@
 .c3-att .c3-arc { fill: none; stroke: var(--usm-blue); stroke-linecap: round; }
 .c3-att .c3-arc.is-max { stroke: var(--usm-gold); }
 .c3-att text.c3-arc-lbl { font-size: 10.5px; font-weight: 700; fill: var(--md-default-fg-color--light); }
+.c3-att.is-vertical text.c3-arc-lbl { font-size: 12px; }
 .md-typeset .c3-heat-t { font-size: 0.72rem; margin: 0.8rem 0 0; opacity: 0.8; }
 .c3-heat .c3-col { text-align: center; font-weight: 600; font-size: 0.64rem; }
 .c3-heat .c3-rowbtn {
@@ -78,8 +79,20 @@
 }
 .c3-heat .c3-rowbtn:hover { color: var(--usm-blue); }
 .c3-heat .ia-heat-cell.is-strong { color: #fff; font-weight: 700; }
+/* Celular: columnas angostas y encabezados de columna en vertical para que la matriz quepa sin desplazarse */
+@media (max-width: 600px) {
+  .c3-heat .ia-heat-cell { min-width: 0; padding: 0.3rem 0.05rem; }
+  .c3-heat .c3-col {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-align: left;
+    justify-self: center;
+    padding: 0.3rem 0 0.2rem;
+  }
+  .c3-heat .c3-rowbtn { padding: 0.3rem 0.25rem; }
+}
 .c3-heat .c3-row-on { box-shadow: inset 0 0 0 2px var(--usm-gold); }
-.c3-heat .c3-rowbtn.c3-row-on { box-shadow: none; color: var(--usm-gold); }
+.c3-heat .c3-rowbtn.c3-row-on { box-shadow: none; color: var(--usm-gold-text); }
 
 /* ---------- c3-prompt ---------- */
 .md-typeset .c3-lbl { font-size: 0.74rem; font-weight: 700; margin: 0.7rem 0 0.2rem; }
@@ -103,8 +116,10 @@
 .c3-pp-ej { background: color-mix(in srgb, var(--usm-blue) 14%, transparent); }
 .c3-pp-reclamo { font-weight: 700; }
 .md-typeset .c3-verdict { font-size: 0.78rem; margin: 0.4rem 0 0; font-weight: 600; }
-.c3-verdict.is-ok { color: #2e8b57; }
-.c3-verdict.is-warn { color: color-mix(in srgb, var(--usm-gold) 70%, var(--md-default-fg-color)); }
+/* Texto: colores con contraste ≥ 4,5:1 en claro y en oscuro (dorado de texto = --usm-gold-text) */
+.c3-verdict.is-ok { color: #1f7047; }
+[data-md-color-scheme="slate"] .c3-verdict.is-ok { color: #5cc98c; }
+.c3-verdict.is-warn { color: var(--usm-gold-text); }
 .c3-verdict.is-bad { color: var(--usm-red); }
 
 /* ---------- Tabla comparativa encoder / decoder y otras ---------- */
