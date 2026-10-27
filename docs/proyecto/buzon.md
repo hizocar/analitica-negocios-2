@@ -40,7 +40,7 @@ uno corto y fácil de reconocer. Antes de subir un sprint, revisen la lista de c
 *2 o 3 integrantes y el caso (FinTrust, MercaSur o propio). Si el caso es propio, adjunten la propuesta
 de una página en PDF.*
 
-[📬 Abrir buzón](BUZON_URL?a=inscripcion){.usm-btn target="_blank" rel="noopener"}
+[📬 Abrir buzón](https://script.google.com/macros/s/AKfycbzydLhqK1Q_0dCt2zzBEi9ZBhZ8xRRzYfKxMZrt-D_McNnTnwq26dLOkPVIoVl4AqPS/exec?a=inscripcion){.usm-btn target="_blank" rel="noopener"}
 </div>
 
 <div class="usm-card" markdown>
@@ -49,7 +49,7 @@ de una página en PDF.*
 
 *Notebook `.ipynb` con auditoría de datos, baseline TF-IDF y red neuronal (MLP) en Keras.*
 
-[📬 Abrir buzón](BUZON_URL?a=sprint1){.usm-btn target="_blank" rel="noopener"}
+[📬 Abrir buzón](https://script.google.com/macros/s/AKfycbzydLhqK1Q_0dCt2zzBEi9ZBhZ8xRRzYfKxMZrt-D_McNnTnwq26dLOkPVIoVl4AqPS/exec?a=sprint1){.usm-btn target="_blank" rel="noopener"}
 </div>
 
 <div class="usm-card" markdown>
@@ -58,7 +58,7 @@ de una página en PDF.*
 
 *Notebook `.ipynb` con clasificador sobre embeddings, curva con pocos datos, buscador semántico y mapa de temas.*
 
-[📬 Abrir buzón](BUZON_URL?a=sprint2){.usm-btn target="_blank" rel="noopener"}
+[📬 Abrir buzón](https://script.google.com/macros/s/AKfycbzydLhqK1Q_0dCt2zzBEi9ZBhZ8xRRzYfKxMZrt-D_McNnTnwq26dLOkPVIoVl4AqPS/exec?a=sprint2){.usm-btn target="_blank" rel="noopener"}
 </div>
 
 <div class="usm-card" markdown>
@@ -67,7 +67,7 @@ de una página en PDF.*
 
 *Notebook `.ipynb` con anonimización, clasificación zero-shot y few-shot, extracción estructurada y costos.*
 
-[📬 Abrir buzón](BUZON_URL?a=sprint3){.usm-btn target="_blank" rel="noopener"}
+[📬 Abrir buzón](https://script.google.com/macros/s/AKfycbzydLhqK1Q_0dCt2zzBEi9ZBhZ8xRRzYfKxMZrt-D_McNnTnwq26dLOkPVIoVl4AqPS/exec?a=sprint3){.usm-btn target="_blank" rel="noopener"}
 </div>
 
 <div class="usm-card" markdown>
@@ -76,7 +76,7 @@ de una página en PDF.*
 
 *El notebook integrado, partiendo de la plantilla del proyecto. Máximo 25 MB.*
 
-[📬 Abrir buzón](BUZON_URL?a=final-notebook){.usm-btn target="_blank" rel="noopener"}
+[📬 Abrir buzón](https://script.google.com/macros/s/AKfycbzydLhqK1Q_0dCt2zzBEi9ZBhZ8xRRzYfKxMZrt-D_McNnTnwq26dLOkPVIoVl4AqPS/exec?a=final-notebook){.usm-btn target="_blank" rel="noopener"}
 </div>
 
 <div class="usm-card" markdown>
@@ -85,7 +85,7 @@ de una página en PDF.*
 
 *Las láminas con las que presentan el jueves 3 de diciembre. Máximo 25 MB.*
 
-[📬 Abrir buzón](BUZON_URL?a=final-slides){.usm-btn target="_blank" rel="noopener"}
+[📬 Abrir buzón](https://script.google.com/macros/s/AKfycbzydLhqK1Q_0dCt2zzBEi9ZBhZ8xRRzYfKxMZrt-D_McNnTnwq26dLOkPVIoVl4AqPS/exec?a=final-slides){.usm-btn target="_blank" rel="noopener"}
 </div>
 
 </div>
