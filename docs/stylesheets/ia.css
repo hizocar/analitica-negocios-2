@@ -185,3 +185,6 @@
   .md-typeset .ia-colab a.ia-colab-btn { transition: none; }
   .ia-flow-step { transition: none; }
 }
+
+/* ---------- Nota de cada equipo (página de notas) ---------- */
+.md-typeset .usm-nota { font-size: 1.15rem; margin: 0.4rem 0 0.8rem; }

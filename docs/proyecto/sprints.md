@@ -2,7 +2,8 @@
 
 El proyecto avanza en **tres sprints evaluados** (10 % cada uno) y una **entrega final** (40 %). Cada
 sprint aplica la cápsula de la semana a tu caso y se entrega **por buzón hasta el domingo a las 23:59**.
-En la tutoría del jueves siguiente recibes la nota, un semáforo y los comentarios.
+En la tutoría del jueves siguiente recibes la nota, un semáforo y los comentarios, que quedan publicados en
+[Notas y retroalimentación](notas.md).
 
 | Entrega | Cápsula | Plazo (buzón) | Peso | Devolución |
 |---|---|---|:-:|---|
