@@ -942,7 +942,7 @@ notebook debe incluir:
 **Cómo se entrega:** descarga el notebook (*Archivo → Descargar → Descargar .ipynb*), nómbralo
 `S1_FinTrust_Apellido1_Apellido2_Apellido3.ipynb` (o `S1_MercaSur_…`) y súbelo al
 [buzón del Sprint 1](../proyecto/buzon.md). Basta con que un integrante lo entregue. El buzón acepta dos días más
-con −1,0 punto por día de atraso. Detalles y rúbrica en [Sprints y buzón](../proyecto/sprints.md).
+con −15 puntos por día de atraso. Detalles y rúbrica en [Sprints y buzón](../proyecto/sprints.md).
 
 </div>
 

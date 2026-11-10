@@ -15,7 +15,7 @@ haz clic para ver tu nota, el detalle por criterio de la rúbrica y los comentar
 !!! info "Sobre esta revisión"
     Cada entrega se corrigió contra la rúbrica publicada en [Sprints y buzón](sprints.md), leyendo el
     notebook completo con sus resultados. Se evalúa lo que el notebook **muestra**: una celda que define
-    algo pero no se ejecuta no tiene resultado que evaluar. Escala de 1,0 a 7,0.
+    algo pero no se ejecuta no tiene resultado que evaluar. Escala de 1 a 100.
 
     Si crees que tu nota no refleja tu entrega, escribe a **sebastian.azocarm@usm.cl** o plantéalo en la
     tutoría del jueves. Recuerda que los sprints se pueden **corregir para la entrega final**: la nota del
@@ -25,7 +25,7 @@ haz clic para ver tu nota, el detalle por criterio de la rúbrica y los comentar
 
 Entregas recibidas: **2 de 2 equipos inscritos**, ambas dentro del plazo (domingo 8 de noviembre, 23:59).
 
-| Criterio | Peso | Nivel 7,0 |
+| Criterio | Peso | Nivel 100 |
 |---|:-:|---|
 | Pregunta de negocio y auditoría de datos | 30 % | Pregunta concreta; todos los problemas de calidad detectados y resueltos con decisiones justificadas. |
 | EDA de texto | 20 % | Gráficos pertinentes, cada uno con su conclusión. |
@@ -34,17 +34,17 @@ Entregas recibidas: **2 de 2 equipos inscritos**, ambas dentro del plazo (doming
 
 ??? note "🔒 Alvami · FinTrust — ver nota y retroalimentación"
 
-    <p class="usm-nota"><strong>Nota Sprint 1: 4,7</strong> · 🟡 Amarillo</p>
+    <p class="usm-nota"><strong>Nota Sprint 1: 63</strong> · 🟡 Amarillo</p>
 
     Entregado el domingo 8 de noviembre a las 22:13 (a tiempo).
 
     | Criterio | Peso | Nota |
     |---|:-:|:-:|
-    | **Pregunta de negocio y auditoría**<br><small>Pregunta muy bien planteada. La auditoría que se ve es la de la plantilla y falta la tabla de decisiones.</small> | 30 % | 4,5 |
-    | **EDA de texto**<br><small>Tres gráficos claros y con conclusión; dos conclusiones no calzan del todo con los datos.</small> | 20 % | 5,8 |
-    | **Modelos y evaluación**<br><small>Correctos y sin fuga, pero faltan las variantes de la red y la lectura de las curvas.</small> | 35 % | 5,0 |
-    | **Interpretación para el negocio**<br><small>No hay lectura de los errores en términos de costos.</small> | 15 % | 3,0 |
-    | **Nota final**<br><small>0,30 × 4,5 + 0,20 × 5,8 + 0,35 × 5,0 + 0,15 × 3,0 = 4,71</small> | | **4,7** |
+    | **Pregunta de negocio y auditoría**<br><small>Pregunta muy bien planteada. La auditoría que se ve es la de la plantilla y falta la tabla de decisiones.</small> | 30 % | 60 |
+    | **EDA de texto**<br><small>Tres gráficos claros y con conclusión; dos conclusiones no calzan del todo con los datos.</small> | 20 % | 78 |
+    | **Modelos y evaluación**<br><small>Correctos y sin fuga, pero faltan las variantes de la red y la lectura de las curvas.</small> | 35 % | 68 |
+    | **Interpretación para el negocio**<br><small>No hay lectura de los errores en términos de costos.</small> | 15 % | 35 |
+    | **Nota final**<br><small>0,30 × 60 + 0,20 × 78 + 0,35 × 68 + 0,15 × 35 = 62,65</small> | | **63** |
 
     **✅ Lo que está bien**
 
@@ -96,17 +96,17 @@ Entregas recibidas: **2 de 2 equipos inscritos**, ambas dentro del plazo (doming
 
 ??? note "🔒 Emanix · MercaSur — ver nota y retroalimentación"
 
-    <p class="usm-nota"><strong>Nota Sprint 1: 6,8</strong> · 🟢 Verde</p>
+    <p class="usm-nota"><strong>Nota Sprint 1: 96</strong> · 🟢 Verde</p>
 
     Entregado el domingo 8 de noviembre a las 21:09 (a tiempo).
 
     | Criterio | Peso | Nota |
     |---|:-:|:-:|
-    | **Pregunta de negocio y auditoría**<br><small>Auditoría excelente y con tabla de decisiones; a la pregunta le falta decir a quién beneficia.</small> | 30 % | 6,7 |
-    | **EDA de texto**<br><small>Completo, con conclusiones precisas en cada gráfico.</small> | 20 % | 6,8 |
-    | **Modelos y evaluación**<br><small>Metodología impecable: validación, control de fuga, dos redes, curvas interpretadas.</small> | 35 % | 7,0 |
-    | **Interpretación para el negocio**<br><small>Identifican el error más costoso; falta cuantificarlo.</small> | 15 % | 6,3 |
-    | **Nota final**<br><small>0,30 × 6,7 + 0,20 × 6,8 + 0,35 × 7,0 + 0,15 × 6,3 = 6,77</small> | | **6,8** |
+    | **Pregunta de negocio y auditoría**<br><small>Auditoría excelente y con tabla de decisiones; a la pregunta le falta decir a quién beneficia.</small> | 30 % | 95 |
+    | **EDA de texto**<br><small>Completo, con conclusiones precisas en cada gráfico.</small> | 20 % | 97 |
+    | **Modelos y evaluación**<br><small>Metodología impecable: validación, control de fuga, dos redes, curvas interpretadas.</small> | 35 % | 100 |
+    | **Interpretación para el negocio**<br><small>Identifican el error más costoso; falta cuantificarlo.</small> | 15 % | 88 |
+    | **Nota final**<br><small>0,30 × 95 + 0,20 × 97 + 0,35 × 100 + 0,15 × 88 = 96,1</small> | | **96** |
 
     **✅ Lo que está bien**
 
@@ -137,7 +137,7 @@ Entregas recibidas: **2 de 2 equipos inscritos**, ambas dentro del plazo (doming
     1. **Pregunta de negocio:** sumen en 1–2 líneas **a quién beneficia** y qué se gana. Por ejemplo, el
        equipo de pagos recibe antes los cobros duplicados y baja el tiempo de devolución.
     2. **Lectura en costos:** ya identificaron el error más caro (un cobro doble que no llega a Pagos).
-       Para el 7,0, tradúzcanlo a números aunque sea con supuestos. Por ejemplo: de 86 reseñas de Pago,
+       Para llegar a 100, tradúzcanlo a números aunque sea con supuestos. Por ejemplo: de 86 reseñas de Pago,
        15 se van a otro equipo (7 a Despacho); si cada una demora X días más y cuesta Y en atención o
        en devoluciones, ¿cuánto cuesta al mes?
     3. **Una decisión para discutir:** eliminar los **397 textos repetidos con etiqueta consistente** evita

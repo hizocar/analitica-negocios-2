@@ -951,7 +951,7 @@ Drive (<em>Archivo → Guardar una copia en Drive</em>) y complétala con tu equ
 - [ ] Borrador de 8–10 láminas con títulos de acción y la lámina de conclusión lista para ensayarla en 1 minuto.
 
 **Para los [buzones](../proyecto/buzon.md) del domingo 29 de noviembre, 23:59** (son **dos**: «Final · Notebook» para el
-`.ipynb` y «Final · Láminas» para el PDF; aceptan hasta dos días más con −1,0 punto por día):
+`.ipynb` y «Final · Láminas» para el PDF; aceptan hasta dos días más con −15 puntos por día):
 
 - [ ] Notebook basado en la plantilla, que corre de principio a fin, lee los datos desde una URL y **no tiene claves de API** (el buzón lo rechaza si encuentra una).
 - [ ] Pregunta de negocio, datos y limpieza, y los tres enfoques de clasificación evaluados **sobre el mismo test**.

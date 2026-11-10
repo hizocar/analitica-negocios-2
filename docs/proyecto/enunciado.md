@@ -105,7 +105,7 @@ qué se hace y qué se concluye.
 
 ## 📐 Rúbrica de la entrega final (40 %)
 
-| Criterio | Peso | Nivel 7,0 |
+| Criterio | Peso | Nivel 100 |
 |---|:-:|---|
 | Reproducibilidad y orden | 10 % | Corre completo tras reiniciar; lee desde URL; secciones con texto que explica y concluye; sin claves expuestas. |
 | Datos y modelos de clasificación | 25 % | Limpieza justificada; los tres enfoques evaluados sobre el mismo test, sin fuga de datos; métricas adecuadas; análisis de errores. |
@@ -115,7 +115,7 @@ qué se hace y qué se concluye.
 
 ## 📐 Rúbrica de la presentación (30 %)
 
-| Criterio | Peso | Nivel 7,0 |
+| Criterio | Peso | Nivel 100 |
 |---|:-:|---|
 | Estructura piramidal | 30 % | La recomendación aparece en el primer minuto; tres argumentos claros; cada lámina tiene un título que es una conclusión. |
 | Evidencia y visualización | 25 % | Gráficos limpios y legibles; métricas traducidas a lenguaje de negocio; comparación honesta entre enfoques. |
@@ -123,5 +123,5 @@ qué se hace y qué se concluye.
 | Manejo del tiempo y equipo | 10 % | Respeta los 10 minutos; todos los integrantes participan con transiciones fluidas. |
 | Respuesta a preguntas | 15 % | Responde con precisión, reconoce las limitaciones y cualquier integrante puede explicar cualquier parte. |
 
-Escala de **1,0 a 7,0**; nota de aprobación **4,0**. Política de atrasos, uso de IA y claves de API en el
+Escala de **1 a 100**; nota de aprobación **55**. Política de atrasos, uso de IA y claves de API en el
 [Programa](../programa.md#7-politicas).

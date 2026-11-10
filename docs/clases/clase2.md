@@ -803,7 +803,7 @@ recalcularlos en el Sprint 3 y la entrega final. Tiempo total: ~45 min.</p>
 ## 🔗 Conexión con tu proyecto (Sprint 2)
 
 El **Sprint 2** (10 %) se entrega como notebook `.ipynb` por [buzón](../proyecto/buzon.md) hasta el **domingo 15 de
-noviembre a las 23:59** (el buzón acepta hasta dos días de atraso, con −1,0 punto por día). Usa el notebook como punto
+noviembre a las 23:59** (el buzón acepta hasta dos días de atraso, con −15 puntos por día). Usa el notebook como punto
 de partida y adapta todo a **tu pregunta de negocio** del Sprint 1. Checklist de lo que debe incluir:
 
 - [ ] **Embeddings** de todos los textos limpios de tu caso con `sentence-transformers` (indica el modelo y el tiempo de cálculo) y guardados con `np.save`.

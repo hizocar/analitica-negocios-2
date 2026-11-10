@@ -82,7 +82,7 @@ La nota final del curso es la nota del **proyecto**, compuesta por:
 | Entrega final · notebook, asistente RAG y slides | 40 % | Domingo 29 de noviembre, 23:59 (buzón) |
 | Presentación final | 30 % | Jueves 3 de diciembre (en la tutoría) |
 
-- Escala de notas de **1,0 a 7,0**; nota de aprobación **4,0**.
+- Escala de notas de **1 a 100**; nota de aprobación **55**.
 - Cada sprint se evalúa con una rúbrica corta publicada en [Sprints y buzón](proyecto/sprints.md). La
   entrega final y la presentación se evalúan con la rúbrica de [Enunciado y rúbrica](proyecto/enunciado.md).
 - La nota de la presentación es individual: se ajusta según la participación y las respuestas de cada
@@ -91,8 +91,8 @@ La nota final del curso es la nota del **proyecto**, compuesta por:
 ## 7. Políticas
 
 - **Equipos:** de 2 o 3 integrantes. Equipo y caso se inscriben hasta el **domingo 1 de noviembre**.
-- **Atrasos:** se descuenta **1,0 punto por cada día de atraso** (hasta dos días). Pasado ese plazo, la
-  entrega se califica con nota 1,0. Si tienes un problema justificado, avisa **antes** del plazo.
+- **Atrasos:** se descuentan **15 puntos por cada día de atraso** (hasta dos días). Pasado ese plazo,
+  la entrega se califica con nota 1. Si tienes un problema justificado, avisa **antes** del plazo.
 - **Reproducibilidad:** el notebook debe ejecutarse completo, de principio a fin, tras *Reiniciar y ejecutar
   todo*, y leer los datos desde una URL.
 - **Uso de IA generativa:** puedes usar asistentes de IA (ChatGPT, Gemini, Claude, Copilot) para

@@ -9,8 +9,8 @@ registra la hora exacta y lo guarda en el archivo privado del curso, al que solo
 
 !!! danger "Las tres reglas del buzón"
     1. **Un archivo por equipo.** Basta con que un integrante entregue. Si reenvían, vale el último envío.
-    2. **Plazo: domingo a las 23:59.** El buzón acepta **dos días más** con **−1,0 punto por día de
-       atraso**. El martes a las 23:59 se cierra solo y la entrega queda con nota 1,0, salvo
+    2. **Plazo: domingo a las 23:59.** El buzón acepta **dos días más** con **−15 puntos por día de
+       atraso**. El martes a las 23:59 se cierra solo y la entrega queda con nota 1, salvo
        justificación avisada **antes** del plazo.
     3. **Sin claves de API.** El buzón revisa el notebook y **lo rechaza** si encuentra una clave
        (Gemini, OpenAI, Anthropic o Hugging Face). Usa los Secretos de Colab ([guía](../guias/gemini.md)).

@@ -23,7 +23,7 @@ En la tutoría del jueves siguiente recibes la nota, un semáforo y los comentar
 3. En la **primera celda** del notebook escribe los nombres del equipo, el caso y el **enlace de Colab**
    compartido con permiso de lectura.
 4. Súbelo al **[buzón de la entrega](buzon.md)** antes del domingo a las 23:59. Basta con que **un
-   integrante** entregue por el equipo. El buzón acepta dos días más con −1,0 punto por día de atraso.
+   integrante** entregue por el equipo. El buzón acepta dos días más con −15 puntos por día de atraso.
 
 !!! warning "Antes de subir"
     - Ejecuta *Entorno de ejecución → Reiniciar y ejecutar todo* y verifica que no haya errores.
@@ -62,7 +62,7 @@ final evalúa la versión corregida.
 - [ ] **Comparación en test:** F1 macro, `classification_report` y matriz de confusión de ambos modelos, y
   qué error es más costoso para el negocio.
 
-| Criterio | Peso | Nivel 7,0 |
+| Criterio | Peso | Nivel 100 |
 |---|:-:|---|
 | Pregunta de negocio y auditoría de datos | 30 % | Pregunta concreta; todos los problemas de calidad detectados y resueltos con decisiones justificadas. |
 | EDA de texto | 20 % | Gráficos pertinentes, cada uno con su conclusión. |
@@ -88,7 +88,7 @@ final evalúa la versión corregida.
 - [ ] **Mapa de temas:** clustering sobre embeddings, elección de k justificada y un **nombre de negocio**
   para cada cluster.
 
-| Criterio | Peso | Nivel 7,0 |
+| Criterio | Peso | Nivel 100 |
 |---|:-:|---|
 | Embeddings y clasificación | 30 % | Comparación justa contra el Sprint 1 (mismo test y misma métrica). |
 | Curva con pocos datos | 25 % | Experimento bien hecho y conclusión clara para el negocio. |
@@ -116,7 +116,7 @@ final evalúa la versión corregida.
 - [ ] **Análisis de errores:** 5 casos donde el LLM falla o discrepa de la etiqueta. ¿Se equivoca el modelo o
   la etiqueta?
 
-| Criterio | Peso | Nivel 7,0 |
+| Criterio | Peso | Nivel 100 |
 |---|:-:|---|
 | Anonimización y buenas prácticas | 15 % | PII enmascarada antes de la API; sin claves expuestas. |
 | Prompts y salidas estructuradas | 30 % | Prompts claros; zero-shot vs. few-shot comparados; JSON validado. |
