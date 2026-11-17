@@ -149,3 +149,168 @@ Entregas recibidas: **2 de 2 equipos inscritos**, ambas dentro del plazo (doming
     - La primera celda debe tener **los integrantes, el caso y el enlace de Colab** (ver
       [Sprints y buzón](sprints.md)); hoy solo tiene la pregunta.
     - Agreguen la celda final **«Uso de IA»** (qué herramientas usaron y para qué).
+
+## 🧭 Sprint 2 · Embeddings (10 %)
+
+Entregas recibidas: **2 de 2 equipos inscritos**. Una dentro del plazo (domingo 15 de noviembre, 23:59) y
+una con un día de atraso (−15 puntos).
+
+| Criterio | Peso | Nivel 100 |
+|---|:-:|---|
+| Embeddings y clasificación | 30 % | Comparación justa contra el Sprint 1 (mismo test y misma métrica). |
+| Curva con pocos datos | 25 % | Experimento bien hecho y conclusión clara para el negocio. |
+| Búsqueda semántica | 20 % | Consultas relevantes y análisis de aciertos y fallos. |
+| Temas descubiertos | 25 % | k justificado; clusters interpretados con nombres útiles para el negocio. |
+
+??? note "🔒 Alvami · FinTrust — ver nota y retroalimentación"
+
+    <p class="usm-nota"><strong>Nota Sprint 2: 61</strong> · 🟡 Amarillo</p>
+
+    Entregado el lunes 16 de noviembre a las 03:00: **un día de atraso (−15 puntos)**.
+
+    | Criterio | Peso | Nota |
+    |---|:-:|:-:|
+    | **Embeddings y clasificación**<br><small>Comparación justa de cuatro modelos en el mismo test, con análisis de Fraude.</small> | 30 % | 95 |
+    | **Curva con pocos datos**<br><small>Experimento bien hecho; la conclusión exagera en N = 50 y cita un ejemplo que no calza.</small> | 25 % | 88 |
+    | **Búsqueda semántica**<br><small>Buenas consultas de negocio, pero dos comentarios contradicen los resultados.</small> | 20 % | 75 |
+    | **Temas descubiertos**<br><small>Los nombres de los clusters no corresponden a su contenido.</small> | 25 % | 40 |
+    | **Nota de la rúbrica**<br><small>0,30 × 95 + 0,25 × 88 + 0,20 × 75 + 0,25 × 40 = 75,5</small> | | 75,5 |
+    | **Atraso**<br><small>1 día × −15 puntos</small> | | −15 |
+    | **Nota final**<br><small>75,5 − 15 = 60,5</small> | | **61** |
+
+    **✅ Lo que está bien**
+
+    - **Corrigieron la curva del Sprint 1.** Ahora promedian tres submuestras y evalúan con **42
+      paráfrasis**. La conclusión sale de sus datos: TF-IDF gana en el test habitual y los embeddings ganan
+      en paráfrasis (0,766 vs. 0,628 con 200 ejemplos; 0,810 vs. 0,671 con 1.000).
+    - **La comparación de clasificadores es justa y completa** (celda 9). Comparan cuatro modelos sobre los
+      **mismos 1.192 textos de test**, con F1 macro, reportes y matrices. Comprueban con `assert` que la
+      partición es idéntica a la del Sprint 1. Las variantes de red se eligen con validación interna.
+    - **El análisis de Fraude (celda 11)** cuenta fraudes escapados y falsas alarmas por modelo. Mantiene el
+      foco de su pregunta de negocio.
+    - **El buscador está bien construido:** `buscar` y `buscar_tfidf` sobre el mismo corpus, cada consulta
+      ligada a un área y a una necesidad, y P@5 de ambos métodos. La consulta 2 es un muy buen ejemplo:
+      embeddings entiende que «descontaron dos veces el mismo pago» equivale a «me cobraron dos veces la
+      misma compra». TF-IDF, en cambio, se engancha con «dos veces» y trae llamadas cortadas.
+    - **Embeddings guardados para reutilizar**, con huella SHA-256 para no recalcularlos.
+
+    **🔧 Qué corregir para la entrega final**
+
+    1. **Los nombres de los clusters no salen de los clusters.** El diccionario `NOMBRES_NEGOCIO_CLUSTER`
+       (celda 22) trae 10 nombres escritos de antemano y se asignan por número. Su propia tabla muestra que
+       no calzan:
+
+        | Cluster | Nombre asignado | Lo que realmente contiene |
+        |---|---|---|
+        | 1 | Cargos duplicados y comisiones de mantención | **83 % Atención al cliente** (sucursal, llamada, nadie, hora) |
+        | 2 | Estafas por phishing, enlaces falsos y robo de tarjeta | **86 % App y canales digitales** (app, error, acceso, bloqueo) |
+        | 0 | Fallas técnicas en App móvil y transferencias | Mezcla de Cobro indebido (34 %), Fraude (24 %), Crédito (20 %) e Información (18 %) |
+
+        Pongan el nombre **después** de leer los términos distintivos y los ejemplos centrales que ustedes
+        mismos calcularon.
+    2. **k = 3 no sirve para el negocio, aunque tenga la mayor silueta.** El cluster 0 junta el **59 % de los
+       reclamos** y ahí quedan **cerca de 840 de los 934 fraudes**, mezclados con cobros, créditos y
+       trámites. Para un equipo cuya prioridad es el fraude, ese mapa esconde justamente lo importante.
+       Además:
+        - la silueta casi no cambia entre k = 3 y k = 10 (0,21 a 0,24);
+        - k = 3 está en el borde del rango probado y k = 2 no se evaluó.
+
+        Prueben un k mayor (por ejemplo, 6 a 8) y elijan con silueta **más** interpretabilidad. Expliquen la
+        decisión por escrito; la celda 23 hoy es genérica y no comenta sus clusters.
+    3. **Búsqueda: dos comentarios contradicen sus resultados** (celda 19).
+        - **Consulta 1:** dice que TF-IDF «falla por el typo», pero TF-IDF obtuvo **P@5 = 100 %** y
+          embeddings 80 %.
+        - **Consulta 3:** la consulta no contiene «app» ni «móvil». TF-IDF acierta por «intento» («cada vez
+          que intento hacer una transferencia»).
+
+        Además, P@5 por categoría es solo una aproximación. En la consulta 5, TF-IDF trae un texto idéntico a
+        los demás que está etiquetado como Información y trámites: es un error de etiqueta, no del buscador.
+        Definan un criterio de relevancia por consulta y juzguen cada resultado leyéndolo.
+    4. **Curva, precisión de la conclusión** (celda 16).
+        - Con 50 ejemplos, los embeddings ganan en paráfrasis por 0,500 vs. 0,474, con desviación de 0,081.
+          Eso es un empate, no «supera en todos los tamaños».
+        - El ejemplo «seguro automotriz que nunca contraté» **lo aciertan ambos métodos** en su tabla de
+          detalle. «Usaron mi plástico» sí está bien elegido: TF-IDF lo manda a Información y trámites.
+    5. **Clasificación, detalle menor:** que los embeddings ahorren «mucha memoria» no está medido. Una
+       matriz TF-IDF dispersa de 3.000 columnas no ocupa 3.000 números por texto. Si lo afirman, muéstrenlo.
+
+    **💡 Para pensar**
+
+    Su regresión logística y su MLP sobre TF-IDF dan exactamente el mismo reporte (0,951), igual que en el
+    Sprint 1, y los embeddings llegan a 0,948. Cuando modelos tan distintos coinciden, el techo suele estar
+    en los datos: etiquetas dudosas o reclamos que mezclan dos temas. Revisar esos errores puede rendir más
+    que otro modelo.
+
+    **📌 Requisitos de entrega**
+
+    - Sigue faltando el **enlace de Colab** en la primera celda (pedido en el Sprint 1).
+    - La celda 1 está vacía; bórrenla.
+    - Bien: ya incluyeron la celda **«Uso de IA»**.
+
+??? note "🔒 Emanix · MercaSur — ver nota y retroalimentación"
+
+    <p class="usm-nota"><strong>Nota Sprint 2: 92</strong> · 🟢 Verde</p>
+
+    Entregado el domingo 15 de noviembre a las 23:32 (a tiempo).
+
+    | Criterio | Peso | Nota |
+    |---|:-:|:-:|
+    | **Embeddings y clasificación**<br><small>Mismo test y misma métrica; verificación exhaustiva de particiones.</small> | 30 % | 95 |
+    | **Curva con pocos datos**<br><small>Experimento impecable y conclusión honesta, con sus límites.</small> | 25 % | 98 |
+    | **Búsqueda semántica**<br><small>Criterios de relevancia definidos antes de evaluar; varias consultas copian el vocabulario del corpus.</small> | 20 % | 88 |
+    | **Temas descubiertos**<br><small>k muy bien analizado; faltan nombres accionables y separar elogios de quejas.</small> | 25 % | 85 |
+    | **Nota final**<br><small>0,30 × 95 + 0,25 × 98 + 0,20 × 88 + 0,25 × 85 = 91,85</small> | | **92** |
+
+    **✅ Lo que está bien**
+
+    - **Continuidad verificada con el Sprint 1.** Antes de empezar comprueban con `assert` que textos,
+      etiquetas y particiones coinciden y no se cruzan. También verifican que ninguna reseña supera los 128
+      tokens del modelo.
+    - **Comparación justa en el mismo test**, y reconocen que las dos regresiones usan distinto `C`.
+    - **La curva con pocos datos es de nivel profesional**:
+        - tres semillas por tamaño;
+        - TF-IDF ajustado solo con cada submuestra;
+        - 42 paráfrasis, con la comprobación de que ninguna aparece en el entrenamiento;
+        - una conclusión clara: TF-IDF gana en el test del caso y los embeddings ganan por unos 20 puntos en
+          paráfrasis, sin que la brecha se cierre con 1.000 ejemplos.
+
+        Además advierten que tres muestras no prueban significancia.
+    - **La búsqueda se evaluó con método.** Definen un criterio de relevancia por consulta **antes** de mirar
+      los resultados y juzgan cada uno. Reportan sin maquillar que TF-IDF gana (0,68 vs. 0,60). El
+      experimento de quitar «qué maravilla» muestra muy bien la debilidad de TF-IDF.
+    - **El análisis de k es el más completo posible.** Notan que la silueta sube sin un máximo interior,
+      comparan 8 y 12 grupos y descubren que los embeddings agrupan también **por producto** (yoga, belleza,
+      tecnología) y **por estilo** (un grupo con 97 % de textos en mayúsculas). Ese hallazgo vale mucho.
+    - **Atendieron la retroalimentación del Sprint 1:** la primera celda tiene integrantes, caso y enlace,
+      hay celda de Uso de IA y agregaron una estimación de costos con sus supuestos explícitos.
+
+    **🔧 Qué mejorar para la entrega final**
+
+    1. **Nombres de temas que un equipo pueda usar.** «Segundas compras y experiencias variadas»,
+       «Opiniones diversas redactadas en mayúsculas» o «Experiencias con mats de yoga» describen el grupo,
+       pero no le dicen a nadie qué hacer. Dos ideas:
+        - **El grupo de mayúsculas es un artefacto:** pasen los textos a minúsculas antes de calcular los
+          embeddings y vean si desaparece.
+        - **Varios temas mezclan elogios y quejas.** «Atención por chat y correo» junta «me resolvieron todo»
+          con «nadie responde, solo bots». Para Atención no es lo mismo. Separen por tono, o al menos
+          cuantifiquen cuánto hay de cada uno.
+    2. **k = 12 está en el borde del rango probado**, con la silueta todavía subiendo. Ustedes ya lo
+       reconocen. Si no van a probar más allá, elijan el k por utilidad para el negocio y díganlo así.
+    3. **Consultas que pongan a prueba la semántica.** Q1 («me cobraron dos veces») y Q5 («nadie responde el
+       chat») repiten frases textuales del corpus, así que es esperable que TF-IDF empate. Prueben
+       redacciones con palabras que no aparecen en las reseñas, por ejemplo «me hicieron un doble cargo».
+    4. **Q2 exige dos condiciones (atraso y falta de aviso).** Busquen en el catálogo si existe alguna reseña
+       que las cumpla, por ejemplo con `str.contains("avis")`. Si no existe, el P@5 = 0 se debe a la
+       consulta y no a los buscadores.
+
+    **📌 Requisitos de entrega**
+
+    - El título de la primera celda todavía dice «Sprint 1»; actualícenlo.
+    - **La celda 162 empieza a mitad de frase** («alcanzando P@5 de 0,40»); falta el comienzo.
+    - Los contadores de ejecución están desordenados: la celda 160 corrió antes que la 156. Antes de
+      entregar, usen *Reiniciar y ejecutar todo*.
+
+    **🔭 Para el Sprint 3**
+
+    Entre los ejemplos aleatorios de sus clusters aparecen **RUT, teléfonos y correos**. Es justo lo que el
+    Sprint 3 pide enmascarar antes de enviar textos a la API.
