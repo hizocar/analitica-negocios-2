@@ -82,6 +82,7 @@ extra_javascript:
   - javascripts/widgets-clase4.js
   - javascripts/widgets-clase5.js
   - javascripts/py-run.js
+  - javascripts/notas.js
 
 # Customization
 extra:
