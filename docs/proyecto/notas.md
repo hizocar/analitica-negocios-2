@@ -33,6 +33,16 @@ nota no refleja tu entrega, escribe a **sebastian.azocarm@usm.cl** o plantéalo 
 <div class="nt-team">
 <p class="nt-team-case">Caso A · FinTrust</p>
 <div class="nt-adv">
+<div class="nt-head"><span class="nt-name">Sprint 3 · LLM</span><span class="nt-meta">entregado el lunes 23 a las 13:53 · 1 día de atraso (−15)</span><button type="button" class="nt-reveal">Revelar</button></div>
+<div class="nt-revealed" hidden>
+<p class="nt-grade"><strong>81</strong> 🟡</p>
+<p class="nt-calc">Rúbrica: 0,15 × 98 + 0,30 × 97 + 0,35 × 93 + 0,20 × 98 = 95,95 · atraso −15 → 80,95</p>
+<ul class="nt-checks"><li><span class="nt-mark">✅</span><span><strong>Anonimización y buenas prácticas · 15 % · 98.</strong> Miden cuántos reclamos traían datos personales (364 de 5.960, 6,1 %, por tipo), buscan restos con patrones propios (arrobas, dígitos largos, «+56», celulares) y un <code>assert</code> impide enviar a la API un texto con datos personales. La clave se lee de los Secretos de Colab y se borra de la memoria. Además, dicen qué podría escaparse (nombres sin «Atte.», direcciones, RUT sin guion) y que en producción usarían un modelo NER.</span></li><li><span class="nt-mark">✅</span><span><strong>Prompts y salidas estructuradas · 30 % · 97.</strong> El prompt tiene rol, tarea, una definición por categoría, regla de desempate y formato. El esquema usa <code>Literal</code> con las 6 categorías y, aun así, validan todo lo que vuelve (JSON legible, cada <code>id</code> una vez, categoría válida) y cuentan lo que no pasa como inválido. Los ejemplos few-shot salen solo de entrenamiento y se eligen «claros» con la logística. Muy buena lectura: zero-shot y few-shot coinciden en los 120 casos, así que los ejemplos no se justifican.</span></li><li><span class="nt-mark">✅</span><span><strong>Evaluación y costo · 35 % · 93.</strong> 120 casos del mismo test (20 por clase) para todos los modelos, con F1, recall de Fraude, tokens de <code>usage_metadata</code> (incluido el razonamiento) y latencia medida también para los modelos locales, clasificando uno a uno como en producción. La lectura (empate en calidad, US$ 0,09 por 1.000 reclamos, segundos vs. milisegundos) es clara. Dos cifras del texto no calzan con la tabla: la logística responde en 1,9 ms de mediana, no «~3 ms», y few-shot usa un 22 % más de tokens por caso (126 vs. 103), aunque cueste un 7 % más.</span></li><li><span class="nt-mark">✅</span><span><strong>Análisis de errores · 20 % · 98.</strong> Los 8 errores de Gemini son los mismos 8 de TF-IDF, y los diagnostican uno por uno: 5 etiquetas ruidosas y 3 casos de frontera (dos temas, o Fraude frente a Cobro). Conectan el resultado con su análisis del techo del Sprint 2 y lo traducen en una decisión: invertir en reglas de negocio y en re-etiquetar antes que en otro modelo.</span></li></ul>
+<p class="nt-tips-title">Cómo mejorar</p>
+<ul class="nt-tips"><li>El trabajo vale 96; la nota es 81 porque llegó con un día de atraso. Es el segundo sprint seguido: la entrega final (domingo 29) pesa 40 % y el descuento es el mismo.</li><li>La versión entregada se ejecutó sin la clave (las respuestas de Gemini vienen de <code>cache_gemini.json</code>) y ninguna celda conserva su contador de ejecución. Para la entrega final, adjunten la caché o dejen visible una ejecución con la API, para que costos y latencias se puedan verificar.</li><li>En la extracción, el producto se infiere en unos 8 casos aunque el prompt prohíbe inventar. Agreguen la regla explícita («avance» → Tarjeta de crédito; si no se nombra, «No indica») y conviertan el monto en lista cuando hay más de uno.</li><li>Bien: atendieron punto por punto la retroalimentación de los Sprints 1 y 2, con una tabla que dice qué cambiaron y dónde. Eso cuenta para la entrega final.</li></ul>
+</div>
+</div>
+<div class="nt-adv">
 <div class="nt-head"><span class="nt-name">Sprint 2 · Embeddings</span><span class="nt-meta">entregado el lunes 16 a las 03:00 · 1 día de atraso (−15)</span><button type="button" class="nt-reveal">Revelar</button></div>
 <div class="nt-revealed" hidden>
 <p class="nt-grade"><strong>61</strong> 🟡</p>
@@ -59,6 +69,16 @@ nota no refleja tu entrega, escribe a **sebastian.azocarm@usm.cl** o plantéalo 
 <div class="nt-team">
 <p class="nt-team-case">Caso B · MercaSur</p>
 <div class="nt-adv">
+<div class="nt-head"><span class="nt-name">Sprint 3 · LLM</span><span class="nt-meta">entregado a tiempo</span><button type="button" class="nt-reveal">Revelar</button></div>
+<div class="nt-revealed" hidden>
+<p class="nt-grade"><strong>95</strong> 🟢</p>
+<p class="nt-calc">Rúbrica: 0,15 × 92 + 0,30 × 95 + 0,35 × 95 + 0,20 × 95 = 94,55</p>
+<ul class="nt-checks"><li><span class="nt-mark">✅</span><span><strong>Anonimización y buenas prácticas · 15 % · 92.</strong> Enmascaran correos, RUT, teléfonos y nombres en 229 reseñas (4,3 %), buscan restos con otro patrón (0) y revisan una muestra de 50 textos sin detecciones. A la API solo va <code>texto_anon</code>, y la clave se lee de los Secretos. Ojo con dos cosas: la «revisión manual» se hizo pegando textos en ChatGPT, que también es enviar datos a un tercero, y el patrón de nombres incluye «soy», que puede enmascarar frases como «soy cliente nuevo» (no midieron esos falsos positivos).</span></li><li><span class="nt-mark">✅</span><span><strong>Prompts y salidas estructuradas · 30 % · 95.</strong> Un prompt muy cuidado: definición por aspecto, criterios (no decidir por emojis ni por el nombre del producto), regla de desempate en varios niveles y la instrucción de tratar las reseñas como datos y no como órdenes. Validan con Pydantic estricto y comprueban que vuelvan exactamente los <code>id</code> enviados. Comparan zero-shot y few-shot caso a caso: los ejemplos cambiaron una sola predicción y no ganaron ni perdieron aciertos. Los 12 ejemplos son casi todos elogios, y ustedes mismos lo reconocen como límite.</span></li><li><span class="nt-mark">✅</span><span><strong>Evaluación y costo · 35 % · 95.</strong> Los mismos 120 casos del test (estratificados) para Gemini y para la MLP del Sprint 1 sobre los mismos textos enmascarados. Los tokens se miden en cada lote, el razonamiento se cobra como salida y el precio va con fuente y fecha. La latencia se mide por lotes de 10 para los dos modelos: 0,16 s frente a 1,5 s de mediana por lote, y US$ 0,087 frente a US$ 0,100 por 1.000 reseñas. Las limitaciones están bien escritas (un p95 con 12 lotes, Pago con solo 10 casos).</span></li><li><span class="nt-mark">✅</span><span><strong>Análisis de errores · 20 % · 95.</strong> Listan las 15 discrepancias y documentan 5 con tipo y acción: dos etiquetas probablemente erradas, un caso con varios aspectos y dos fallos del modelo contra su propia regla de desempate (S3_040 y el few-shot de S3_003). Reconocer que el modelo también se equivoca, y no solo culpar a la etiqueta, es justo lo que pedía el criterio. Bien también el «no ajustar el prompt usando este test».</span></li></ul>
+<p class="nt-tips-title">Cómo mejorar</p>
+<ul class="nt-tips"><li>Ninguna de las 20 fichas tenía un monto, así que la extracción de montos no quedó probada. Para la entrega final, agreguen algunas reseñas que mencionen dinero (por ejemplo, de Pago o de Devoluciones) y verifiquen que el monto extraído aparezca en el texto.</li><li>Prueben few-shot con ejemplos negativos y mixtos, que son los que generan discrepancias (S3_017, S3_040), antes de descartar los ejemplos.</li><li>Forma: el hallazgo de la celda 279 dice «Se seleccionó Gemini 2.5 Flash», pero la siguiente explica que usaron 3.1 Flash-Lite. Además, en las celdas de texto «US$0,0867» se ve como «US0,0867»: Colab toma el signo <code>$</code> como fórmula. Escriban <code>US\$</code> o «USD».</li><li>Muy bien la «Corrección del Sprint 2» (consultas con otras palabras, minúsculas antes de los embeddings, separar elogios de quejas) y la comparación extra entre modelos de Gemini. No cambian notas anteriores, pero cuentan para la entrega final.</li></ul>
+</div>
+</div>
+<div class="nt-adv">
 <div class="nt-head"><span class="nt-name">Sprint 2 · Embeddings</span><span class="nt-meta">entregado a tiempo</span><button type="button" class="nt-reveal">Revelar</button></div>
 <div class="nt-revealed" hidden>
 <p class="nt-grade"><strong>92</strong> 🟢</p>
@@ -82,11 +102,13 @@ nota no refleja tu entrega, escribe a **sebastian.azocarm@usm.cl** o plantéalo 
 
 ## Qué revisa cada sprint
 
+- **Sprint 3 · LLM** (10 %). Plazo: domingo 22 de noviembre, 23:59. Anonimización y buenas prácticas
+  (15 %), prompts y salidas estructuradas (30 %), evaluación y costo (35 %) y análisis de errores (20 %).
 - **Sprint 2 · Embeddings** (10 %). Plazo: domingo 15 de noviembre, 23:59. Embeddings y clasificación
   (30 %), curva con pocos datos (25 %), búsqueda semántica (20 %) y temas descubiertos (25 %).
 - **Sprint 1 · Datos y primeros modelos** (10 %). Plazo: domingo 8 de noviembre, 23:59. Pregunta de
   negocio y auditoría de datos (30 %), EDA de texto (20 %), modelos y evaluación (35 %) e interpretación
   para el negocio (15 %).
 
-El nivel 100 de cada criterio está en [Sprints y buzón](sprints.md). El Sprint 3 vence el domingo 22 de
-noviembre y la entrega final el domingo 29.
+El nivel 100 de cada criterio está en [Sprints y buzón](sprints.md). La entrega final vence el domingo 29
+de noviembre.
